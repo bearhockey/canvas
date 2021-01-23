@@ -1,0 +1,46 @@
+<html>
+<head>
+<style>
+canvas
+{
+  border:1px solid #CCCCCC;
+  background-color: #333333;
+  padding: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+div
+{
+  display: block;
+  float: left;
+  padding: 2px 4px;
+}
+</style>
+</head>
+<body onload="startGame()">
+<script src="grid.js"></script>
+<script src="main.js"></script>
+<script type="text/javascript">
+  function MovePlayer(x, y)
+  {
+    myPlayer.x += x;
+    myPlayer.y += y;
+    myGameArea.clear();
+    myPlayer.update();
+  }
+  function MoveUp() { MovePlayer(0, -1); }
+  function MoveDown() { MovePlayer(0, 1); }
+  function MoveLeft() { MovePlayer(-1, 0); }
+  function MoveRight() { MovePlayer(1, 0); }
+</script>
+<div id="divCanvas" style="width:640px;"></div>
+<div id="divController" style="width:auto;">
+  <button onclick="MoveLeft()">LEFT</button>
+  <button onclick="MoveUp()">UP</button>
+  <button onclick="MoveDown()">DOWN</button>
+  <button onclick="MoveRight()">RIGHT</button>
+</div>
+
+</body>
+</html>
