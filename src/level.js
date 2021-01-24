@@ -16,21 +16,15 @@ var LEVEL = (function () {
     var idx;
     var xmlData;
     var objRoom;
-    // var xmlRoomData = XML.xhttp.responseXML;
     var xmlRoomData = XML.xmlDoc;
-    console.log(XML.xhttp);
-    console.log(XML.xhttp.responseXML);
-    console.log(xmlRoomData);
     if (xmlRoomData)
     {
-      console.log("LOADROMXML 2");
       var arrFloorData = xmlRoomData.getElementsByTagName("ground")[0].getElementsByTagName("room");
       if (arrFloorData && arrFloorData.length > 0)
       {
-        console.log("LOADROMXML 3");
         for (idx = 0; idx < arrFloorData.length; ++idx)
         {
-          xmlData = arrFloorData[iRando];
+          xmlData = arrFloorData[idx];
           objRoom =
           {
             label: xmlData.getElementsByTagName("label")[0].innerHTML,
@@ -152,12 +146,10 @@ var LEVEL = (function () {
     var strLabel = "Room # " + level.iRevealedRooms;
     var iRando;
     var objRoom;
-    console.log(level.arrGroundRooms.length);
     if (level.arrGroundRooms.length > 0)
     {
-      console.log("yay");
       iRando = Math.floor(Math.random() * level.arrGroundRooms.length);
-      objRoom = level.arrGroundRooms.splice(iRando, 1);
+      objRoom = level.arrGroundRooms.splice(iRando, 1)[0];
       if (objRoom)
       {
         strLabel = objRoom.label;

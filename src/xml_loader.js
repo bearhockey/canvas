@@ -1,24 +1,33 @@
 var XML = (function () {
   var xml = {};
 
+  xml.fnCallback = null;
+
   xml.xhttp = new XMLHttpRequest();
   xml.xhttp.overrideMimeType('application/xml');
   xml.xhttp.onreadystatechange = function()
   {
-    console.log("READY:");
-    if (this.readyState == 4 && this.status == 200)
+    if (this.readyState == 4)
     {
       xml.xmlDoc = this.responseXML;
-      console.log("READY:");
+      if (xml.fnCallback != null) { xml.fnCallback(); }
+      else
+      {
+        alert("Function callback for XML.Load is null so game will not load!");
+      }
     }
+  };
+
+  xml.Load = function(fnCallback)
+  {
+    xml.fnCallback = fnCallback;
+    xml.LoadRooms();
   };
 
   xml.LoadRooms = function()
   {
-    console.log("Open");
     xml.xhttp.open("GET", "./data/room_data.xml", true);
     xml.xhttp.send();
-    console.log("Send");
   };
 
   return xml;

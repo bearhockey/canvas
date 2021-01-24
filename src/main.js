@@ -1,8 +1,12 @@
+function loadGame()
+{
+  XML.Load(startGame);
+}
 
 function startGame()
 {
   // load files
- XML.LoadRooms();
+ // XML.LoadRooms();
  LEVEL.LoadRoomXML();
 
   // start game
