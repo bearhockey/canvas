@@ -1,6 +1,13 @@
 <html>
 <head>
 <style>
+button
+{
+  border-radius: 10px;
+  height: 64px;
+  margin: 4px;
+  width: 64px;
+}
 canvas
 {
   border:1px solid #CCCCCC;
@@ -15,31 +22,34 @@ div
   display: block;
   float: left;
   padding: 2px 4px;
+  text-align: center;
 }
 </style>
 </head>
 <body onload="startGame()">
 <script src="grid.js"></script>
+<script src="level.js"></script>
 <script src="main.js"></script>
 <script type="text/javascript">
   function MovePlayer(x, y)
   {
     myPlayer.x += x;
     myPlayer.y += y;
-    myGameArea.clear();
-    myPlayer.update();
+    myGameArea.update();
   }
   function MoveUp() { MovePlayer(0, -1); }
   function MoveDown() { MovePlayer(0, 1); }
   function MoveLeft() { MovePlayer(-1, 0); }
   function MoveRight() { MovePlayer(1, 0); }
 </script>
-<div id="divCanvas" style="width:640px;"></div>
+<div id="divCanvas"></div>
 <div id="divController" style="width:auto;">
-  <button onclick="MoveLeft()">LEFT</button>
   <button onclick="MoveUp()">UP</button>
-  <button onclick="MoveDown()">DOWN</button>
+  <br>
+  <button onclick="MoveLeft()">LEFT</button>
   <button onclick="MoveRight()">RIGHT</button>
+  <br>
+  <button onclick="MoveDown()">DOWN</button>
 </div>
 
 </body>
