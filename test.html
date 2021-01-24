@@ -27,20 +27,16 @@ div
 </style>
 </head>
 <body onload="startGame()">
+<script src="camera.js"></script>
 <script src="grid.js"></script>
 <script src="level.js"></script>
+<script src="player.js"></script>
 <script src="main.js"></script>
 <script type="text/javascript">
-  function MovePlayer(x, y)
-  {
-    myPlayer.x += x;
-    myPlayer.y += y;
-    myGameArea.update();
-  }
-  function MoveUp() { MovePlayer(0, -1); }
-  function MoveDown() { MovePlayer(0, 1); }
-  function MoveLeft() { MovePlayer(-1, 0); }
-  function MoveRight() { MovePlayer(1, 0); }
+  function MoveUp()    { myPlayer.MoveNorth(); myGameArea.Update(); }
+  function MoveDown()  { myPlayer.MoveSouth(); myGameArea.Update(); }
+  function MoveRight() { myPlayer.MoveEast();  myGameArea.Update(); }
+  function MoveLeft()  { myPlayer.MoveWest();  myGameArea.Update(); }
 </script>
 <div id="divCanvas"></div>
 <div id="divController" style="width:auto;">
