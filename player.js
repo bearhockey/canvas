@@ -32,7 +32,8 @@ var PLAYER = (function () {
       var x = cCords.x - CAMERA.iPosX;
       var y = cCords.y - CAMERA.iPosY;
       ctx.fillStyle = this.color;
-      ctx.fillRect(GRID.Normalize(x, 16), GRID.Normalize(y, 16), 32, 32);
+      var iSize = GRID.iSize / 2;
+      ctx.fillRect(GRID.Normalize(x, iSize/2), GRID.Normalize(y, iSize/2), iSize, iSize);
     };
   };
 
