@@ -27,16 +27,17 @@ div
 </style>
 </head>
 <body onload="startGame()">
-<script src="camera.js"></script>
-<script src="grid.js"></script>
-<script src="level.js"></script>
-<script src="player.js"></script>
-<script src="main.js"></script>
+<script src="./src/direction_const.js"></script>
+<script src="./src/camera.js"></script>
+<script src="./src/grid.js"></script>
+<script src="./src/level.js"></script>
+<script src="./src/player.js"></script>
+<script src="./src/main.js"></script>
 <script type="text/javascript">
-  function MoveUp()    { myPlayer.MoveNorth(); myGameArea.Update(); }
-  function MoveDown()  { myPlayer.MoveSouth(); myGameArea.Update(); }
-  function MoveRight() { myPlayer.MoveEast();  myGameArea.Update(); }
-  function MoveLeft()  { myPlayer.MoveWest();  myGameArea.Update(); }
+  function MoveUp()    { myPlayer.Move(DIRECTION.NORTH); myGameArea.Update(); }
+  function MoveDown()  { myPlayer.Move(DIRECTION.SOUTH); myGameArea.Update(); }
+  function MoveRight() { myPlayer.Move(DIRECTION.EAST);  myGameArea.Update(); }
+  function MoveLeft()  { myPlayer.Move(DIRECTION.WEST);  myGameArea.Update(); }
 
   function ZoomOut() { GRID.Zoom(GRID.iFactor+1); myGameArea.Update(); }
   function ZoomIn()  { GRID.Zoom(GRID.iFactor-1); myGameArea.Update(); }
