@@ -6,5 +6,9 @@
       <label lang="en">Foyer</label>
       <doors>4</doors>
     </room>
+    <room category="default">
+      <label lang="en">Bedroom</label>
+      <doors>2</doors>
+    </room>
   </ground>
 </rooms>

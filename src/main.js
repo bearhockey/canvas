@@ -2,14 +2,14 @@
 function startGame()
 {
   // load files
- // XML.LoadRooms();
+ XML.LoadRooms();
+ LEVEL.LoadRoomXML();
 
   // start game
   myGameArea.start();
   GRID.Init(myGameArea.canvas.width);
   LEVEL.Generate(20*20);
   LEVEL.Update();
-  // myPlayer = new player(4, 4, "red");
   myPlayer = new PLAYER(4*20 + 4, "red");
   myGameArea.Update();
   DrawScreen();

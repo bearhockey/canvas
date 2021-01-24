@@ -5,6 +5,44 @@ var LEVEL = (function () {
   level.iRowLength = 0;
   level.iRevealedRooms = 0;
 
+  level.arrGroundRooms = [];
+
+  // ----------------
+  // LoadRoomXML
+  //     Loads the room data from room_data.xml and parses them into arrays
+  // ----------------
+  level.LoadRoomXML = function()
+  {
+    var idx;
+    var xmlData;
+    var objRoom;
+    // var xmlRoomData = XML.xhttp.responseXML;
+    var xmlRoomData = XML.xmlDoc;
+    console.log(XML.xhttp);
+    console.log(XML.xhttp.responseXML);
+    console.log(xmlRoomData);
+    if (xmlRoomData)
+    {
+      console.log("LOADROMXML 2");
+      var arrFloorData = xmlRoomData.getElementsByTagName("ground")[0].getElementsByTagName("room");
+      if (arrFloorData && arrFloorData.length > 0)
+      {
+        console.log("LOADROMXML 3");
+        for (idx = 0; idx < arrFloorData.length; ++idx)
+        {
+          xmlData = arrFloorData[iRando];
+          objRoom =
+          {
+            label: xmlData.getElementsByTagName("label")[0].innerHTML,
+            doors: xmlData.getElementsByTagName("doors")[0].innerHTML
+          };
+
+          level.arrGroundRooms.push(objRoom);
+        } // end for loop
+      } // end arrFloorData check
+    } // end xmlRoomData check
+  };
+
   // ----------------
   // GetTile
   //     Returns the tile object at the given index, or empty object if out
@@ -40,26 +78,10 @@ var LEVEL = (function () {
     var fnCheck;
     switch (iDirection)
     {
-      case DIRECTION.NORTH:
-      {
-        fnCheck = level.GetNorth;
-        break;
-      }
-      case DIRECTION.EAST:
-      {
-        fnCheck = level.GetEast;
-        break;
-      }
-      case DIRECTION.SOUTH:
-      {
-        fnCheck = level.GetSouth;
-        break;
-      }
-      case DIRECTION.WEST:
-      {
-        fnCheck = level.GetWest;
-        break;
-      }
+      case DIRECTION.NORTH: { fnCheck = level.GetNorth; break; }
+      case DIRECTION.EAST:  { fnCheck = level.GetEast;  break; }
+      case DIRECTION.SOUTH: { fnCheck = level.GetSouth; break; }
+      case DIRECTION.WEST:  { fnCheck = level.GetWest;  break; }
       default: break;
     } // end switch
 
@@ -127,19 +149,22 @@ var LEVEL = (function () {
     objTile.value = 1;
     level.iRevealedRooms++;
 
-    var strLabel = "";
+    var strLabel = "Room # " + level.iRevealedRooms;
     var iRando;
-    var xmlRoomData = XML.xhttp.resposneXML;
-    var arrFloorData = xmlRoomData.getElementsByTagName("ground");
-    if (arrFloorData && arrFloorData.length > 0)
+    var objRoom;
+    console.log(level.arrGroundRooms.length);
+    if (level.arrGroundRooms.length > 0)
     {
-      iRando = Math.random() * arrFloorData.length;
-      strLabel = arrFloorData[iRando].label;
+      console.log("yay");
+      iRando = Math.floor(Math.random() * level.arrGroundRooms.length);
+      objRoom = level.arrGroundRooms.splice(iRando, 1);
+      if (objRoom)
+      {
+        strLabel = objRoom.label;
+      }
     }
 
     objTile.label = strLabel;
-    // debug - just adding some room text for now
-    // objTile.label = "Room # " + level.iRevealedRooms;
   };
 
   // ----------------
