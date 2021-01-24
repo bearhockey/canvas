@@ -3,6 +3,7 @@ var LEVEL = (function () {
   var level = {};
   level.arrTiles = [];
   level.iRowLength = 0;
+  level.iRevealedRooms = 0;
 
   // ----------------
   // GetTile
@@ -124,6 +125,21 @@ var LEVEL = (function () {
     }
     // show discovered state
     objTile.value = 1;
+    level.iRevealedRooms++;
+
+    var strLabel = "";
+    var iRando;
+    var xmlRoomData = XML.xhttp.resposneXML;
+    var arrFloorData = xmlRoomData.getElementsByTagName("ground");
+    if (arrFloorData && arrFloorData.length > 0)
+    {
+      iRando = Math.random() * arrFloorData.length;
+      strLabel = arrFloorData[iRando].label;
+    }
+
+    objTile.label = strLabel;
+    // debug - just adding some room text for now
+    // objTile.label = "Room # " + level.iRevealedRooms;
   };
 
   // ----------------

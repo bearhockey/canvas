@@ -2,8 +2,8 @@ var GRID = (function () {
   var grid = {};
 
   // at zoom level 1
-  const GRID_SIZE = 128;
-  const GRID_WIDTH = 5;
+  const GRID_SIZE = 256;
+  const GRID_WIDTH = 3;
 
   grid.iCanvasWidth = 0; // should never change after init
   grid.iSize = GRID_SIZE; // size of each grid element
@@ -11,6 +11,7 @@ var GRID = (function () {
   grid.iHeight = GRID_WIDTH;
   grid.iPadding = 0;
   grid.iFactor = 2;
+  grid.bShow = false;
 
   grid.Init = function(iCanvasWidth = 0)
   {
@@ -37,6 +38,8 @@ var GRID = (function () {
 
   grid.Draw = function(ctx)
   {
+    if (!grid.bShow) { return; } // early return - don't draw GRID
+
     var idx, x;
     x = grid.iPadding;
     ctx.beginPath();

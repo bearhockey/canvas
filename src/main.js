@@ -1,6 +1,10 @@
 
 function startGame()
 {
+  // load files
+ // XML.LoadRooms();
+
+  // start game
   myGameArea.start();
   GRID.Init(myGameArea.canvas.width);
   LEVEL.Generate(20*20);
@@ -25,6 +29,10 @@ var myGameArea =
   {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
+  Draw : function(bClear = true)
+  {
+    DrawScreen();
+  },
   Update : function()
   {
     this.clear();
@@ -37,6 +45,8 @@ function Update()
 {
   myPlayer.Update();
   CAMERA.CenterOn(myPlayer.idx);
+  var objCurrentTile = LEVEL.GetTile(myPlayer.idx);
+  document.getElementById('txtLocation').innerHTML = objCurrentTile.label;
 }
 
 function DrawScreen()

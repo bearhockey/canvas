@@ -23,11 +23,13 @@ div
   float: left;
   padding: 2px 4px;
   text-align: center;
+  width: auto;
 }
 </style>
 </head>
 <body onload="startGame()">
 <script src="./src/direction_const.js"></script>
+<script stc="./src/xml_loader.js"></script>
 <script src="./src/camera.js"></script>
 <script src="./src/grid.js"></script>
 <script src="./src/level.js"></script>
@@ -41,18 +43,29 @@ div
 
   function ZoomOut() { GRID.Zoom(GRID.iFactor+1); myGameArea.Update(); }
   function ZoomIn()  { GRID.Zoom(GRID.iFactor-1); myGameArea.Update(); }
+
+  function ShowGrid() { GRID.bShow = true; myGameArea.Draw(); }
 </script>
 <div id="divCanvas"></div>
-<div id="divController" style="width:auto;">
-  <button onclick="MoveUp()">UP</button>
-  <br>
-  <button onclick="MoveLeft()">LEFT</button>
-  <button onclick="MoveRight()">RIGHT</button>
-  <br>
-  <button onclick="MoveDown()">DOWN</button>
-  <hr>
-  <button onclick="ZoomOut()">ZOOM (-)</button>
-  <button onclick="ZoomIn()">ZOOM (+)</button>
+<div id="divRight">
+  <div id="divInfo">
+    <p id="txtLocation">Location</p>
+    <hr>
+  </div>
+  <br><br>
+  <div id="divController" style="width:auto;">
+    <button onclick="MoveUp()">UP</button>
+    <br>
+    <button onclick="MoveLeft()">LEFT</button>
+    <button onclick="MoveRight()">RIGHT</button>
+    <br>
+    <button onclick="MoveDown()">DOWN</button>
+    <hr>
+    <button onclick="ZoomOut()">ZOOM (-)</button>
+    <button onclick="ZoomIn()">ZOOM (+)</button>
+    <br>
+    <button onclick="ShowGrid()">SHOW GRID</button>
+  </div>
 </div>
 
 </body>

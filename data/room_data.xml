@@ -1,0 +1,10 @@
+<rooms>
+  <basement>
+  </basement>
+  <ground>
+    <room category="default">
+      <label lang="en">Foyer</label>
+      <doors>4</doors>
+    </room>
+  </ground>
+</rooms>
