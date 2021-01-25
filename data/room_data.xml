@@ -1,14 +1,32 @@
 <rooms>
+  <landing>
+    <room category="ground">
+      <label lang="en">Front Door</label>
+      <doors>3</doors>
+      <defined_doors>1,1,0,1</defined_doors>
+      <stairs>0</stairs>
+    </room>
+    <room category="ground_stairs">
+      <label lang="en">Ground Floor Stairwell</label>
+      <doors>3</doors>
+      <defined_doors>0,1,1,1</defined_doors>
+      <stairs>1</stairs>
+    </room>
+  </landing>
   <basement>
   </basement>
   <ground>
     <room category="default">
       <label lang="en">Foyer</label>
       <doors>4</doors>
+      <defined_doors></defined_doors>
+      <stairs>0</stairs>
     </room>
     <room category="default">
       <label lang="en">Bedroom</label>
       <doors>2</doors>
+      <defined_doors></defined_doors>
+      <stairs>0</stairs>
     </room>
   </ground>
 </rooms>

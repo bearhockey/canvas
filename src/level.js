@@ -1,10 +1,19 @@
 var LEVEL = (function () {
+  // landings positions
+  const GROUND_FRONT_DOOR = 0;
+  const GROUND_STAIRS = 1;
+  // door states
+  const DOOR_BLOCKED = -1; // cannot make a door in this direction
+  const DOOR_OPEN    = 0;  // a door can be made here
+  const DOOR_EXISTS  = 1;  // a door already exists here
+
   const TILE_PADDING = 2;
   var level = {};
   level.arrTiles = [];
   level.iRowLength = 0;
   level.iRevealedRooms = 0;
 
+  level.arrLandings = [];
   level.arrGroundRooms = [];
 
   // ----------------
@@ -14,24 +23,43 @@ var LEVEL = (function () {
   level.LoadRoomXML = function()
   {
     var idx;
+    var arrFloorData;
     var xmlData;
     var objRoom;
     var xmlRoomData = XML.xmlDoc;
     if (xmlRoomData)
     {
-      var arrFloorData = xmlRoomData.getElementsByTagName("ground")[0].getElementsByTagName("room");
+      // landings first
+      arrFloorData = xmlRoomData.getElementsByTagName("landing")[0].getElementsByTagName("room");
       if (arrFloorData && arrFloorData.length > 0)
       {
         for (idx = 0; idx < arrFloorData.length; ++idx)
         {
           xmlData = arrFloorData[idx];
-          objRoom =
+          switch (xmlData.getAttribute("category"))
           {
-            label: xmlData.getElementsByTagName("label")[0].innerHTML,
-            doors: xmlData.getElementsByTagName("doors")[0].innerHTML
-          };
-
-          level.arrGroundRooms.push(objRoom);
+            case "ground":
+            {
+              level.arrLandings[GROUND_FRONT_DOOR] = XML.ParseRoom(xmlData);
+              break;
+            }
+            case "ground_stairs":
+            {
+              level.arrLandings[GROUND_STAIRS] = XML.ParseRoom(xmlData);
+              break;
+            }
+            default: break;
+          } // end switch
+        }
+      }
+      // ground floor
+      arrFloorData = xmlRoomData.getElementsByTagName("ground")[0].getElementsByTagName("room");
+      if (arrFloorData && arrFloorData.length > 0)
+      {
+        for (idx = 0; idx < arrFloorData.length; ++idx)
+        {
+          xmlData = arrFloorData[idx];
+          level.arrGroundRooms.push(XML.ParseRoom(xmlData));
         } // end for loop
       } // end arrFloorData check
     } // end xmlRoomData check
@@ -119,56 +147,54 @@ var LEVEL = (function () {
   // ----------------
   // GenerateTile
   //     Generates a tile
+  // @params - iTileIdx     :int - Index of the tile to generate
+  // @params - iForcedResult:int - Force a specific landing tile to generate
   // ----------------
-  level.GenerateTile = function(iTileIdx = -1)
+  level.GenerateTile = function(iTileIdx = -1, iForcedResult = -1)
   {
     if (iTileIdx < 0) { return; }
-    var objTile = level.arrTiles[iTileIdx];
-    var bHasExit = false;
 
-    var iDirection;
-    var bMakeDoor = false;
-    for (iDirection = 0; iDirection < objTile.doors.length; ++iDirection)
-    {
-      bMakeDoor = objTile.doors[iDirection] = level.GenerateDoor(iTileIdx, iDirection);
-      if (bMakeDoor) { bHasExit = true; }
-    }
-
-    // if no exits then open all doors
-    if (!bHasExit)
-    {
-      objTile.doors = [true, true, true, true];
-    }
-    // show discovered state
-    objTile.value = 1;
-    level.iRevealedRooms++;
-
-    var strLabel = "Room # " + level.iRevealedRooms;
     var iRando;
-    var objRoom;
-    if (level.arrGroundRooms.length > 0)
+    var objRoom = null;
+    var bGroundLanding = false;
+    if (iForcedResult > -1)
     {
-      iRando = Math.floor(Math.random() * level.arrGroundRooms.length);
-      objRoom = level.arrGroundRooms.splice(iRando, 1)[0];
-      if (objRoom)
+      objRoom = level.arrLandings[iForcedResult];
+    }
+    else if (level.iRevealedRooms == 0)
+    {
+      objRoom = level.arrLandings[GROUND_FRONT_DOOR];
+      bGroundLanding = true;
+    }
+    else
+    {
+      if (level.arrGroundRooms.length > 0)
       {
-        strLabel = objRoom.label;
+        iRando = Math.floor(Math.random() * level.arrGroundRooms.length);
+        objRoom = level.arrGroundRooms.splice(iRando, 1)[0];
       }
     }
 
-    objTile.label = strLabel;
+    level.arrTiles[iTileIdx] = level.LoadRoom(objRoom, iTileIdx);
+    level.iRevealedRooms++;
+    if (bGroundLanding)
+    {
+      level.GenerateTile(level.GetNorth(iTileIdx), GROUND_STAIRS);
+    }
   };
 
   // ----------------
   // GenerateDoor
   //     Generates a door
-  // @param  - idx       :int - Index of level tiles to generate a door on
-  // @param  - iDirection:int - Direction to check against making a door
-  // @return - Boolean        - Returns true to make a door in this direction
+  // @params - idx       :int     - Index of level tiles to generate a door on
+  // @params - iDirection:int     - Direction to check against making a door
+  // @params - bUseRandom:Boolean - If true, generate door randomly
+  // @return - int                - The state of the door
   // ----------------
-  level.GenerateDoor = function(idx, iDirection)
+  level.GenerateDoor = function(idx, iDirection, bUseRandom = true)
   {
     var objNeighbor;
+    var iDoorState = DOOR_OPEN;
     var bMadeDoor = false;
 
     var iNeighborIdx = level.GetDirection(idx, iDirection);
@@ -179,16 +205,81 @@ var LEVEL = (function () {
       {
         if (objNeighbor.doors[DIRECTION.GetOpposite(iDirection)])
         {
-          bMadeDoor = true;
+          iDoorState = DOOR_EXISTS;
         }
-      }
-      else
+        else
+        {
+          iDoorState = DOOR_BLOCKED;
+        }
+      } // objNeighbor check
+    } // iNeighbotIdx check
+
+    return iDoorState;
+  };
+
+  // ----------------
+  // LoadRoom
+  //     Generates a tile from a loaded room
+  // ----------------
+  level.LoadRoom = function(objRoom, iTileIdx)
+  {
+    var idx;
+    var iRandom;
+    var iDirection;
+    var iDoors = 0;
+    var bMakeDoor = false;
+    var bHasExit = false;
+
+    var objTile = { value:1, doors:[false, false, false, false] }; // it is revealed
+    var strLabel = "Room # " + level.iRevealedRooms;
+    if (objRoom)
+    {
+      strLabel = objRoom.label;
+      iDoors = parseInt(objRoom.doors);
+      if (objRoom.defined_doors)
       {
-        bMadeDoor = level.RandomCheck(40);
+        var arrDefinedDoors = objRoom.defined_doors.split(",");
+        // have to iterate through array since JS considers "0" as true
+        for (idx = 0; idx < arrDefinedDoors.length; ++idx)
+        {
+          objTile.doors[idx] = (parseInt(arrDefinedDoors[idx]) > 0);
+        }
+
+        bHasExit = true;
       }
     }
 
-    return bMadeDoor;
+    objTile.label = strLabel;
+    var iMadeDoors = 0;
+    var iDoorState;
+    var arrPossibleDoors = [];
+    for (iDirection = 0; iDirection < objTile.doors.length; ++iDirection)
+    {
+      if (objTile.doors[iDirection])
+      {
+        iMadeDoors++; // already a door there
+        continue;
+      }
+      iDoorState = level.GenerateDoor(iTileIdx, iDirection);
+      if (iDoorState == DOOR_EXISTS)
+      {
+        objTile.doors[iDirection] = true;
+        iMadeDoors++;
+      }
+      else if (iDoorState != DOOR_BLOCKED)
+      {
+        arrPossibleDoors.push(iDirection);
+      }
+    }
+
+    while (iMadeDoors < iDoors && arrPossibleDoors.length > 0)
+    {
+      iRandom = Math.floor(Math.random() * arrPossibleDoors.length);
+      objTile.doors[arrPossibleDoors.shift(iRandom)] = true;
+      iMadeDoors++;
+    }
+
+    return objTile;
   };
 
   // ----------------
@@ -201,6 +292,10 @@ var LEVEL = (function () {
     return (iRand < iChance);
   };
 
+  // ----------------
+  // Update
+  //     Run any time an action is d one on the game screen
+  // ----------------
   level.Update = function(idx = -1)
   {
     if (idx > -1 && idx < level.arrTiles.length)
@@ -243,22 +338,15 @@ var LEVEL = (function () {
             objTile = level.arrTiles[iTileIdx];
             iX = GRID.Normalize(iGridX);
             iY = GRID.Normalize(iGridY);
-            if (objTile.value > 0)
-            {
-              ctx.fillStyle = "darkgrey";
-            }
-            else
-            {
-              ctx.fillStyle = "black";
-            }
-
+            ctx.fillStyle = (objTile.value > 0) ? "darkgrey" : "black";
             ctx.fillRect(iX + TILE_PADDING,
                          iY + TILE_PADDING,
                          iSize - TILE_PADDING*2,
                          iSize - TILE_PADDING*2);
 
-            if (objTile.value > 0 && objTile.doors)
+            if (objTile.value > 0)
             {
+              if (objTile.doors)
               ctx.fillStyle = "yellow";
               if (objTile.doors[DIRECTION.NORTH])
               {
@@ -275,6 +363,17 @@ var LEVEL = (function () {
               if (objTile.doors[DIRECTION.WEST])
               {
                 ctx.fillRect(iX, iY + iSize/8, iDoorWidth, iSize * (3/4));
+              }
+
+              if (objTile.label && GRID.iFactor < 3)
+              {
+                ctx.fillStyle = "white";
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+                ctx.shadowColor = "black";
+                ctx.shadowBlur = 1;
+                ctx.font = (GRID.iFactor == 1) ? "24px Arial ": "12px Arial";
+                ctx.fillText(objTile.label, iX+10, iY+iSize - 10);
               }
             }
           }

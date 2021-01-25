@@ -16,7 +16,6 @@ function startGame()
   LEVEL.Update();
   myPlayer = new PLAYER(4*20 + 4, "red");
   myGameArea.Update();
-  DrawScreen();
 }
 
 var myGameArea =

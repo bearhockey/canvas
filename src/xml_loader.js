@@ -30,5 +30,16 @@ var XML = (function () {
     xml.xhttp.send();
   };
 
+  xml.ParseRoom = function(xmlData)
+  {
+    var objRoom =
+    {
+      label         : xmlData.getElementsByTagName("label")[0].innerHTML,
+      doors         : xmlData.getElementsByTagName("doors")[0].innerHTML,
+      defined_doors : xmlData.getElementsByTagName("defined_doors")[0].innerHTML
+    };
+    return objRoom;
+  };
+
   return xml;
 }());
