@@ -36,7 +36,8 @@ var XML = (function () {
     {
       label         : xmlData.getElementsByTagName("label")[0].innerHTML,
       doors         : xmlData.getElementsByTagName("doors")[0].innerHTML,
-      defined_doors : xmlData.getElementsByTagName("defined_doors")[0].innerHTML
+      defined_doors : xmlData.getElementsByTagName("defined_doors")[0].innerHTML,
+      image         : xmlData.getElementsByTagName("room_image")[0].innerHTML
     };
     return objRoom;
   };

@@ -9,6 +9,7 @@
 <script src="./src/grid.js"></script>
 <script src="./src/level.js"></script>
 <script src="./src/player.js"></script>
+<script src="./src/scene.js"></script>
 <script src="./src/main.js"></script>
 <script type="text/javascript">
   function MoveUp()    { myPlayer.Move(DIRECTION.NORTH); myGameArea.Update(); }
@@ -21,26 +22,41 @@
 
   function ShowGrid() { GRID.bShow = true; myGameArea.Draw(); }
 </script>
-<div id="divCanvas"></div>
-<div id="divRight">
+<div id="divMain">
+ <div id="divTop">
+  <div id="divCanvas"></div>
   <div id="divInfo">
     <p id="txtLocation">Location</p>
     <hr>
-  </div>
-  <br><br>
-  <div id="divController" style="width:auto;">
-    <button onclick="MoveUp()">UP</button>
-    <br>
-    <button onclick="MoveLeft()">LEFT</button>
-    <button onclick="MoveRight()">RIGHT</button>
-    <br>
-    <button onclick="MoveDown()">DOWN</button>
+    <img id="room_preview" class="room" src="" height=144 width=256 />
+    <br><br><br>
     <hr>
-    <button onclick="ZoomOut()">ZOOM (-)</button>
-    <button onclick="ZoomIn()">ZOOM (+)</button>
-    <br>
-    <button onclick="ShowGrid()">SHOW GRID</button>
   </div>
+ </div>
+ <div id="divController">
+  <div class="buttonGroup">
+    <table>
+      <tr><td></td><td>
+   <button class="arrow" onclick="MoveUp()">^</button>
+ </td><td></td></tr>
+   <tr><td>
+    <button class="arrow" onclick="MoveLeft()"><</button>
+  </td>
+  <td>
+   <button class="arrow" onclick="DrawScreen()">X</button>
+ </td>
+ <td>
+  <button class="arrow" onclick="MoveRight()">></button>
+</td></tr>
+<tr><td></td><td>
+   <button class="arrow" onclick="MoveDown()">V</button>
+ </td><td></td></tr>
+</table>
+  </div>
+  <button onclick="ZoomOut()">ZOOM (-)</button>
+  <button onclick="ZoomIn()">ZOOM (+)</button>
+  <button onclick="ShowGrid()">SHOW GRID</button>
+ </div>
 </div>
 
 </body>

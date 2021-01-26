@@ -5,12 +5,14 @@
       <doors>3</doors>
       <defined_doors>1,1,0,1</defined_doors>
       <stairs>0</stairs>
+      <room_image></room_image>
     </room>
     <room category="ground_stairs">
       <label lang="en">Ground Floor Stairwell</label>
       <doors>3</doors>
       <defined_doors>0,1,1,1</defined_doors>
       <stairs>1</stairs>
+      <room_image></room_image>
     </room>
   </landing>
   <basement>
@@ -21,12 +23,14 @@
       <doors>4</doors>
       <defined_doors></defined_doors>
       <stairs>0</stairs>
+      <room_image></room_image>
     </room>
     <room category="default">
       <label lang="en">Bedroom</label>
       <doors>2</doors>
       <defined_doors></defined_doors>
       <stairs>0</stairs>
+      <room_image>room_bedroom.png</room_image>
     </room>
   </ground>
 </rooms>

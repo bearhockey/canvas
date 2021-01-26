@@ -6,6 +6,9 @@ var LEVEL = (function () {
   const DOOR_BLOCKED = -1; // cannot make a door in this direction
   const DOOR_OPEN    = 0;  // a door can be made here
   const DOOR_EXISTS  = 1;  // a door already exists here
+  // defaults
+  const ROOM_SRC      = "./res/"; // TODO: make this a const somewhere else
+  const DEFAULT_THUMB = "room_default.png";
 
   const TILE_PADDING = 2;
   var level = {};
@@ -232,9 +235,11 @@ var LEVEL = (function () {
 
     var objTile = { value:1, doors:[false, false, false, false] }; // it is revealed
     var strLabel = "Room # " + level.iRevealedRooms;
+    var strImage = DEFAULT_THUMB;
     if (objRoom)
     {
-      strLabel = objRoom.label;
+      if (objRoom.label) { strLabel = objRoom.label; }
+      if (objRoom.image) { strImage = objRoom.image; }
       iDoors = parseInt(objRoom.doors);
       if (objRoom.defined_doors)
       {
@@ -250,6 +255,7 @@ var LEVEL = (function () {
     }
 
     objTile.label = strLabel;
+    objTile.image = strImage;
     var iMadeDoors = 0;
     var iDoorState;
     var arrPossibleDoors = [];
@@ -298,11 +304,27 @@ var LEVEL = (function () {
   // ----------------
   level.Update = function(idx = -1)
   {
+    var objTile;
+    var bNewTile = false;
     if (idx > -1 && idx < level.arrTiles.length)
     {
-      if (level.arrTiles[idx].value < 1)
+      objTile = level.arrTiles[idx];
+      if (objTile.value < 1)
       {
         level.GenerateTile(idx);
+        bNewTile = true;
+      }
+      objTile = level.arrTiles[idx];
+
+      var strRoomImage = ROOM_SRC;
+      if (objTile.image != null)
+      {
+        strRoomImage += objTile.image;
+        UpdateRoomImage(strRoomImage);
+        if (bNewTile)
+        {
+          SCENE.SetScene(strRoomImage);
+        }
       }
     }
   };

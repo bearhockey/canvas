@@ -5,6 +5,14 @@ button
   margin: 4px;
   width: 64px;
 }
+button.arrow
+{
+  font-size: 8px;
+  font-weight: 600;
+  height: 32px;
+  margin: 0px;
+  width: 32px;
+}
 canvas
 {
   border:1px solid #CCCCCC;
@@ -12,13 +20,56 @@ canvas
   padding: 0px;
   margin-left: auto;
   margin-right: auto;
+}
+div.buttonGroup
+{
+  float: left;
+  display: inline-block;
+  margin: 0px 16px;
+  text-align: center;
+  vertical-align: top;
+}
+
+#divTop
+{
+  width: 100%;
   display: block;
 }
-div
+#divCanvas
+{
+  max-width: 700px;
+  display: inline-block;
+}
+#divInfo
+{
+  background-color: #CCCCCC;
+  border: 2px solid;
+  border-radius: 5%;
+  display: inline-block;
+  min-width: 264px;
+  text-align: center;
+  vertical-align: top;
+  width: 20%;
+}
+
+#divInfo p
+{
+  font-size: 24px;
+  font-weight: 550;
+  margin: 4px;
+  padding: 0px;
+}
+
+#divController
 {
   display: block;
-  float: left;
-  padding: 2px 4px;
+  margin: 4px;
+  max-width: 700px;
   text-align: center;
-  width: auto;
+  vertical-align: top;
+}
+
+img.room
+{
+  border: 2px solid;
 }
