@@ -2,6 +2,7 @@ var PLAYER = (function () {
   var player = function(idx, color = "black")
   {
     this.idx = idx;
+    this.iFloor = 1;
     this.color = color;
 
     this.Move = function(iDirection)
@@ -10,13 +11,19 @@ var PLAYER = (function () {
       var objTile;
       if (iTileIdx > -1)
       {
-        objTile = LEVEL.GetTile(this.idx);
+        objTile = LEVEL.GetTile(this.idx, this.iFloor);
         if (objTile.doors[iDirection])
         {
           this.idx = iTileIdx;
         }
       }
     };
+
+    this.UseStairs = function()
+    {
+      this.iFloor = LEVEL.UseStairs(this.idx);
+    }
+
 
     this.Update = function()
     {

@@ -1,7 +1,12 @@
 var LEVEL = (function () {
+  // floors
+  const FLOOR_BASEMENT = 0;
+  const FLOOR_GROUND = 1;
+  const FLOOR_UPPER = 2;
   // landings positions
   const GROUND_FRONT_DOOR = 0;
   const GROUND_STAIRS = 1;
+  const UPPER_STAIRS = 2;
   // door states
   const DOOR_BLOCKED = -1; // cannot make a door in this direction
   const DOOR_OPEN    = 0;  // a door can be made here
@@ -12,9 +17,11 @@ var LEVEL = (function () {
 
   const TILE_PADDING = 2;
   var level = {};
-  level.arrTiles = [];
-  level.iRowLength = 0;
+  level.arrFloors = [[],[],[]];
+  level.iRowLength = 0; // length of a row
+  level.iNumTiles = 0; // number of tiles in a floor
   level.iRevealedRooms = 0;
+  level.iCurrentFloor = 1;
 
   level.arrLandings = [];
   level.arrGroundRooms = [];
@@ -51,6 +58,11 @@ var LEVEL = (function () {
               level.arrLandings[GROUND_STAIRS] = XML.ParseRoom(xmlData);
               break;
             }
+            case "upper_stairs":
+            {
+              level.arrLandings[UPPER_STAIRS] = XML.ParseRoom(xmlData);
+              break;
+            }
             default: break;
           } // end switch
         }
@@ -73,11 +85,21 @@ var LEVEL = (function () {
   //     Returns the tile object at the given index, or empty object if out
   //    of bounds
   // ----------------
-  level.GetTile = function(idx)
+  level.GetTile = function(idx, iFloor = -1)
   {
-    if (idx > -1 && idx < level.arrTiles.length)
+    if (iFloor >= level.arrFloors.length)
     {
-      return level.arrTiles[idx];
+      console.error("level.GetTile called with invalid floor : " + iFloor);
+      return;
+    }
+    else if (iFloor < 0)
+    {
+      iFloor = level.iCurrentFloor;
+    }
+    var arrTiles = level.arrFloors[iFloor];
+    if (idx > -1 && idx < level.iNumTiles)
+    {
+      return arrTiles[idx];
     }
     else
     {
@@ -117,8 +139,8 @@ var LEVEL = (function () {
   level.GetNorth = function(idx) { return idx - level.iRowLength; };
   level.GetSouth = function(idx)
   {
-    if (idx + level.iRowLength >= level.arrTiles.length) { return -1; }
-    else                                                 { return idx + level.iRowLength; }
+    if (idx + level.iRowLength >= level.iNumTiles) { return -1; }
+    else                                           { return idx + level.iRowLength; }
   };
   level.GetEast  = function(idx)
   {
@@ -132,19 +154,25 @@ var LEVEL = (function () {
   };
 
   // ----------------
-  // Generate
+  // Init
   //     Builds all the tiles
   // ----------------
-  level.Generate = function(iSize)
+  level.Init = function(iSize)
   {
-    level.arrTiles.length = 0;
-    var idx;
-    for (idx = 0; idx < iSize; ++idx)
-    {
-      level.arrTiles.push({value:0, doors:[false, false, false, false]});
-    }
-
     level.iRowLength = Math.sqrt(iSize);
+    level.iNumTiles = iSize;
+
+    var iFloor = 1;
+    var idx;
+    var arrTiles;
+    for (iFloor = 0; iFloor < level.arrFloors.length; ++iFloor)
+    {
+      arrTiles = level.arrFloors[iFloor];
+      for (idx = 0; idx < iSize; ++idx)
+      {
+        arrTiles.push({value:0, doors:[false, false, false, false]});
+      }
+    }
   };
 
   // ----------------
@@ -153,13 +181,15 @@ var LEVEL = (function () {
   // @params - iTileIdx     :int - Index of the tile to generate
   // @params - iForcedResult:int - Force a specific landing tile to generate
   // ----------------
-  level.GenerateTile = function(iTileIdx = -1, iForcedResult = -1)
+  level.GenerateTile = function(iTileIdx = -1, iForcedResult = -1, iFloor = -1)
   {
     if (iTileIdx < 0) { return; }
 
     var iRando;
     var objRoom = null;
     var bGroundLanding = false;
+    if (iFloor < 0) { iFloor = level.iCurrentFloor; }
+
     if (iForcedResult > -1)
     {
       objRoom = level.arrLandings[iForcedResult];
@@ -178,11 +208,12 @@ var LEVEL = (function () {
       }
     }
 
-    level.arrTiles[iTileIdx] = level.LoadRoom(objRoom, iTileIdx);
+    level.arrFloors[iFloor][iTileIdx] = level.LoadRoom(objRoom, iTileIdx);
     level.iRevealedRooms++;
     if (bGroundLanding)
     {
       level.GenerateTile(level.GetNorth(iTileIdx), GROUND_STAIRS);
+      level.GenerateTile(level.GetNorth(iTileIdx), UPPER_STAIRS, FLOOR_UPPER);
     }
   };
 
@@ -203,7 +234,7 @@ var LEVEL = (function () {
     var iNeighborIdx = level.GetDirection(idx, iDirection);
     if (iNeighborIdx >= 0)
     {
-      objNeighbor = level.arrTiles[iNeighborIdx];
+      objNeighbor = level.arrFloors[level.iCurrentFloor][iNeighborIdx];
       if (objNeighbor.value > 0)
       {
         if (objNeighbor.doors[DIRECTION.GetOpposite(iDirection)])
@@ -236,10 +267,12 @@ var LEVEL = (function () {
     var objTile = { value:1, doors:[false, false, false, false] }; // it is revealed
     var strLabel = "Room # " + level.iRevealedRooms;
     var strImage = DEFAULT_THUMB;
+    var iStairs = 0;
     if (objRoom)
     {
-      if (objRoom.label) { strLabel = objRoom.label; }
-      if (objRoom.image) { strImage = objRoom.image; }
+      if (objRoom.label)  { strLabel = objRoom.label; }
+      if (objRoom.image)  { strImage = objRoom.image; }
+      if (objRoom.stairs) { iStairs = parseInt(objRoom.stairs); }
       iDoors = parseInt(objRoom.doors);
       if (objRoom.defined_doors)
       {
@@ -256,6 +289,7 @@ var LEVEL = (function () {
 
     objTile.label = strLabel;
     objTile.image = strImage;
+    objTile.iStairs = iStairs;
     var iMadeDoors = 0;
     var iDoorState;
     var arrPossibleDoors = [];
@@ -299,22 +333,46 @@ var LEVEL = (function () {
   };
 
   // ----------------
+  // UseStairs
+  //     Gets the stairs value from a tile and assigns level.iCurrentFloor to
+  //    the new floor level
+  // @params - idx:int - Tile index to check for stairs
+  // @return - int     - The new current floor
+  // ----------------
+  level.UseStairs = function(idx)
+  {
+    var objTile = level.GetTile(idx, level.iCurrentFloor);
+    level.GotoFloor(level.iCurrentFloor + objTile.iStairs);
+    return level.iCurrentFloor;
+  }
+
+  level.GotoFloor = function(iFloor)
+  {
+    if (iFloor > -1 && iFloor < level.arrFloors.length)
+    {
+      level.iCurrentFloor = iFloor;
+    }
+  };
+
+  // ----------------
   // Update
-  //     Run any time an action is d one on the game screen
+  //     Run any time an action is done on the game screen
   // ----------------
   level.Update = function(idx = -1)
   {
     var objTile;
     var bNewTile = false;
-    if (idx > -1 && idx < level.arrTiles.length)
+    var arrTiles;
+    if (idx > -1 && idx < level.iNumTiles)
     {
-      objTile = level.arrTiles[idx];
-      if (objTile.value < 1)
+      arrTiles = level.arrFloors[level.iCurrentFloor];
+      if (arrTiles[idx].value < 1)
       {
         level.GenerateTile(idx);
         bNewTile = true;
       }
-      objTile = level.arrTiles[idx];
+
+      objTile = arrTiles[idx];
 
       var strRoomImage = ROOM_SRC;
       if (objTile.image != null)
@@ -326,7 +384,30 @@ var LEVEL = (function () {
           SCENE.SetScene(strRoomImage);
         }
       }
+      UpdateStairsButton(objTile.iStairs != 0);
     }
+  };
+
+  // ----------------
+  // DrawCurrentFloorName
+  //     Draws a string of the current floor for display
+  // ----------------
+  level.DrawCurrentFloorName = function(ctx)
+  {
+    var strReturn = "";
+    switch(level.iCurrentFloor)
+    {
+      case FLOOR_BASEMENT: strReturn = "Basement"; break;
+      case FLOOR_GROUND: strReturn = "Ground Floor"; break;
+      case FLOOR_UPPER: strReturn = "Upper Floor"; break;
+      default: break;
+    } // end switch
+
+    ctx.fillStyle = "#666666";
+    ctx.fillRect(0, 0, 160, 40);
+    ctx.fillStyle = "#DDDDDD";
+    ctx.font = "24px Arial";
+    ctx.fillText(strReturn, 10, 24);
   };
 
   level.Draw = function(ctx)
@@ -335,7 +416,6 @@ var LEVEL = (function () {
     var xdx, ydx;
     var iRowOffset;
     var iTileIdx;
-    var iTileLength = level.arrTiles.length;
 
     var iGridX;
     var iGridY = 0;
@@ -350,17 +430,30 @@ var LEVEL = (function () {
     {
       iRowOffset = ydx * level.iRowLength;
       iGridX = 0;
-      if (iRowOffset >= 0 && iRowOffset < iTileLength)
+      if (iRowOffset >= 0 && iRowOffset < level.iNumTiles)
       {
         for (xdx = CAMERA.iPosX; xdx < CAMERA.iPosX + GRID.iWidth; ++xdx)
         {
           iTileIdx = level.GetTileIndex(xdx, ydx);
-          if (xdx >= 0 && xdx < level.iRowLength && iTileIdx < iTileLength)
+          if (xdx >= 0 && xdx < level.iRowLength && iTileIdx < level.iNumTiles)
           {
-            objTile = level.arrTiles[iTileIdx];
+            objTile = level.arrFloors[level.iCurrentFloor][iTileIdx];
             iX = GRID.Normalize(iGridX);
             iY = GRID.Normalize(iGridY);
-            ctx.fillStyle = (objTile.value > 0) ? "darkgrey" : "black";
+            if (objTile.value > 0)
+            {
+              switch (objTile.iStairs)
+              {
+                case -1: ctx.fillStyle = "#AA8888"; break;
+                case 1:  ctx.fillStyle = "#88AA88"; break
+                default: ctx.fillStyle = "#888888"; break;
+              } // end of switch
+            }
+            else
+            {
+              ctx.fillStyle = "black";
+            }
+
             ctx.fillRect(iX + TILE_PADDING,
                          iY + TILE_PADDING,
                          iSize - TILE_PADDING*2,

@@ -17,6 +17,8 @@
   function MoveRight() { myPlayer.Move(DIRECTION.EAST);  myGameArea.Update(); }
   function MoveLeft()  { myPlayer.Move(DIRECTION.WEST);  myGameArea.Update(); }
 
+  function UseStairs() { myPlayer.UseStairs(); myGameArea.Update(); }
+
   function ZoomOut() { GRID.Zoom(GRID.iFactor+1); myGameArea.Update(); }
   function ZoomIn()  { GRID.Zoom(GRID.iFactor-1); myGameArea.Update(); }
 
@@ -53,6 +55,7 @@
  </td><td></td></tr>
 </table>
   </div>
+  <button id="buttonStairs" onclick="UseStairs()" disabled>STAIRS</button>
   <button onclick="ZoomOut()">ZOOM (-)</button>
   <button onclick="ZoomIn()">ZOOM (+)</button>
   <button onclick="ShowGrid()">SHOW GRID</button>

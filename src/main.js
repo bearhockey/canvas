@@ -14,7 +14,7 @@ function startGame()
   myGameArea.start();
   GRID.Init(myGameArea.canvas.width);
   SCENE.Init(myGameArea.canvas.width, myGameArea.canvas.height)
-  LEVEL.Generate(PLAY_AREA*PLAY_AREA);
+  LEVEL.Init(PLAY_AREA*PLAY_AREA);
   LEVEL.Update();
   myPlayer = new PLAYER(PLAY_AREA/2 * PLAY_AREA + PLAY_AREA/2, "red");
   myGameArea.Update();
@@ -62,6 +62,7 @@ function DrawScreen()
   LEVEL.Draw(ctx);
   myPlayer.Draw(ctx);
   GRID.Draw(ctx);
+  LEVEL.DrawCurrentFloorName(ctx);
 }
 
 function UpdateRoomImage(strImage)
@@ -70,4 +71,9 @@ function UpdateRoomImage(strImage)
   {
     document.getElementById('room_preview').src = strImage;
   }
+}
+
+function UpdateStairsButton(bUseStairs = false)
+{
+  document.getElementById('buttonStairs').disabled = !bUseStairs;
 }

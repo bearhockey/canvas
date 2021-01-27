@@ -14,6 +14,13 @@
       <stairs>1</stairs>
       <room_image></room_image>
     </room>
+    <room category="upper_stairs">
+      <label lang="en">Upper Floor Stairwell</label>
+      <doors>4</doors>
+      <defined_doors></defined_doors>
+      <stairs>-1</stairs>
+      <room_image></room_image>
+    </room>
   </landing>
   <basement>
   </basement>
