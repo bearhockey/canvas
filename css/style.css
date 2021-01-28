@@ -1,12 +1,6 @@
-button
-{
-  border-radius: 10px;
-  height: 64px;
-  margin: 4px;
-  width: 64px;
-}
 button.arrow
 {
+  border-radius: 10px;
   font-size: 16px;
   font-weight: 600;
   height: 64px;
@@ -42,9 +36,6 @@ div.buttonGroup
 }
 #divInfo
 {
-  background-color: #CCCCCC;
-  border: 2px solid;
-  border-radius: 5%;
   display: inline-block;
   min-width: 264px;
   text-align: center;
@@ -52,12 +43,46 @@ div.buttonGroup
   width: 20%;
 }
 
-#divInfo p
+div.sideInfo
+{
+  background-color: #CCCCCC;
+  border: 2px solid;
+  border-radius: 15px;
+  margin: 4px 0px;
+  min-height: 50px;
+  text-align: center;
+  vertical-align: top;
+}
+
+div.sideInfo h1
 {
   font-size: 24px;
   font-weight: 550;
   margin: 4px;
   padding: 0px;
+}
+
+div.sideInfo p
+{
+}
+
+div.sideInfo button
+{
+  border-radius: 10px;
+  border: 0px solid;
+  font-size: 16px;
+  font-weight: 700;
+  height: 32px;
+  margin: 4px;
+  width: 100px;
+}
+
+div.subInfo
+{
+  background-color: #EEEEEE;
+  margin: 4px 16px 8px;
+  min-height: 50px;
+  padding: 2px;
 }
 
 #divController

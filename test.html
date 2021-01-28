@@ -1,6 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/scene.css">
 </head>
 <body onload="loadGame()">
 <script src="./src/direction_const.js"></script>
@@ -8,8 +9,10 @@
 <script src="./src/camera.js"></script>
 <script src="./src/grid.js"></script>
 <script src="./src/level.js"></script>
+<script src="./src/item.js"></script>
 <script src="./src/player.js"></script>
 <script src="./src/scene.js"></script>
+<script src="./src/info_panel.js"></script>
 <script src="./src/main.js"></script>
 <script type="text/javascript">
   function MoveUp()    { myPlayer.Move(DIRECTION.NORTH); myGameArea.Update(); }
@@ -18,6 +21,7 @@
   function MoveLeft()  { myPlayer.Move(DIRECTION.WEST);  myGameArea.Update(); }
 
   function UseStairs() { myPlayer.UseStairs(); myGameArea.Update(); }
+  function ShowModal() { SCENE.Render(); }
 
   function ZoomOut() { GRID.Zoom(GRID.iFactor+1); myGameArea.Update(); }
   function ZoomIn()  { GRID.Zoom(GRID.iFactor-1); myGameArea.Update(); }
@@ -28,11 +32,21 @@
  <div id="divTop">
   <div id="divCanvas"></div>
   <div id="divInfo">
-    <p id="txtLocation">Location</p>
-    <hr>
-    <img id="room_preview" class="room" src="" height=144 width=256 />
-    <br><br><br>
-    <hr>
+    <div class="sideInfo">
+     <h1 id="txtLocation">Location</h1>
+     <hr>
+     <img id="room_preview" class="room" src="" height=144 width=256 />
+     <hr>
+     <button id="buttonRoom" onclick="INFO_PANEL.UpdateInfoPanel(INFO_PANEL.ROOM)">Room</button>
+     <button id="buttonChar" onclick="INFO_PANEL.UpdateInfoPanel(INFO_PANEL.CHARACTER)">Character</button>
+     <button id="buttonInv" onclick="INFO_PANEL.UpdateInfoPanel(INFO_PANEL.INVENTORY)">Inventory</button>
+   </div>
+   <div class="sideInfo">
+     <h1 id="txtInfoHeader">Info</h1>
+     <hr>
+     <div id="divSubInfo" class="subInfo">
+     </div>
+   </div>
   </div>
  </div>
  <div id="divController">
@@ -59,6 +73,18 @@
   <button onclick="ZoomOut()">ZOOM (-)</button>
   <button onclick="ZoomIn()">ZOOM (+)</button>
   <button onclick="ShowGrid()">SHOW GRID</button>
+  <button onclick="ShowModal()">MODAL</button>
+ </div>
+</div>
+
+<div class="scene" id="divScene">
+ <div class="stage">
+  <div class="headline">
+    <p id="pSceneHeadline">Title</p>
+    <span class="close" id="buttonCloseScene">&times;</span>
+  </div>
+  <div class="stage_body"><div id="divStage"></div></div>
+  <div class="headline"><button onclick="SCENE.Close()">CLOSE</button></div>
  </div>
 </div>
 

@@ -2,24 +2,30 @@
   <landing>
     <room category="ground">
       <label lang="en">Front Door</label>
+      <description lang="en">The front door to the mansion.</description>
       <doors>3</doors>
       <defined_doors>1,1,0,1</defined_doors>
       <stairs>0</stairs>
       <room_image></room_image>
+      <event>0</event>
     </room>
     <room category="ground_stairs">
       <label lang="en">Ground Floor Stairwell</label>
+      <description lang="en">A set of stairs that wind up to the upper reaeches of the house.</description>
       <doors>3</doors>
       <defined_doors>0,1,1,1</defined_doors>
       <stairs>1</stairs>
       <room_image></room_image>
+      <event>0</event>
     </room>
     <room category="upper_stairs">
       <label lang="en">Upper Floor Stairwell</label>
+      <description lang="en">A set of stairs decsending to the ground floor.</description>
       <doors>4</doors>
       <defined_doors></defined_doors>
       <stairs>-1</stairs>
       <room_image></room_image>
+      <event>0</event>
     </room>
   </landing>
   <basement>
@@ -27,17 +33,21 @@
   <ground>
     <room category="default">
       <label lang="en">Foyer</label>
+      <description lang="en">Your standard foyer.</description>
       <doors>4</doors>
       <defined_doors></defined_doors>
       <stairs>0</stairs>
       <room_image></room_image>
+      <event>3</event>
     </room>
     <room category="default">
       <label lang="en">Bedroom</label>
+      <description lang="en">A spooky bedroom.</description>
       <doors>2</doors>
       <defined_doors></defined_doors>
       <stairs>0</stairs>
       <room_image>room_bedroom.png</room_image>
+      <event>3</event>
     </room>
   </ground>
 </rooms>

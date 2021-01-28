@@ -1,36 +1,50 @@
 var SCENE = (function () {
   var scene = {};
-  scene.image = new Image;
-  scene.iCanvasHeight = 0;
-  scene.iCanvasWidth = 0;
-  scene.bImageLoaded = false;
+  var divScene;
+  var divStage;
+  var pSceneHeadline;
+  var spanClose;
 
-  scene.Init = function(iWidth, iHeight)
+  scene.strTitle = "Fake Title";
+  scene.strImage = null;
+
+  scene.Init = function()
   {
-    scene.iCanvasHeight = iHeight;
-    scene.iCanvasWidth = iWidth;
+    divScene = document.getElementById("divScene");
+    divStage = document.getElementById("divStage");
+    pSceneHeadline = document.getElementById("pSceneHeadline");
+    spanClose = document.getElementById("buttonCloseScene");
+
+    spanClose.onclick = function() { divScene.style.display = "none"; }
   };
 
-  scene.SetScene = function(strImage)
+  scene.SetScene = function(strTitle, strImage = null)
   {
-    scene.image.src = strImage;
-    scene.bImageLoaded = true;
+    scene.strTitle = strTitle;
+    scene.strImage = strImage;
+    scene.Render();
   };
 
-  scene.Render = function(ctx)
+  scene.Render = function()
   {
-    if (scene.image)
+    pSceneHeadline.innerHTML = scene.strTitle;
+    if (scene.strImage)
     {
-      var xPos = (scene.iCanvasWidth - 640) / 2;
-      var yPos = (scene.iCanvasHeight - 360) / 2;
-      var img = document.getElementById('room_preview');
-      img.onload = function ()
-      {
-        ctx.drawImage(img, xPos, yPos);
-      };
+      divStage.textContent = '';
+      var img = document.createElement("img");
+      img.src = scene.strImage;
+      divStage.appendChild(img);
     }
+    // var pTitle = document.createElement("p");
+    // var pNode = document.createTextNode(scene.strTitle);
+    // pTitle.appendChild(pNode);
+    // divStage.appendChild(pTitle);
+    divScene.style.display = "block";
+  };
 
-    scene.bImageLoaded = false;
+  scene.Close = function()
+  {
+    divScene.style.display = "none";
   };
 
   return scene;

@@ -1,0 +1,10 @@
+<items>
+  <item>
+    <label>Cool Item 1</label>
+    <description>It does something really cool.</description>
+  </item>
+  <item>
+    <label>Cool Item 2</label>
+    <description>It does something even cooler than CI1.</description>
+  </item>
+</items>

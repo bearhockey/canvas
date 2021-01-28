@@ -7,9 +7,12 @@ function startGame()
 {
   const PLAY_AREA = 20;
   // load files
- // XML.LoadRooms();
- LEVEL.LoadRoomXML();
+  // XML.LoadRooms();
+  LEVEL.LoadRoomXML();
+  ITEM.LoadItemXML();
 
+  // init UI
+  INFO_PANEL.Init();
   // start game
   myGameArea.start();
   GRID.Init(myGameArea.canvas.width);
@@ -49,10 +52,11 @@ var myGameArea =
 
 function Update()
 {
+  var idx = myPlayer.idx;
+  var iFloor = myPlayer.iFloor;
   myPlayer.Update();
   CAMERA.CenterOn(myPlayer.idx);
-  var objCurrentTile = LEVEL.GetTile(myPlayer.idx);
-  document.getElementById('txtLocation').innerHTML = objCurrentTile.label;
+  INFO_PANEL.Update(idx, iFloor);
 }
 
 function DrawScreen()

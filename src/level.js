@@ -11,9 +11,15 @@ var LEVEL = (function () {
   const DOOR_BLOCKED = -1; // cannot make a door in this direction
   const DOOR_OPEN    = 0;  // a door can be made here
   const DOOR_EXISTS  = 1;  // a door already exists here
+  // event types
+  const EVENT_NONE     = 0;
+  const EVENT_STANDARD = 1;
+  const EVENT_OMEN     = 2;
+  const EVENT_ITEM     = 3;
   // defaults
   const ROOM_SRC      = "./res/"; // TODO: make this a const somewhere else
   const DEFAULT_THUMB = "room_default.png";
+  const DEFAULT_DESC  = "This room looks like it was never finished.";
 
   const TILE_PADDING = 2;
   var level = {};
@@ -36,7 +42,7 @@ var LEVEL = (function () {
     var arrFloorData;
     var xmlData;
     var objRoom;
-    var xmlRoomData = XML.xmlDoc;
+    var xmlRoomData = XML.GetXMLData(XML.XML_ROOMS);
     if (xmlRoomData)
     {
       // landings first
@@ -266,11 +272,14 @@ var LEVEL = (function () {
 
     var objTile = { value:1, doors:[false, false, false, false] }; // it is revealed
     var strLabel = "Room # " + level.iRevealedRooms;
+    var strDesc = DEFAULT_DESC;
     var strImage = DEFAULT_THUMB;
     var iStairs = 0;
+    var iEventType = EVENT_NONE;
     if (objRoom)
     {
       if (objRoom.label)  { strLabel = objRoom.label; }
+      if (objRoom.desc)   { strDesc = objRoom.desc; }
       if (objRoom.image)  { strImage = objRoom.image; }
       if (objRoom.stairs) { iStairs = parseInt(objRoom.stairs); }
       iDoors = parseInt(objRoom.doors);
@@ -285,11 +294,15 @@ var LEVEL = (function () {
 
         bHasExit = true;
       }
+      if (objRoom.event) { iEventType = parseInt(objRoom.event); }
     }
 
-    objTile.label = strLabel;
-    objTile.image = strImage;
-    objTile.iStairs = iStairs;
+    objTile.label      = strLabel;
+    objTile.desc       = strDesc;
+    objTile.image      = strImage;
+    objTile.iStairs    = iStairs;
+    objTile.iEventType = iEventType;
+    objTile.bHasEvent  = (iEventType > 0);
     var iMadeDoors = 0;
     var iDoorState;
     var arrPossibleDoors = [];
@@ -381,10 +394,16 @@ var LEVEL = (function () {
         UpdateRoomImage(strRoomImage);
         if (bNewTile)
         {
-          SCENE.SetScene(strRoomImage);
+          SCENE.SetScene(objTile.label, strRoomImage);
         }
       }
+
       UpdateStairsButton(objTile.iStairs != 0);
+
+      if (objTile.bHasEvent)
+      {
+        console.log("This tile has an event of type " + objTile.iEventType);
+      }
     }
   };
 
@@ -422,7 +441,7 @@ var LEVEL = (function () {
 
     var iX, iY; // absolute pixel positions on the canvas
     var iSize = GRID.iSize;
-    var iDoorWidth = iSize/16;
+    var iDoorWidth = iSize/32;
 
     var objTile;
 
