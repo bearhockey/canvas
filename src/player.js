@@ -4,7 +4,9 @@ var PLAYER = (function () {
     this.idx = idx;
     this.iFloor = 1;
     this.color = color;
+    this.arrInventory = [];
 
+    this.GetInventory = function() { return this.arrInventory; }
     this.Move = function(iDirection)
     {
       var iTileIdx = LEVEL.GetDirection(this.idx, iDirection);
@@ -24,6 +26,10 @@ var PLAYER = (function () {
       this.iFloor = LEVEL.UseStairs(this.idx);
     }
 
+    this.AddItem = function(objItem)
+    {
+      this.arrInventory.push(objItem);
+    }
 
     this.Update = function()
     {

@@ -28,7 +28,9 @@ var ITEM = (function () {
 
   item.GetItem = function()
   {
-
+    var iRando = Math.floor(Math.random() * item.arrItems.length);
+    var objItem = item.arrItems.splice(iRando, 1)[0];
+    return objItem;
   };
   return item;
 }());

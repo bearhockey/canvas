@@ -68,6 +68,18 @@ var INFO_PANEL = (function () {
       case info.INVENTORY:
       {
         info.txtInfoHeader.innerHTML = "Inventory";
+        var arrInventory = GetCurrentPlayer().GetInventory();
+        var divInventory = document.createElement("div");
+        // var pInv = document.createElement("p");
+        var divItem;
+        for (var i = 0; i < arrInventory.length; ++i)
+        {
+          divItem = document.createElement("div");
+          divItem.className = "inventoryItem";
+          divItem.innerHTML = arrInventory[i].strLabel;
+          divInventory.appendChild(divItem);
+        }
+        info.divSubInfo.appendChild(divInventory);
         break;
       }
       default: break;

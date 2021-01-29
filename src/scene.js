@@ -7,6 +7,8 @@ var SCENE = (function () {
 
   scene.strTitle = "Fake Title";
   scene.strImage = null;
+  scene.strDesc = null;
+  scene.iEventType = 0;
 
   scene.Init = function()
   {
@@ -18,22 +20,44 @@ var SCENE = (function () {
     spanClose.onclick = function() { divScene.style.display = "none"; }
   };
 
-  scene.SetScene = function(strTitle, strImage = null)
+  scene.SetScene = function(strTitle, strImage = null, strDesc = null, iEventType = 0, objEvent = null)
   {
     scene.strTitle = strTitle;
     scene.strImage = strImage;
-    scene.Render();
+    scene.strDesc = strDesc;
+    scene.iEventType = iEventType;
+    scene.Render(objEvent);
   };
 
-  scene.Render = function()
+  scene.Render = function(objEvent = null)
   {
     pSceneHeadline.innerHTML = scene.strTitle;
+    divStage.textContent = '';
     if (scene.strImage)
     {
-      divStage.textContent = '';
       var img = document.createElement("img");
       img.src = scene.strImage;
       divStage.appendChild(img);
+    }
+
+    if (scene.strDesc)
+    {
+      var pDesc = document.createElement("p");
+      pDesc.innerHTML = scene.strDesc;
+      divStage.appendChild(pDesc);
+    }
+
+    if (scene.iEventType > 0 && objEvent != null)
+    {
+      var divItem = document.createElement("div");
+      divItem.className = "stage_item";
+      var hItemHeader = document.createElement("h1");
+      hItemHeader.innerHTML = objEvent.strLabel;
+      var pItemDesc = document.createElement("p");
+      pItemDesc.innerHTML = objEvent.strDesc;
+      divItem.appendChild(hItemHeader);
+      divItem.appendChild(pItemDesc);
+      divStage.appendChild(divItem);
     }
     // var pTitle = document.createElement("p");
     // var pNode = document.createTextNode(scene.strTitle);

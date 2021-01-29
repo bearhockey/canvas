@@ -16,6 +16,9 @@ var LEVEL = (function () {
   const EVENT_STANDARD = 1;
   const EVENT_OMEN     = 2;
   const EVENT_ITEM     = 3;
+  // event strings
+  const EVENT_NONE_STRING = "You find nothing out of the ordinary in this room.";
+  const EVENT_ITEM_STRING = "Within you room you find an item:";
   // defaults
   const ROOM_SRC      = "./res/"; // TODO: make this a const somewhere else
   const DEFAULT_THUMB = "room_default.png";
@@ -374,6 +377,7 @@ var LEVEL = (function () {
   level.Update = function(idx = -1)
   {
     var objTile;
+    var objEvent;
     var bNewTile = false;
     var arrTiles;
     if (idx > -1 && idx < level.iNumTiles)
@@ -392,10 +396,24 @@ var LEVEL = (function () {
       {
         strRoomImage += objTile.image;
         UpdateRoomImage(strRoomImage);
-        if (bNewTile)
+      }
+
+      var strSceneDescription = EVENT_NONE_STRING;
+      switch (objTile.iEventType)
+      {
+        case EVENT_ITEM:
         {
-          SCENE.SetScene(objTile.label, strRoomImage);
+          strSceneDescription = EVENT_ITEM_STRING;
+          objEvent = ITEM.GetItem();
+          GetCurrentPlayer().AddItem(objEvent);
+          break;
         }
+        default: break;
+      }
+
+      if (bNewTile)
+      {
+        SCENE.SetScene(objTile.label, strRoomImage, strSceneDescription, objTile.iEventType, objEvent);
       }
 
       UpdateStairsButton(objTile.iStairs != 0);

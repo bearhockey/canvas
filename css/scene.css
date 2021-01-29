@@ -66,10 +66,21 @@
 
 .stage_body
 {
+  color: #EEEEEE;
+  font-size: 14px;
   min-height: 100px;
   padding: 2px 16px;
   text-align: center;
 }
+
+.stage_item
+{
+  background-color: #777777;
+  margin: auto;
+  width: 50%;
+}
+.stage_item h1 { margin: 2px; }
+.stage_item p  { margin: 2px; }
 
 .close
 {

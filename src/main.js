@@ -1,3 +1,7 @@
+// globals
+var arrPlayers = [];
+var iCurrentPlayer = 0;
+
 function loadGame()
 {
   XML.Load(startGame);
@@ -20,6 +24,7 @@ function startGame()
   LEVEL.Init(PLAY_AREA*PLAY_AREA);
   LEVEL.Update();
   myPlayer = new PLAYER(PLAY_AREA/2 * PLAY_AREA + PLAY_AREA/2, "red");
+  arrPlayers.push(myPlayer);
   myGameArea.Update();
 }
 
@@ -80,4 +85,9 @@ function UpdateRoomImage(strImage)
 function UpdateStairsButton(bUseStairs = false)
 {
   document.getElementById('buttonStairs').disabled = !bUseStairs;
+}
+
+function GetCurrentPlayer()
+{
+  return arrPlayers[iCurrentPlayer];
 }
