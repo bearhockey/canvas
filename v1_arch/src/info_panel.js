@@ -12,13 +12,14 @@ var INFO_PANEL = (function () {
 
   // ----------------
   // Init
-  //     Finds the buttons and saves them off
+  //     Finds the side panel elements and saves them off
   // ----------------
   info.Init = function()
   {
-    info.btnRoom = document.getElementById("buttonRoom");
-    info.btnCharacter = document.getElementById("buttonChar");
-    info.btnInventory = document.getElementById("buttonInv");
+    info.imgRoomPreview = document.getElementById('room_preview');
+    info.btnRoom        = document.getElementById("buttonRoom");
+    info.btnCharacter   = document.getElementById("buttonChar");
+    info.btnInventory   = document.getElementById("buttonInv");
 
     info.txtInfoHeader = document.getElementById("txtInfoHeader");
     info.txtLocation   = document.getElementById("txtLocation");
@@ -34,6 +35,19 @@ var INFO_PANEL = (function () {
     strRoomName = info.txtLocation.innerHTML = objCurrentTile.label;
     strRoomDesc = objCurrentTile.desc;
     info.UpdateInfoBody();
+  };
+
+  // ----------------
+  // UpdateRoomImage
+  //     Updates the preview image for the room with a string for the source image
+  // @params - strImage:String - String of the source image to load
+  // ----------------
+  info.UpdateRoomImage = function(strImage)
+  {
+    if (strImage != null)
+    {
+      info.imgRoomPreview.src = strImage;
+    }
   };
 
   info.UpdateInfoPanel = function(iMode)
@@ -62,7 +76,29 @@ var INFO_PANEL = (function () {
       }
       case info.CHARACTER:
       {
-        info.txtInfoHeader.innerHTML = "strCharName";
+        var cPlayer = GetCurrentPlayer();
+        info.txtInfoHeader.innerHTML = cPlayer.GetName();
+        var imgProfile = document.createElement("img");
+        imgProfile.src = cPlayer.GetProfile();
+        divSubInfo.appendChild(imgProfile);
+
+        var divStats = document.createElement("div");
+        divStats.className = "playerStats";
+        var pSpeed = document.createElement("p");
+        pSpeed.innerHTML = "Speed: " + cPlayer.iSpeed.toString();
+        var pMight = document.createElement("p");
+        pMight.innerHTML = "Might: " + cPlayer.iMight.toString();
+        var pSanity = document.createElement("p");
+        pSanity.innerHTML = "Sanity: " + cPlayer.iSanity.toString();
+        var pKnowledge = document.createElement("p");
+        pKnowledge.innerHTML = "Knowledge: " + cPlayer.iKnowledge.toString();
+        divStats.appendChild(pSpeed);
+        divStats.appendChild(pMight);
+        divStats.appendChild(pSanity);
+        divStats.appendChild(pKnowledge);
+
+        divSubInfo.appendChild(divStats);
+
         break;
       }
       case info.INVENTORY:
@@ -72,11 +108,14 @@ var INFO_PANEL = (function () {
         var divInventory = document.createElement("div");
         // var pInv = document.createElement("p");
         var divItem;
+        var objItem;
         for (var i = 0; i < arrInventory.length; ++i)
         {
+          objItem = arrInventory[i];
           divItem = document.createElement("div");
           divItem.className = "inventoryItem";
-          divItem.innerHTML = arrInventory[i].strLabel;
+          divItem.innerHTML = objItem.strLabel;
+          divItem.onclick = function() { InventoryClick(objItem); }
           divInventory.appendChild(divItem);
         }
         info.divSubInfo.appendChild(divInventory);
@@ -84,6 +123,11 @@ var INFO_PANEL = (function () {
       }
       default: break;
     } // end switch
+  };
+
+  function InventoryClick(objItem)
+  {
+    SCENE.SetScene(objItem.strLabel, null, objItem.strDesc, SCENE.UseItemDiv(objItem));
   };
 
   return info;

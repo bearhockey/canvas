@@ -6,7 +6,8 @@ var LEVEL = (function () {
   // landings positions
   const GROUND_FRONT_DOOR = 0;
   const GROUND_STAIRS = 1;
-  const UPPER_STAIRS = 2;
+  const GROUND_FOYER = 2;
+  const UPPER_STAIRS = 3;
   // door states
   const DOOR_BLOCKED = -1; // cannot make a door in this direction
   const DOOR_OPEN    = 0;  // a door can be made here
@@ -33,7 +34,9 @@ var LEVEL = (function () {
   level.iCurrentFloor = 1;
 
   level.arrLandings = [];
+  level.arrBasementRooms = [];
   level.arrGroundRooms = [];
+  level.arrUpperRooms = [];
 
   // ----------------
   // LoadRoomXML
@@ -42,9 +45,12 @@ var LEVEL = (function () {
   level.LoadRoomXML = function()
   {
     var idx;
+    var jdx;
+    var iLanding = -1;
     var arrFloorData;
     var xmlData;
     var objRoom;
+    var arrRooms;
     var xmlRoomData = XML.GetXMLData(XML.XML_ROOMS);
     if (xmlRoomData)
     {
@@ -55,38 +61,50 @@ var LEVEL = (function () {
         for (idx = 0; idx < arrFloorData.length; ++idx)
         {
           xmlData = arrFloorData[idx];
+          iLanding = -1;
           switch (xmlData.getAttribute("category"))
           {
-            case "ground":
-            {
-              level.arrLandings[GROUND_FRONT_DOOR] = XML.ParseRoom(xmlData);
-              break;
-            }
-            case "ground_stairs":
-            {
-              level.arrLandings[GROUND_STAIRS] = XML.ParseRoom(xmlData);
-              break;
-            }
-            case "upper_stairs":
-            {
-              level.arrLandings[UPPER_STAIRS] = XML.ParseRoom(xmlData);
-              break;
-            }
+            case "ground": { iLanding = GROUND_FRONT_DOOR; break; }
+            case "ground_foyer": { iLanding = GROUND_FOYER; break; }
+            case "ground_stairs": { iLanding = GROUND_STAIRS; break; }
+            case "upper_stairs": { iLanding = UPPER_STAIRS; break; }
             default: break;
           } // end switch
-        }
+          if (iLanding >= 0) { level.arrLandings[iLanding] = XML.ParseRoom(xmlData); }
+        } // end for loop
       }
-      // ground floor
-      arrFloorData = xmlRoomData.getElementsByTagName("ground")[0].getElementsByTagName("room");
+
+      arrFloorData = xmlRoomData.getElementsByTagName("general")[0].getElementsByTagName("room");
       if (arrFloorData && arrFloorData.length > 0)
       {
         for (idx = 0; idx < arrFloorData.length; ++idx)
         {
           xmlData = arrFloorData[idx];
-          level.arrGroundRooms.push(XML.ParseRoom(xmlData));
+          objRoom = XML.ParseRoom(xmlData);
+          for (jdx = 0; jdx < objRoom.arrFloors.length; ++jdx)
+          {
+            arrRooms = level.GetRoomArray(objRoom.arrFloors[jdx]);
+            arrRooms.push(objRoom);
+          }
+
+          // level.arrGroundRooms.push(XML.ParseRoom(xmlData));
         } // end for loop
       } // end arrFloorData check
     } // end xmlRoomData check
+  };
+
+  level.GetRoomArray = function(iFloor)
+  {
+    var arrFloors = [];
+    switch (iFloor)
+    {
+      case FLOOR_BASEMENT: { arrFloors = level.arrBasementRooms; break; }
+      case FLOOR_GROUND:   { arrFloors = level.arrGroundRooms;   break; }
+      case FLOOR_UPPER:    { arrFloors = level.arrUpperRooms;    break; }
+      default: break;
+    } // end of switch
+
+    return arrFloors;
   };
 
   // ----------------
@@ -194,9 +212,10 @@ var LEVEL = (function () {
   {
     if (iTileIdx < 0) { return; }
 
+    var arrRooms; // pointer to the array of rooms to grab from
     var iRando;
     var objRoom = null;
-    var bGroundLanding = false;
+    var bGroundLanding = false; // used to set the initial floors
     if (iFloor < 0) { iFloor = level.iCurrentFloor; }
 
     if (iForcedResult > -1)
@@ -210,10 +229,17 @@ var LEVEL = (function () {
     }
     else
     {
-      if (level.arrGroundRooms.length > 0)
+      switch (iFloor)
       {
-        iRando = Math.floor(Math.random() * level.arrGroundRooms.length);
-        objRoom = level.arrGroundRooms.splice(iRando, 1)[0];
+        case FLOOR_BASEMENT: { arrRooms = level.arrBasementRooms; break; }
+        case FLOOR_UPPER:    { arrRooms = level.arrUpperRooms;    break; }
+        case FLOOR_GROUND:
+        default:             { arrRooms = level.arrGroundRooms;   break; }
+      }
+      if (arrRooms.length > 0)
+      {
+        iRando = Math.floor(Math.random() * arrRooms.length);
+        objRoom = arrRooms.splice(iRando, 1)[0];
       }
     }
 
@@ -221,8 +247,10 @@ var LEVEL = (function () {
     level.iRevealedRooms++;
     if (bGroundLanding)
     {
-      level.GenerateTile(level.GetNorth(iTileIdx), GROUND_STAIRS);
-      level.GenerateTile(level.GetNorth(iTileIdx), UPPER_STAIRS, FLOOR_UPPER);
+      var iNorthIdx = level.GetNorth(iTileIdx);
+      level.GenerateTile(iNorthIdx, GROUND_FOYER);
+      level.GenerateTile(level.GetNorth(iNorthIdx), GROUND_STAIRS);
+      level.GenerateTile(level.GetNorth(iNorthIdx), UPPER_STAIRS, FLOOR_UPPER);
     }
   };
 
@@ -378,6 +406,7 @@ var LEVEL = (function () {
   {
     var objTile;
     var objEvent;
+    var divEvent;
     var bNewTile = false;
     var arrTiles;
     if (idx > -1 && idx < level.iNumTiles)
@@ -395,25 +424,26 @@ var LEVEL = (function () {
       if (objTile.image != null)
       {
         strRoomImage += objTile.image;
-        UpdateRoomImage(strRoomImage);
-      }
-
-      var strSceneDescription = EVENT_NONE_STRING;
-      switch (objTile.iEventType)
-      {
-        case EVENT_ITEM:
-        {
-          strSceneDescription = EVENT_ITEM_STRING;
-          objEvent = ITEM.GetItem();
-          GetCurrentPlayer().AddItem(objEvent);
-          break;
-        }
-        default: break;
+        INFO_PANEL.UpdateRoomImage(strRoomImage);
       }
 
       if (bNewTile)
       {
-        SCENE.SetScene(objTile.label, strRoomImage, strSceneDescription, objTile.iEventType, objEvent);
+        var strSceneDescription = EVENT_NONE_STRING;
+        switch (objTile.iEventType)
+        {
+          case EVENT_ITEM:
+          {
+            strSceneDescription = EVENT_ITEM_STRING;
+            objEvent = ITEM.GetItem();
+            GetCurrentPlayer().AddItem(objEvent);
+            divEvent = SCENE.FindItemDiv(objEvent);
+            break;
+          }
+          default: break;
+        }
+
+        SCENE.SetScene(objTile.label, strRoomImage, strSceneDescription, divEvent);
       }
 
       UpdateStairsButton(objTile.iStairs != 0);

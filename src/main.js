@@ -1,30 +1,24 @@
 // globals
-var arrPlayers = [];
-var iCurrentPlayer = 0;
 
-function loadGame()
-{
-  XML.Load(startGame);
-}
-
-function startGame()
+function StartGame()
 {
   const PLAY_AREA = 20;
-  // load files
-  // XML.LoadRooms();
-  LEVEL.LoadRoomXML();
-  ITEM.LoadItemXML();
+  const CENTER_TILE = PLAY_AREA/2 * PLAY_AREA + PLAY_AREA/2;
 
-  // init UI
-  INFO_PANEL.Init();
   // start game
   myGameArea.start();
   GRID.Init(myGameArea.canvas.width);
   SCENE.Init(myGameArea.canvas.width, myGameArea.canvas.height)
-  LEVEL.Init(PLAY_AREA*PLAY_AREA);
-  LEVEL.Update();
-  myPlayer = new PLAYER(PLAY_AREA/2 * PLAY_AREA + PLAY_AREA/2, "red");
-  arrPlayers.push(myPlayer);
+  SERVER.ServerSend({"level_init": true});
+  // LEVEL.Update();
+
+  // var arrStats = [DEBUG_MOVES, 4, 4, 4]; // make big speed for debugging
+  // arrPlayers.push(new PLAYER(CENTER_TILE, "red", "Player 1", arrStats));
+  // arrPlayers.push(new PLAYER(CENTER_TILE, "green", "Player 2"));
+  // arrPlayers.push(new PLAYER(CENTER_TILE, "blue", "Player 3"));
+  // arrPlayers.push(new PLAYER(CENTER_TILE, "purple", "Player 4"));
+
+  // arrPlayers[iCurrentPlayer].ResetMoves();
   myGameArea.Update();
 }
 
@@ -49,37 +43,34 @@ var myGameArea =
   },
   Update : function()
   {
-    this.clear();
     Update();
-    DrawScreen();
   }
 };
 
+function MoveCurrentPlayer(iDirection)
+{
+
+}
+
 function Update()
 {
-  var idx = myPlayer.idx;
-  var iFloor = myPlayer.iFloor;
-  myPlayer.Update();
-  CAMERA.CenterOn(myPlayer.idx);
-  INFO_PANEL.Update(idx, iFloor);
+  //var cPawn = GetCurrentPlayer();
+  // var idx = cPawn.idx;
+  // var iFloor = cPawn.iFloor;
+  // cPawn.Update();
+  // CAMERA.CenterOn(cPawn.idx);
+  // INFO_PANEL.Update(idx, iFloor);
+  SERVER.ServerSend({ "level_update":true, "player_update":true, "draw":true });
 }
 
 function DrawScreen()
 {
   var ctx = myGameArea.context;
-  // SCENE.Render(ctx); // this isn't working properly
+  // DEBUG: this needs to be set by server
+  CAMERA.iPosY = 2;
+  CAMERA.iPosX = 2;
   LEVEL.Draw(ctx);
-  myPlayer.Draw(ctx);
-  GRID.Draw(ctx);
-  LEVEL.DrawCurrentFloorName(ctx);
-}
-
-function UpdateRoomImage(strImage)
-{
-  if (strImage != null)
-  {
-    document.getElementById('room_preview').src = strImage;
-  }
+  PLAYER.Draw(ctx);
 }
 
 function UpdateStairsButton(bUseStairs = false)
@@ -87,7 +78,7 @@ function UpdateStairsButton(bUseStairs = false)
   document.getElementById('buttonStairs').disabled = !bUseStairs;
 }
 
-function GetCurrentPlayer()
+function GotoNextPlayer()
 {
-  return arrPlayers[iCurrentPlayer];
+
 }

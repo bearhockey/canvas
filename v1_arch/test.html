@@ -1,0 +1,94 @@
+<html>
+<head>
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/scene.css">
+<link rel="stylesheet" href="./css/panel.css">
+</head>
+<body onload="loadGame()">
+<script src="./src/direction_const.js"></script>
+<script src="./src/xml_loader.js"></script>
+<script src="./src/camera.js"></script>
+<script src="./src/grid.js"></script>
+<script src="./src/level.js"></script>
+<script src="./src/item.js"></script>
+<script src="./src/player.js"></script>
+<script src="./src/scene.js"></script>
+<script src="./src/info_panel.js"></script>
+<script src="./src/main.js"></script>
+
+<script type="text/javascript">
+  function MoveUp()    { GetCurrentPlayer().Move(DIRECTION.NORTH); }
+  function MoveDown()  { GetCurrentPlayer().Move(DIRECTION.SOUTH); }
+  function MoveRight() { GetCurrentPlayer().Move(DIRECTION.EAST); }
+  function MoveLeft()  { GetCurrentPlayer().Move(DIRECTION.WEST); }
+
+  function UseStairs() { GetCurrentPlayer().UseStairs(); }
+
+  function ZoomOut() { GRID.Zoom(GRID.iFactor+1); myGameArea.Update(); }
+  function ZoomIn()  { GRID.Zoom(GRID.iFactor-1); myGameArea.Update(); }
+  function EndTurn() { GotoNextPlayer(); }
+</script>
+
+<div id="divMain">
+  <div id="divTop">
+    <div id="divCanvas"></div>
+    <div id="divInfo">
+      <div class="sideInfo">
+        <h1 id="txtLocation">Location</h1>
+        <hr>
+        <img id="room_preview" class="room" src="" height=144 width=256 />
+        <hr>
+        <button id="buttonRoom" onclick="INFO_PANEL.UpdateInfoPanel(INFO_PANEL.ROOM)">Room</button>
+        <button id="buttonChar" onclick="INFO_PANEL.UpdateInfoPanel(INFO_PANEL.CHARACTER)">Character</button>
+        <button id="buttonInv" onclick="INFO_PANEL.UpdateInfoPanel(INFO_PANEL.INVENTORY)">Inventory</button>
+      </div>
+      <div class="sideInfo">
+        <h1 id="txtInfoHeader">Info</h1>
+        <hr>
+        <div id="divSubInfo" class="subInfo"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="divController">
+    <div class="buttonGroup">
+      <table>
+        <tr><td></td>
+          <td><button class="arrow" onclick="MoveUp()">^</button></td>
+        <td></td></tr>
+        <tr>
+          <td><button class="arrow" onclick="MoveLeft()"><</button></td>
+          <td><button class="arrow" onclick="DrawScreen()">X</button></td>
+          <td><button class="arrow" onclick="MoveRight()">></button></td>
+        </tr>
+        <tr><td></td>
+          <td><button class="arrow" onclick="MoveDown()">V</button></td>
+        <td></td></tr>
+      </table>
+    </div>
+
+  <button id="buttonStairs" onclick="UseStairs()" disabled>STAIRS</button>
+  <button onclick="ZoomOut()">ZOOM (-)</button>
+  <button onclick="ZoomIn()">ZOOM (+)</button>
+  <button onclick="EndTurn()">End turn</button>
+ </div>
+</div>
+
+<!-- Hidden scene popup thing -->
+<div class="scene" id="divScene">
+  <div class="stage">
+    <div class="headline">
+      <p id="pSceneHeadline">Title</p>
+      <span class="close" id="buttonCloseScene">&times;</span>
+    </div>
+    <div class="stage_body">
+      <div id="divStage"></div>
+    </div>
+    <div class="headline">
+      <button onclick="SCENE.Close()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,50 +1,58 @@
 var PLAYER = (function () {
-  var player = function(idx, color = "black")
+  // privates
+  var m_arrPlayers = [];
+  var m_iCurrentPlayer = 0;
+  // main
+  var player = {};
+
+  player.Move = function(iDirection, iPlayer=-1)
   {
-    this.idx = idx;
-    this.iFloor = 1;
-    this.color = color;
-    this.arrInventory = [];
-
-    this.GetInventory = function() { return this.arrInventory; }
-    this.Move = function(iDirection)
+    if (iPlayer < 0 || iPlayer >= m_arrPlayers.length)
     {
-      var iTileIdx = LEVEL.GetDirection(this.idx, iDirection);
-      var objTile;
-      if (iTileIdx > -1)
-      {
-        objTile = LEVEL.GetTile(this.idx, this.iFloor);
-        if (objTile.doors[iDirection])
-        {
-          this.idx = iTileIdx;
-        }
-      }
-    };
-
-    this.UseStairs = function()
-    {
-      this.iFloor = LEVEL.UseStairs(this.idx);
+      iPlayer = m_iCurrentPlayer;
     }
 
-    this.AddItem = function(objItem)
+    var objPlayer = m_arrPlayers[iPlayer];
+    var objTile = LEVEL.GetTileByIndex(objPlayer.iTileIdx);
+    if (objTile.arrDoors[iDirection] > 0)
     {
-      this.arrInventory.push(objItem);
+      SERVER.ServerSend( { "move_pawn":iPlayer, "direction":iDirection, "draw":true } );
     }
+  };
 
-    this.Update = function()
+  player.Update = function(objData)
+  {
+    if (objData['arrPlayers']) { m_arrPlayers = objData['arrPlayers']; }
+    if (objData['iCurrentPlayer'] != null)
     {
-      LEVEL.Update(this.idx);
-    };
+      m_iCurrentPlayer = parseInt(objData['iCurrentPlayer']);
+    }
+  };
 
-    this.Draw = function(ctx)
+  player.Draw = function(ctx, iPosition=0)
+  {
+    var bCurrentPlayer;
+    ctx.fillStyle = "red";
+    var iSize = GRID.iSize / 3;
+    var objPlayer;
+    var arrCords;
+    var idx;
+    for (idx = 0; idx < m_arrPlayers.length; ++idx)
     {
-      var cCords = LEVEL.GetTileCords(this.idx);
-      var x = cCords.x - CAMERA.iPosX;
-      var y = cCords.y - CAMERA.iPosY;
-      ctx.fillStyle = this.color;
-      var iSize = GRID.iSize / 2;
-      ctx.fillRect(GRID.Normalize(x, iSize/2), GRID.Normalize(y, iSize/2), iSize, iSize);
-    };
+      console.log(idx);
+      bCurrentPlayer = (idx == m_iCurrentPlayer);
+      objPlayer = m_arrPlayers[idx];
+      arrCords = LEVEL.GetTileCords(parseInt(objPlayer.iTileIdx));
+
+      var iOffsetX = (bCurrentPlayer) ? iSize : (iSize/2 + iSize*(iPosition%2));
+      var iOffsetY = (bCurrentPlayer) ? iSize : (iSize/2 + iSize*Math.floor(iPosition/2));
+      console.log("Position:");
+      console.log(arrCords);
+      ctx.fillRect(GRID.Normalize(arrCords[0] + CAMERA.iPosX, iOffsetX),
+                   GRID.Normalize(arrCords[1] + CAMERA.iPosY, iOffsetY),
+                   iSize,
+                   iSize);
+    }
   };
 
   return player;

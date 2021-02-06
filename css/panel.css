@@ -40,6 +40,17 @@ div.subInfo
   padding: 2px 0px;
 }
 
+div.playerStats
+{
+  background-color: #EEEEEE;
+}
+
+
+div.playerStats p
+{
+  margin: 0px;
+}
+
 div.inventoryItem
 {
   background-color: #BBBBBB;
