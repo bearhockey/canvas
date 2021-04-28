@@ -1,0 +1,9 @@
+idx|category|label|dessription|image|doors|stairs|event
+1|1|Bloody Room|Blood stains cover every inch of this small space.||4|0|3
+2|1|Chapel|Rest your soul here.||1|0|1
+3|1,2|Charred Room|The room smells of charred remains, mostly wood, but...||4|0|2
+4|1|Dining Room|A dining room.||2|0|2
+5|1,2|Hallway|A long hallway with connecting doors.||4|0|0
+6|1|Kitchen|Something smells good.||2|0|2
+7|1,2|Library|A library stacked with shelves of old, dusty books.||2|0|1
+8|2|Bedroom|A spooky bedroom.|room_bedroom.png|2|0|3

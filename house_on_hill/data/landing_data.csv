@@ -1,0 +1,28 @@
+  <landing>
+    <room category="ground">
+      <label lang="en">Front Door</label>
+      <description lang="en">The front door to the mansion.</description>
+      <doors>3</doors>
+      <defined_doors>1,1,0,1</defined_doors>
+    </room>
+    <room category="ground_foyer">
+      <label lang="en">Foyer</label>
+      <description lang="en">Your standard foyer.</description>
+      <doors>4</doors>
+      <defined_doors>1,1,1,1</defined_doors>
+    </room>
+    <room category="ground_stairs">
+      <label lang="en">Ground Floor Stairwell</label>
+      <description lang="en">A set of stairs that wind up to the upper reaeches of the house.</description>
+      <doors>1</doors>
+      <defined_doors>0,0,1,0</defined_doors>
+      <stairs>1</stairs>
+    </room>
+    <room category="upper_stairs">
+      <label lang="en">Upper Floor Stairwell</label>
+      <description lang="en">A set of stairs decsending to the ground floor.</description>
+      <doors>4</doors>
+      <defined_doors>1,1,1,1</defined_doors>
+      <stairs>-1</stairs>
+    </room>
+  </landing>

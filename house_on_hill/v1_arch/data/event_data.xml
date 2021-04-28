@@ -1,0 +1,24 @@
+<events>
+  <event>
+    <label lang="en">Creepy Crawlies</label>
+    <description lang="en">A thousand bugs spill out on your skin, under your clothes, and in your hair.</description>
+    <trial>
+      <check_type>2</check_type>
+      <roll>
+        <range>5,16</range>
+        <result>2</result>
+        <modifier>1</modifier>
+      </roll>
+      <roll>
+        <range>1,4</range>
+        <result>2</result>
+        <modifier>-1</modifier>
+      </roll>
+      <roll>
+        <range>0</range>
+        <result>2</result>
+        <modifier>-2</modifier>
+      </roll>
+    </trial>
+  </event>
+</events>
