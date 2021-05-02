@@ -1,0 +1,20 @@
+button.tab_inactive
+{
+  background-color: #666666;
+  height: 50px;
+  width: 50px;
+}
+
+button.tab_active
+{
+  background-color: #9999AA;
+  height: 50px;
+  width: 50px;
+}
+
+button.panel
+{
+  font-weight: 700;
+  min-height: 50px;
+  width: 45%;
+}

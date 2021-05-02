@@ -1,8 +1,5 @@
 var INVENTORY = (function () {
   // privates
-  const DEFAULT_PAWN_COLOR = "#EEEEEE";
-  const SHOW_CURRENT_PATH = DEBUG_ON;
-  const SEARCH_RADIUS = 5;
   // main
   var inventory = function()
   {
@@ -22,9 +19,6 @@ var INVENTORY = (function () {
       {
         this.objInventory[iResType] += iQuantity;
       }
-
-      console.debug("Inventory updated:");
-      console.debug(this.objInventory);
     };
 
     // ----------------

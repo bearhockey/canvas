@@ -1,15 +1,17 @@
 var ENTITY = (function () {
   // privates
   // main
-  var entity = function(cParent, cNode, iHealth = 10, iShape=0, strColor="#EEEEEE", bIsPassable=true)
+  var entity = function(cParent, cNode, iHealth=10, iShape=0, strColor="#EEEEEE", bIsPassable=true)
   {
     // overloaded methods - must be predefined
-    this.GetNode = function() {};
-    this.SetNode = function() {};
-    this.GetPassable = function() {};
-    this.SetPassable = function() {};
+    this.GetNode      = function() {};
+    this.SetNode      = function() {};
+    this.GetPassable  = function() {};
+    this.SetPassable  = function() {};
     this.MarkAsTarget = function() {};
     this.ClearTarget  = function() {};
+    this.GetHealth    = function() {};
+    this.ModifyHealth = function() {};
 
     this.cParent = cParent;
     this.iHealth = iHealth;
@@ -18,6 +20,7 @@ var ENTITY = (function () {
     this.strColor = strColor;
     this.bIsPassable = bIsPassable;
     this.bIsTarget = false;
+    this.cTracker = null; // if this is target, something is tracking it
 
     if (this.cNode)
     {
@@ -30,8 +33,24 @@ var ENTITY = (function () {
     this.GetPassable = function(cNode)       { return this.bIsPassable; };
     this.SetPassable = function(bIsPassable) { this.bIsPassable = bIsPassable; };
 
-    this.MarkAsTarget = function() { this.bIsTarget = true; }
-    this.ClearTarget  = function() { this.bIsTarget = false; }
+    this.MarkAsTarget = function(cTracker = null)
+    {
+      this.bIsTarget = true;
+      this.cTracker = cTracker;
+    };
+    this.ClearTarget  = function()
+    {
+      this.bIsTarget = false;
+      this.cTracker = null;
+    };
+    this.GetTracker = function() { return this.cTracker; };
+
+    this.GetHealth = function() { return this.iHealth; };
+    this.ModifyHealth = function(iDelta)
+    {
+      this.iHealth -= iDelta;
+      return this.iHealth;
+    };
 
     // ----------------
     // this.Draw

@@ -5,6 +5,7 @@ var NODE = (function () {
   {
     this.idx = idx;
     this.bIsPassable = bIsPassable;
+    this.bHighlight = false;
     this.arrEntities = [];
     this.objPathData = null;
 

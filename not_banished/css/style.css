@@ -1,8 +1,34 @@
+body
+{
+  background-color: #000000;
+}
 canvas
 {
   border:1px solid #CCCCCC;
-  background-color: #333333;
+  background-color: #000000;
   padding: 0px;
   margin-left: auto;
   margin-right: auto;
+}
+
+div.divMain
+{
+  text-align: center;
+}
+
+div.divCanvas
+{
+  display: inline-block;
+  width: 600px;
+}
+
+div.divSidePanel
+{
+  border: 2px solid #DDDDDD;
+  background-color: #888888;
+  display: inline-block;
+  margin-left: 5px;
+  min-height: 600px;
+  min-width: 200px;
+  vertical-align: top;
 }

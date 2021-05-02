@@ -1,6 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/ui.css">
 </head>
 <script type="text/javascript">
   const DEBUG_ON = true;
@@ -11,8 +12,14 @@
   <script src="./src/node.js"></script>
   <script src="./src/field.js"></script>
 
+  <script src="./src/mouse.js"></script>
+
   <script src="./src/path.js"></script>
   <script src="./src/jobs/task.js"></script>
+
+  <script src="./src/ui/tab.js"></script>
+  <script src="./src/ui/button.js"></script>
+  <script src="./src/ui/side_panel.js"></script>
 
   <script src="./src/entity/inventory.js"></script>
   <script src="./src/entity/entity.js"></script>
@@ -24,7 +31,14 @@
 <script type="text/javascript">
 </script>
 
-<div id="divCanvas">
+<div id="divMain" class="divMain">
+  <div id="divCanvas" class="divCanvas">
+  </div>
+  <div id="divSidePanel" class="divSidePanel">
+    <div id="divTabAnchor"></div>
+    <hr>
+    <div id="divButtonAnchor"></div>
+  </div>
 </div>
 
 </body>

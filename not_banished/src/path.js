@@ -31,6 +31,7 @@ var PATH = (function () {
     // ----------------
     this.GeneratePath = function(cStartNode, cEndNode)
     {
+      this.arrNodes = [];
       cStartNode.AddPathData({ f:0, g:0 });
       var arrOpenNodes = [cStartNode];
       var arrClosedNodes = [];
@@ -65,6 +66,8 @@ var PATH = (function () {
         if (cCurrentNode == cEndNode)
         {
           cNode = cCurrentNode;
+          if (cNode == null || cNode.objPathData == null) { return; }
+
           while (cNode.objPathData.cParent)
           {
             cParentNode = cNode.objPathData.cParent;

@@ -2,11 +2,11 @@ var PAWN = (function () {
   // privates
   const DEFAULT_PAWN_COLOR = "#EEEEEE";
   const SHOW_CURRENT_PATH = DEBUG_ON;
-  const SEARCH_RADIUS = 5;
+  const SEARCH_RADIUS = 8;
   const PAWN_HEALTH = 100;
   const PAWN_DAMAGE = 2;
   // main
-  var pawn = function(cNode)
+  var pawn = function(cNode, strName = "Pawn")
   {
     // overloaded methods - must be predefined
     this.GetNode = function() {};
@@ -19,6 +19,8 @@ var PAWN = (function () {
 
     this.GetPassable = function() { return this.entity.GetPassable(); };
 
+    // pawn specific data
+    this.strName = strName;
     this.iJobType;
     this.cInventory = new INVENTORY();
     this.arrTaskList = [];
@@ -29,9 +31,25 @@ var PAWN = (function () {
     // this.AddTask
     //     Adds a task to the pawn's task list
     // ----------------
-    this.AddTask = function(iTaskType = 0, objData = null)
+    this.AddTask = function(cPawn = this, iTaskType = 0, objData = null)
     {
-      this.arrTaskList.push(new TASK(iTaskType, objData));
+      if (cPawn == null) { cPawn = this; }
+      if (cPawn.arrTaskList != null)
+      {
+        cPawn.arrTaskList.push(new TASK(iTaskType, objData));
+      }
+    };
+
+    // ----------------
+    // this.AddTaskByCommand
+    //     Adds a task via a command with objData (from the UI for now)
+    // ----------------
+    this.AddTaskByCommand = function(objData = null)
+    {
+      console.debug("AddTaskByCommand: " + objData.toString());
+      if (objData == null || objData.cPawn == null) { return; }
+      var cPawn = objData.cPawn;
+      cPawn.AddTask(cPawn, objData.iTaskType, objData.objTaskData);
     };
 
     // ----------------
@@ -69,6 +87,7 @@ var PAWN = (function () {
           {
             this.AddToInventory(iResType, cResource.Harvest(PAWN_DAMAGE));
             this.cCurrentPath = null;
+            bIsTaskDone = (cResource.GetHealth() <= 0);
           }
           else if (this.cCurrentPath == null)
           {
@@ -84,7 +103,7 @@ var PAWN = (function () {
               bIsTaskDone = true;
             }
           }
-          
+
           break;
         }
         case CONST.TASK_GOTO_ENTITY:
@@ -100,6 +119,12 @@ var PAWN = (function () {
             this.cCurrentPath.GeneratePath(this.GetNode(), cTarget.GetNode());
           }
 
+          break;
+        }
+        case CONST.TASK_IDLE:
+        {
+          this.IdleMove();
+          bIsTaskDone = true;
           break;
         }
         default: break;
@@ -141,6 +166,25 @@ var PAWN = (function () {
     };
 
     // ----------------
+    // this.IdleMove
+    //     Pawn moves idly
+    // ----------------
+    this.IdleMove = function()
+    {
+      var arrNeighbors = FIELD.GetNodeNeighbors(this.GetNode(), true);
+      var iNeighbors = arrNeighbors.length;
+      var iRandomIdx = Math.floor(Math.random() * iNeighbors * 3);
+      if (iRandomIdx < iNeighbors)
+      {
+        var cNode = arrNeighbors[iRandomIdx];
+        if (cNode != null)
+        {
+          cNode.PlaceEntity(this);
+        }
+      }
+    };
+
+    // ----------------
     // this.Update
     //     Updates the pawn
     // ----------------
@@ -159,8 +203,10 @@ var PAWN = (function () {
         if (this.arrTaskList && this.arrTaskList.length > 0)
         {
           this.taskCurrent = this.arrTaskList.shift();
-          // console.debug("New task on the list: ");
-          // console.debug(this.taskCurrent);
+        }
+        else
+        {
+          this.arrTaskList.push(new TASK(CONST.TASK_IDLE));
         }
       }
 

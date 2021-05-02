@@ -9,6 +9,7 @@ var FIELD = (function () {
   field.iOffset = 10;
   field.bShowGrid = true;
   field.arrNodes = [];
+  field.iHighlightIdx = -1;
 
   field.Init = function()
   {
@@ -55,7 +56,7 @@ var FIELD = (function () {
     {
       for (x = arrNodeCords[0]-1; x <= arrNodeCords[0]+1; ++x)
       {
-        cNeighbor = field.GetNodeFromCords(x, y);
+        cNeighbor = field.GetNodeFromCords([x, y]);
         if (cNeighbor && cNeighbor != cNode && (!bOnlyPassable || cNeighbor.IsPassable()))
         {
           arrNeighbors.push(cNeighbor);
@@ -90,17 +91,19 @@ var FIELD = (function () {
   // field.GetIdxFromCords
   //     Returns an idx corresponding to the cords given
   // ----------------
-  field.GetIdxFromCords = function(x, y)
+  field.GetIdxFromCords = function(arrCords)
   {
+    var x = arrCords[0];
+    var y = arrCords[1];
     if      (x < 0 || x >= GRID_SIZE) { return -1;}
     else if (y < 0 || y > GRID_SIZE) { return -1; }
     return (y * GRID_SIZE) + x;
   };
 
-  field.GetNodeFromCords = function(x, y)
+  field.GetNodeFromCords = function(arrCords)
   {
     var cNode = null;
-    var idx = field.GetIdxFromCords(x, y);
+    var idx = field.GetIdxFromCords(arrCords);
     if (idx >= 0 && idx < field.arrNodes.length)
     {
       cNode = field.GetNode(idx);
@@ -127,7 +130,7 @@ var FIELD = (function () {
     {
       for (ix = x1; ix < x2; ++ix)
       {
-        cNode = field.GetNodeFromCords(ix, iy);
+        cNode = field.GetNodeFromCords([ix, iy]);
         if (cNode != null) { arrNodes.push(cNode); }
       }
     } // iy for loop
@@ -190,6 +193,21 @@ var FIELD = (function () {
   };
 
   // ----------------
+  // field.FindNodeFromCords
+  //     Finds a node from given coordinates
+  // ----------------
+  field.FindNodeFromCords = function(arrCords)
+  {
+    var x = Math.floor((arrCords[0] - field.iOffset) / NODE_SIZE);
+    var y = Math.floor((arrCords[1] - field.iOffset) / NODE_SIZE);
+
+    var cNode = field.GetNodeFromCords([x, y]);
+    return cNode;
+  };
+
+  field.SetHighlight = function(idx) { field.iHighlightIdx = idx; };
+
+  // ----------------
   // field.GetRandomGrassColor
   //     Does what it says on the tin
   // ----------------
@@ -233,6 +251,16 @@ var FIELD = (function () {
         cNode.DrawEntities(ctx);
       }
     } // end for loop
+
+    field.DrawHighlightedNode(ctx);
+  };
+
+  field.DrawHighlightedNode = function(ctx)
+  {
+    if (this.iHighlightIdx >= 0)
+    {
+      field.GetNode(this.iHighlightIdx).Draw(ctx, "#FFFFFF33");
+    }
   };
 
   field.DrawGrid = function(ctx)

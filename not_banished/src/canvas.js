@@ -1,5 +1,7 @@
 // consts
-const FPS = 4;
+const FPS = 2;
+const CANVAS_WIDTH = 600;
+const CANVAS_HEIGHT = 600;
 // globals - don't use if you can
 var m_house;
 
@@ -31,17 +33,15 @@ function StartGame()
   var arrHouseNodes = [FIELD.GetNode(18), FIELD.GetNode(19), FIELD.GetNode(34), FIELD.GetNode(35)];
   m_house = new STRUCTURE(FIELD.GetNode(18), arrHouseNodes);
 
-  var newPawn = new PAWN(FIELD.GetNode(136));
+  var newPawn = new PAWN(FIELD.GetNode(136), "Joseph");
   newPawn.AddToInventory(CONST.RESOURCE_FOOD, 10); // start them with some food
   newPawn.AddToInventory(CONST.RESOURCE_REST, 10); // start well rested
   // debug stuff - add tasks
-  newPawn.AddTask(CONST.TASK_HARVEST_RESOURCE, CONST.RESOURCE_TREE);
-  newPawn.AddTask(CONST.TASK_HARVEST_RESOURCE, CONST.RESOURCE_STONE);
-  newPawn.AddTask(CONST.TASK_HARVEST_RESOURCE, CONST.RESOURCE_TREE);
-  newPawn.AddTask(CONST.TASK_HARVEST_RESOURCE, CONST.RESOURCE_TREE);
-  newPawn.AddTask(CONST.TASK_GOTO_ENTITY, m_house);
+  newPawn.AddTask(newPawn, CONST.TASK_HARVEST_RESOURCE, CONST.RESOURCE_TREE);
+  newPawn.AddTask(newPawn, CONST.TASK_GOTO_ENTITY, m_house);
 
   m_arrPawns.push(newPawn);
+
   /*
   newPawn = new PAWN(FIELD.GetNode(221));
   newPawn.AddToInventory(CONST.RESOURCE_FOOD, 10); // start them with some food
@@ -58,6 +58,7 @@ function StartGame()
   // start animation
   nFPS = 1000 / FPS;
   nStartTime = nThen = Date.now();
+  SIDEPANEL.Update();
   window.requestAnimationFrame(Update);
 }
 
@@ -66,10 +67,13 @@ var myGameArea =
   canvas : document.createElement("canvas"),
   start  : function()
   {
-    this.canvas.width = 720;
-    this.canvas.height = 600;
+    this.canvas.width = CANVAS_WIDTH;
+    this.canvas.height = CANVAS_HEIGHT;
     this.context = this.canvas.getContext("2d");
     document.getElementById('divCanvas').appendChild(this.canvas);
+    this.canvas.addEventListener('mousemove', MOUSE.Move);
+    this.canvas.addEventListener('click', MOUSE.LeftClick);
+    this.canvas.addEventListener('contextmenu', MOUSE.RightClick);
   },
   clear : function()
   {
@@ -83,7 +87,6 @@ function Update(iTimeStamp)
   var nTimeDiff = nNow - nThen;
   if (nTimeDiff > nFPS)
   {
-    console.debug(m_arrPawns);
     UpdateArray(m_arrPawns);
     DrawScreen();
     nThen = nNow - (nTimeDiff % nFPS);

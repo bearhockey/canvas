@@ -67,5 +67,60 @@ var GEO = (function () {
     geo.DrawOutline(outlineColor);
   };
 
+  this.DrawRoundedRect = function(ctx, xPos, yPos, iWidth, iHeight, iRadius, color, outlineColor=null)
+  {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(xPos + iRadius, yPos);
+    ctx.lineTo(xPos + iWidth - iRadius, yPos);
+    ctx.quadraticCurveTo(xPos + iWidth,
+                         yPos,
+                         xPos + iWidth,
+                         yPos + iRadius);
+    ctx.lineTo(xPos + iWidth, yPos + iHeight - iRadius);
+    ctx.quadraticCurveTo(xPos + iWidth,
+                        yPos + iHeight,
+                        xPos + iWidth - iRadius,
+                        yPos + iHeight);
+    ctx.lineTo(xPos + iRadius, yPos + iHeight);
+    ctx.quadraticCurveTo(xPos,
+                        yPos + iHeight,
+                        xPos,
+                        yPos + iHeight - iRadius);
+    ctx.lineTo(xPos, yPos + iRadius);
+    ctx.quadraticCurveTo(xPos,
+                         yPos,
+                         xPos + iRadius,
+                         yPos);
+    ctx.closePath();
+    ctx.fill();
+    if (outlineColor != null)
+    {
+      ctx.strokeStyle = outlineColor;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+    }
+  };
+
+  // --------
+
+  geo.IsInRect = function(arrCords, objRect)
+  {
+    if (objRect == null
+     || objRect.top == null
+     || objRect.bottom == null
+     || objRect.left == null
+     || objRect.right == null)
+     { return false; }
+
+     if (arrCords[0] >= objRect.left && arrCords[0] <= objRect.right &&
+         arrCords[1] >= objRect.top && arrCords[1] <= objRect.bottom)
+     { return true; }
+
+     return false;
+  };
+
+
+
   return geo;
 }());

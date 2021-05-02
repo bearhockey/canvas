@@ -4,11 +4,14 @@ var RESOURCE = (function () {
   var resource = function(cNode, iResourceType=-1, iQuantity=1)
   {
     // overloaded methods - must be predefined
-    this.GetNode = function() {};
-    this.SetNode = function() {};
-    this.GetPassable = function() {};
+    this.GetNode      = function() {};
+    this.SetNode      = function() {};
+    this.GetPassable  = function() {};
     this.MarkAsTarget = function() {};
     this.ClearTarget  = function() {};
+    this.GetTracker   = function() {};
+    this.GetHealth    = function() {};
+    this.ModifyHealth = function() {};
 
     this.iResourceType = iResourceType;
     this.iQuantity = iQuantity;
@@ -40,8 +43,12 @@ var RESOURCE = (function () {
 
     this.GetPassable = function() { return this.entity.GetPassable(); };
 
-    this.MarkAsTarget = function() { this.entity.MarkAsTarget(); };
+    this.MarkAsTarget = function(cTracker = null) { this.entity.MarkAsTarget(cTracker); };
     this.ClearTarget  = function() { this.entity.ClearTarget(); };
+    this.GetTracker   = function() { return this.entity.GetTracker(); };
+
+    this.GetHealth = function() { return this.entity.GetHealth(); };
+    this.ModifyHealth = function(iDelta) { return this.entity.ModifyHealth(iDelta); };
 
     // ----------------
     // this.Harvest
@@ -49,14 +56,14 @@ var RESOURCE = (function () {
     // ----------------
     this.Harvest = function(iDamage)
     {
-      this.iQuantity -= iDamage;
-      if (this.iQuantity < 1)
+      var iRemainder = this.ModifyHealth(iDamage);
+      if (iRemainder < 1)
       {
         this.ClearTarget();
         this.GetNode().RemoveEntity(this);
       }
 
-      return Math.min(iDamage, iDamage + this.iQuantity);
+      return Math.min(iDamage, iDamage + iRemainder);
     };
 
     // ----------------
