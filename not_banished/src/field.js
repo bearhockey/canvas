@@ -2,25 +2,39 @@ var FIELD = (function () {
   var field = {};
 
   const GRID_SIZE = 16; // a box of AxA
-  const NODE_SIZE = 32; // pixels sized nodes
+  const NODE_SIZE = 16; // pixels sized nodes
 
-  const IMPASS_COLOR = "#CC2222";
+  const IMPASS_COLOR    = "#CC2222";
+  const HIGHLIGHT_COLOR = "#CCCCFF66";
+  const CURSOR_COLOR    = "#FFFFFF33";
+
+  field.iDrawMode = CONST.DRAW_ORTH;
 
   field.iOffset = 10;
-  field.bShowGrid = true;
+  field.bShowGrid = false;
   field.arrNodes = [];
   field.iHighlightIdx = -1;
+  field.iCursorIdx = -1;
+
+  field.arrVisibleNodes = [];
 
   field.Init = function()
   {
     var idx;
     for (idx = 0; idx < GRID_SIZE*GRID_SIZE; ++idx)
     {
-      field.arrNodes.push(new NODE(idx));
+      field.arrNodes.push(new NODE(idx, true, field.GetRandomGrassColor()));
     }
   };
 
-  field.GetRowSize = function() { return GRID_SIZE; }
+  field.GetDrawMode = function() { return field.iDrawMode; };
+  field.GetRowSize  = function() { return GRID_SIZE; };
+  field.GetNodeSize = function() { return NODE_SIZE*CAMERA.GetCameraZoom(); };
+
+  field.ChangeDrawMode = function(iDrawMode)
+  {
+    field.iDrawMode = iDrawMode;
+  }
 
   // ----------------
   // field.GetNode
@@ -67,19 +81,42 @@ var FIELD = (function () {
     return arrNeighbors;
   };
 
-  // field.GetPosition
-  //     Returns the position of something
-  field.GetPosition = function(idx, bIsCenter=true)
+  field.OrthToIso = function(arrPosition, iNodeSize, iCenterOffset=0)
   {
-    var x = idx % GRID_SIZE;
-    var y = Math.floor(idx / GRID_SIZE);
-    var iCenterOffset = (bIsCenter) ? NODE_SIZE/2 : 0;
-    return [x * NODE_SIZE + field.iOffset + iCenterOffset,
-            y * NODE_SIZE + field.iOffset + iCenterOffset];
+    var y = arrPosition[1];
+    var iIsoOffset = 300;
+    var iRowOffset = y * (iNodeSize/2);
+    var isoX = arrPosition[0] * iNodeSize/2 + field.iOffset + iCenterOffset - iRowOffset + iIsoOffset;
+    var isoY = (arrPosition[1]/4) * iNodeSize + field.iOffset + iCenterOffset + (arrPosition[0] * iNodeSize/4);
+    return [isoX, isoY];
   };
 
+  // ----------------
+  // field.GetPosition
+  //     Returns the position of something
+  // ----------------
+  field.GetPosition = function(idx, bIsCenter=true)
+  {
+    var arrCameraPos = CAMERA.GetCameraCords();
+    var x = (idx % GRID_SIZE) - arrCameraPos[0];
+    var y = Math.floor(idx / GRID_SIZE) - arrCameraPos[1];
+    var iNodeSize = NODE_SIZE * CAMERA.GetCameraZoom();
+    var iCenterOffset = (bIsCenter) ? iNodeSize/2 : 0;
+    if (field.GetDrawMode() == CONST.DRAW_ISO)
+    {
+      return field.OrthToIso([x, y], iNodeSize, iCenterOffset);
+    }
+    else
+    {
+      return [x * iNodeSize + field.iOffset + iCenterOffset,
+              y * iNodeSize + field.iOffset + iCenterOffset];
+    }
+  };
+
+  // ----------------DRAW_MODE == "iso"
   // field.GetCords
   //     Returns an array of cords for the corresponding field node
+  // ----------------
   field.GetCords = function(idx)
   {
     var x = idx % GRID_SIZE;
@@ -110,6 +147,28 @@ var FIELD = (function () {
     }
 
     return cNode;
+  };
+
+  // ----------------
+  // field.GetNodesFromArea
+  //     Returns an array of nodes from a given x by y area
+  // ----------------
+  field.GetNodesFromArea = function(arrCords, iWidth, iHeight)
+  {
+    var arrNodes = [];
+    var cNode;
+    var x;
+    var y;
+    for (y = arrCords[1]; y < iHeight + arrCords[1]; ++y)
+    {
+      for (x = arrCords[0]; x < iWidth + arrCords[0]; ++x)
+      {
+        cNode = field.GetNodeFromCords([x,y]);
+        if (cNode != null) { arrNodes.push(cNode); }
+      } // end x loop
+    } // end y loop
+
+    return arrNodes;
   };
 
   // ----------------
@@ -165,6 +224,9 @@ var FIELD = (function () {
     return arrEntities;
   };
 
+  // ----------------
+  // field.GetNearestResource
+  // ----------------
   field.GetNearestResource = function(cNode, iRadius, iResourceType)
   {
     var arrEntities = field.GetEntities(cNode, iRadius);
@@ -198,14 +260,31 @@ var FIELD = (function () {
   // ----------------
   field.FindNodeFromCords = function(arrCords)
   {
-    var x = Math.floor((arrCords[0] - field.iOffset) / NODE_SIZE);
-    var y = Math.floor((arrCords[1] - field.iOffset) / NODE_SIZE);
+    // var arrCameraPos = CAMERA.GetCameraCords();
+    // var x = Math.floor((arrCords[0] - field.iOffset) / NODE_SIZE)+arrCameraPos[0];
+    // var y = Math.floor((arrCords[1] - field.iOffset) / NODE_SIZE)+arrCameraPos[1];
 
-    var cNode = field.GetNodeFromCords([x, y]);
-    return cNode;
+    // var cNode = field.GetNodeFromCords([x, y]);
+    var cNode;
+    var idx;
+    var iNodesLength = field.arrVisibleNodes.length;
+    for (idx = 0; idx < iNodesLength; ++idx)
+    {
+      cNode = field.arrVisibleNodes[idx];
+      if (cNode != null)
+      {
+        if (GEO.InsidePolygon(arrCords, cNode.GetPolygon()))
+        {
+          return cNode;
+        }
+      }
+    } // end of for loop
+
+    return null;
   };
 
   field.SetHighlight = function(idx) { field.iHighlightIdx = idx; };
+  field.SetCursor    = function(idx) { field.iCursorIdx    = idx; };
 
   // ----------------
   // field.GetRandomGrassColor
@@ -213,9 +292,9 @@ var FIELD = (function () {
   // ----------------
   field.GetRandomGrassColor = function()
   {
-    var r = Math.floor(Math.random()*30);
-    var g = Math.floor(Math.random()*30) + 100;
-    var b = Math.floor(Math.random()*20) + 10;
+    var r = Math.floor(Math.random()*10) + 10;
+    var g = Math.floor(Math.random()*10) + 120;
+    var b = Math.floor(Math.random()*15) + 5;
     return "rgb(" + r.toString() + "," + g.toString() + "," + b.toString() + ")";
   };
 
@@ -225,18 +304,20 @@ var FIELD = (function () {
   // ----------------
   field.Draw = function(ctx, bShowImpassible=false)
   {
+    var arrNodes = field.arrVisibleNodes = field.arrNodes; // TODO: fix this so its not every node
+    // this.arrVisibleNodes = field.GetNodesFromArea(CAMERA.GetCameraCords(), CAMERA.GetCameraWidth(), CAMERA.GetCameraHeight());
     if (field.bShowGrid)
     {
       field.DrawGrid(ctx);
     }
 
     var idx;
-    var iNodesLength = field.arrNodes.length;
+    var iNodesLength = arrNodes.length;
     var cNode;
     var cEntity;
     for (idx = 0; idx < iNodesLength; ++idx)
     {
-      cNode = field.arrNodes[idx];
+      cNode = arrNodes[idx];
       if (cNode != null)
       {
         if (bShowImpassible && !cNode.IsPassable())
@@ -245,7 +326,7 @@ var FIELD = (function () {
         }
         else
         {
-          // cNode.Draw(ctx, field.GetRandomGrassColor());
+          cNode.Draw(ctx);
         }
 
         cNode.DrawEntities(ctx);
@@ -253,16 +334,35 @@ var FIELD = (function () {
     } // end for loop
 
     field.DrawHighlightedNode(ctx);
+    field.DrawCursor(ctx);
   };
 
+  // ----------------
+  // field.DrawHighlightedNode
+  //
+  // ----------------
   field.DrawHighlightedNode = function(ctx)
   {
     if (this.iHighlightIdx >= 0)
     {
-      field.GetNode(this.iHighlightIdx).Draw(ctx, "#FFFFFF33");
+      field.GetNode(this.iHighlightIdx).Draw(ctx, HIGHLIGHT_COLOR);
     }
   };
 
+  // ----------------
+  // this.DrawCursor
+  // ----------------
+  field.DrawCursor = function(ctx)
+  {
+    if (this.iCursorIdx >= 0)
+    {
+      field.GetNode(this.iCursorIdx).Draw(ctx, CURSOR_COLOR);
+    }
+  };
+
+  // ----------------
+  // field.DrawGrid
+  // ----------------
   field.DrawGrid = function(ctx)
   {
     var idx, x;

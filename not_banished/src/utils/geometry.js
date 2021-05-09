@@ -17,25 +17,28 @@ var GEO = (function () {
 
   geo.DrawShape = function(iShape, ctx, x, y, iRadius, color, outlineColor=null)
   {
+    var polygon;
     switch (iShape)
     {
       case geo.CIRCLE:
       {
-        geo.DrawCircle(ctx, x, y, iRadius, color, outlineColor);
+        polygon = geo.DrawCircle(ctx, x, y, iRadius, color, outlineColor);
         break;
       }
       case geo.TRIANGLE:
       {
-        geo.DrawTriangle(ctx, x, y, iRadius, color, outlineColor);
+        polygon = geo.DrawTriangle(ctx, x, y, iRadius, color, outlineColor);
         break;
       }
       case geo.SQUARE:
       {
-        geo.DrawSquare(ctx, x, y, iRadius, color, outlineColor);
+        polygon = geo.DrawSquare(ctx, x, y, iRadius, color, outlineColor);
         break;
       }
       default: break;
     } // end switch statement
+
+    return polygon;
   };
 
   geo.DrawCircle = function(ctx, x, y, iRadius, color, outlineColor=null)
@@ -45,17 +48,27 @@ var GEO = (function () {
     ctx.fillStyle = color;
     ctx.fill();
     geo.DrawOutline(outlineColor);
+
+    return null; // not a polygon
   };
 
   geo.DrawTriangle = function(ctx, x, y, iRadius, color, outlineColor=null)
   {
+    var polygon = [];
     ctx.beginPath();
+
     ctx.moveTo(x, y-iRadius);
+    polygon.push([x, y-iRadius]);
     ctx.lineTo(x+iRadius, y+iRadius);
+    polygon.push([x+iRadius, y+iRadius]);
     ctx.lineTo(x-iRadius, y+iRadius);
+    polygon.push([x-iRadius, y+iRadius]);
+
     ctx.fillStyle = color;
     ctx.fill();
     geo.DrawOutline(outlineColor);
+
+    return polygon;
   };
 
   geo.DrawSquare = function(ctx, x, y, iRadius, color, outlineColor=null)
@@ -65,6 +78,9 @@ var GEO = (function () {
     ctx.fillStyle = color;
     ctx.fill();
     geo.DrawOutline(outlineColor);
+
+    return [ [x-iRadius, y-iRadius], [x+iRadius, y-iRadius],
+             [x+iRadius, y+iRadius], [x-iRadius, y+iRadius] ];
   };
 
   this.DrawRoundedRect = function(ctx, xPos, yPos, iWidth, iHeight, iRadius, color, outlineColor=null)
@@ -104,23 +120,50 @@ var GEO = (function () {
 
   // --------
 
-  geo.IsInRect = function(arrCords, objRect)
+  geo.IsInRect = function(arrPosition, objRect)
   {
-    if (objRect == null
-     || objRect.top == null
-     || objRect.bottom == null
-     || objRect.left == null
-     || objRect.right == null)
-     { return false; }
-
-     if (arrCords[0] >= objRect.left && arrCords[0] <= objRect.right &&
-         arrCords[1] >= objRect.top && arrCords[1] <= objRect.bottom)
-     { return true; }
-
-     return false;
+    return (objRect != null &&
+            arrPosition[0] > objRect.left &&
+            arrPosition[0] < objRect.right &&
+            arrPosition[1] > objRect.top &&
+            arrPosition[1] < objRect.bottom);
   };
 
+  // ----------------
+  // geo.InsidePolygon
+  //     Determines if a point (arrPosition) is within a polygon shape
+  //     polygon is defined as an array of positions
+  //     [ [ 1, 1 ], [ 1, 2 ], [ 2, 2 ], [ 2, 1 ] ];
+  // https://stackoverflow.com/questions/22521982/check-if-point-is-inside-a-polygon
+  // ----------------
+  geo.InsidePolygon = function(arrPosition, polygon)
+  {
+    if (polygon == null) { return false; }
 
+    var x = arrPosition[0];
+    var y = arrPosition[1];
+
+    var bIsInside = false;
+    var bIsIntersect;
+    var i, j;
+    var xi, xj, yi, yj;
+    for (i = 0, j = polygon.length -1; i < polygon.length; j = i++)
+    {
+      xi = polygon[i][0];
+      yi = polygon[i][1];
+      xj = polygon[j][0];
+      yj = polygon[j][1];
+
+      bIsIntersect = ((yi > y) != (yj > y)) &&
+                     (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (bIsIntersect)
+      {
+        bIsInside = !bIsInside;
+      }
+    } // end for loop
+
+    return bIsInside;
+  };
 
   return geo;
 }());

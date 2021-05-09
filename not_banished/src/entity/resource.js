@@ -24,7 +24,7 @@ var RESOURCE = (function () {
       case CONST.RESOURCE_TREE:
       {
         iShape = GEO.TRIANGLE;
-        strColor = "#227733";
+        strColor = "#004422";
         break;
       }
       case CONST.RESOURCE_STONE:

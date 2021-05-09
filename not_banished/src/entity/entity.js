@@ -62,7 +62,8 @@ var ENTITY = (function () {
       {
         var arrPosition = this.cNode.GetPosition();
         var strColor = (DEBUG_ON && this.bIsTarget) ? "#FF3399" : this.strColor;
-        GEO.DrawShape(this.iShape, ctx, arrPosition[0], arrPosition[1], 8, strColor);
+        var iRadius = FIELD.GetNodeSize()/4;
+        GEO.DrawShape(this.iShape, ctx, arrPosition[0], arrPosition[1], iRadius, strColor);
       }
     };
   };

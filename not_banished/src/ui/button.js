@@ -15,8 +15,10 @@ var BUTTON = (function () {
 
     this.Action = function()
     {
-      console.debug("Action()");
-      if (this.fnAction != null) { this.fnAction(SIDEPANEL.GetObjData()); }
+      if (this.fnAction != null)
+      {
+        this.fnAction(SIDEPANEL.GetObjData());
+      }
     };
 
     this.Draw = function(ctx)

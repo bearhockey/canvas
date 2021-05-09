@@ -1,16 +1,20 @@
 var NODE = (function () {
   // privates
+  const DEFAULT_NODE_COLOR = "#000000";
   // main
-  var node = function(idx, bIsPassable=true)
+  var node = function(idx, bIsPassable=true, color=DEFAULT_NODE_COLOR)
   {
     this.idx = idx;
+    this.color = color;
     this.bIsPassable = bIsPassable;
     this.bHighlight = false;
     this.arrEntities = [];
     this.objPathData = null;
+    this.polygon = null; // stores polygon points for bounds testing
 
-    this.GetIdx = function() { return this.idx; };
-    this.GetPathData = function() { return this.objPathData; }
+    this.GetIdx      = function() { return this.idx; };
+    this.GetPathData = function() { return this.objPathData; };
+    this.GetPolygon  = function() { return this.polygon; };
 
     // ----------------
     // this.IsPassable
@@ -136,10 +140,25 @@ var NODE = (function () {
     // this.Draw
     //     Draws the node a certain color - useful for debugging
     // ----------------
-    this.Draw = function(ctx, color="#FFFFFF")
+    this.Draw = function(ctx, color=null)
     {
       var arrPosition = this.GetPosition();
-      GEO.DrawShape(GEO.SQUARE, ctx, arrPosition[0], arrPosition[1], 15, color);
+      var nodeColor = (color != null) ? color : this.color;
+      if (FIELD.GetDrawMode() == CONST.DRAW_ISO)
+      {
+        this.polygon = ISO.DrawTile(ctx, arrPosition, FIELD.GetNodeSize()/2, nodeColor);
+      }
+      else
+      {
+        this.polygon = GEO.DrawShape(GEO.SQUARE, ctx, arrPosition[0], arrPosition[1], FIELD.GetNodeSize()/2, nodeColor);
+      }
+      // degbug text
+      if (FIELD.GetNodeSize() > 40)
+      {
+        ctx.font = '9px serif';
+        ctx.fillStyle = "#000000";
+        ctx.fillText(this.idx.toString(), arrPosition[0], arrPosition[1]);
+      }
     };
 
     // ----------------
@@ -155,6 +174,21 @@ var NODE = (function () {
       {
         this.arrEntities[idx].Draw(ctx);
       }
+    };
+
+    // ----------------
+    // this.Print
+    //     Returns a string of info to print out in a text field
+    // ----------------
+    this.Print = function()
+    {
+      var strReturn = "<ul>";
+      strReturn += "<li>IDX : " + this.idx.toString() + "</li>";
+      strReturn += "<li>COLOR : " + this.color.toString() + "</li>";
+      strReturn += "<li>ENTITIES: " + this.arrEntities.toString() + "</li>";
+      strReturn += "</il>";
+
+      return strReturn;
     };
   }; // end of class
 

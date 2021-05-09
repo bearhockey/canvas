@@ -4,12 +4,15 @@
 <link rel="stylesheet" href="./css/ui.css">
 </head>
 <script type="text/javascript">
-  const DEBUG_ON = true;
+  const DEBUG_ON = false;
 </script>
 <body onload="StartGame()">
+  <script src="./src/debug.js"></script>
   <script src="./src/const.js"></script>
-  <script src="./src/geometry.js"></script>
+  <script src="./src/utils/geometry.js"></script>
+  <script src="./src/utils/isomap.js"></script>
   <script src="./src/node.js"></script>
+  <script src="./src/camera.js"></script>
   <script src="./src/field.js"></script>
 
   <script src="./src/mouse.js"></script>
@@ -29,6 +32,16 @@
   <script src="./src/canvas.js"></script>
 
 <script type="text/javascript">
+  function CamUp()    { CAMERA.PanCamera(CONST.NORTH); }
+  function CamDown()  { CAMERA.PanCamera(CONST.SOUTH); }
+  function CamRight() { CAMERA.PanCamera(CONST.EAST); }
+  function CamLeft()  { CAMERA.PanCamera(CONST.WEST); }
+
+  function CamZoomIn()  { CAMERA.ZoomCamera(CONST.ZOOM_IN); }
+  function CamZoomOut() { CAMERA.ZoomCamera(CONST.ZOOM_OUT); }
+
+  function DrawOrth() { FIELD.ChangeDrawMode(CONST.DRAW_ORTH); };
+  function DrawIso()  { FIELD.ChangeDrawMode(CONST.DRAW_ISO); };
 </script>
 
 <div id="divMain" class="divMain">
@@ -38,6 +51,32 @@
     <div id="divTabAnchor"></div>
     <hr>
     <div id="divButtonAnchor"></div>
+
+    <br><br><br><br>
+
+    <div class="divButtonGroup">
+      <table>
+        <tr>
+          <td><button class="arrow" onclick="DrawOrth()">&#9606;</button></td>
+          <td><button class="arrow" onclick="CamUp()">^</button></td>
+          <td><button class="arrow" onclick="CamZoomIn()">+</button></td>
+        </tr>
+        <tr>
+          <td><button class="arrow" onclick="CamLeft()"><</button></td>
+          <td><button class="arrow">X</button></td>
+          <td><button class="arrow" onclick="CamRight()">></button></td>
+        </tr>
+        <tr>
+          <td><button class="arrow" onclick="DrawIso()">&#10070;</button></td>
+          <td><button class="arrow" onclick="CamDown()">V</button></td>
+          <td><button class="arrow" onclick="CamZoomOut()">-</button></td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="divTextArea" class="text_area">
+    </div>
+
   </div>
 </div>
 

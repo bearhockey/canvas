@@ -5,24 +5,33 @@ var MOUSE = (function () {
   // function
   var mouse = {};
 
+  mouse.arrPosition = [];
+  mouse.cCurrenNode = null;
+
   mouse.Move = function(evt)
   {
-    // var idx;
-    // var arrPosition = mouse.GetMousePosition(evt);
+    mouse.arrPosition = mouse.GetMousePosition(evt);
+    if (mouse.IsInView())
+    {
+      mouse.cCurrentNode = FIELD.FindNodeFromCords(mouse.arrPosition);
+      if (mouse.cCurrentNode != null)
+      {
+        FIELD.SetCursor(mouse.cCurrentNode.idx);
+      }
+    }
   };
 
   mouse.LeftClick = function(evt)
   {
     var idx;
-    var arrPosition = mouse.GetMousePosition(evt);
-    if (GEO.IsInRect(arrPosition, VIEW_AREA))
+    if (mouse.IsInView())
     {
       var arrEntities;
       var cPawn = null;
-      var cNode = FIELD.FindNodeFromCords(arrPosition);
+      var cNode = mouse.cCurrentNode;
+      if (cNode == null) { cNode = FIELD.FindNodeFromCords(mouse.arrPosition); }
       if (cNode != null)
       {
-        console.debug("Found node)");
         arrEntites = cNode.arrEntities;
         if (arrEntites != null && arrEntites.length > 0)
         {
@@ -43,7 +52,7 @@ var MOUSE = (function () {
         }
         else
         {
-          FIELD.SetHighlight(cNode.idx);
+          SIDEPANEL.HighlightNode(cNode);
         }
       }
       else
@@ -56,6 +65,14 @@ var MOUSE = (function () {
   mouse.RightClick = function(evt)
   {
 
+  };
+
+  // ----------------
+  // mouse.IsInView
+  // ----------------
+  mouse.IsInView = function()
+  {
+    return GEO.IsInRect(mouse.arrPosition, VIEW_AREA);
   };
 
   mouse.GetMousePosition = function(evt)

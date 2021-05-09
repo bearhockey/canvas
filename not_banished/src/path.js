@@ -1,5 +1,6 @@
 var PATH = (function () {
   // privates
+  const PATH_COLOR = "#6666CC88";
   // main
   var path = function()
   {
@@ -66,9 +67,8 @@ var PATH = (function () {
         if (cCurrentNode == cEndNode)
         {
           cNode = cCurrentNode;
-          if (cNode == null || cNode.objPathData == null) { return; }
 
-          while (cNode.objPathData.cParent)
+          while (cNode && cNode.objPathData && cNode.objPathData.cParent)
           {
             cParentNode = cNode.objPathData.cParent;
             cNode.ClearPathData();
@@ -128,7 +128,7 @@ var PATH = (function () {
       for (idx = 0; idx < iLength; ++idx)
       {
         cNode = this.arrNodes[idx];
-        if (cNode != null) { cNode.Draw(ctx, "#00CC0066"); }
+        if (cNode != null) { cNode.Draw(ctx, PATH_COLOR); }
       }
     };
   }; // end of class

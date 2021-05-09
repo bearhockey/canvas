@@ -16,10 +16,10 @@
 <script src="./src/main.js"></script>
 
 <script type="text/javascript">
-  function MoveUp()    { PLAYER.Move(DIRECTION.NORTH); }
-  function MoveDown()  { PLAYER.Move(DIRECTION.SOUTH); }
-  function MoveRight() { PLAYER.Move(DIRECTION.EAST); }
-  function MoveLeft()  { PLAYER.Move(DIRECTION.WEST); }
+  function MoveUp()    { CAMERA.PanCamera(CONST.NORTH); }
+  function MoveDown()  { CAMERA.PanCamera(CONST.SOUTH); }
+  function MoveRight() { CAMERA.PanCamera(CONST.EAST); }
+  function MoveLeft()  { CAMERA.PanCamera(CONST.WEST); }
 
   function UseStairs() {  }
 

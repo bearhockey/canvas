@@ -1,7 +1,7 @@
 var SIDEPANEL = (function () {
   // consts
   const HIGHLIGHT_NONE = 0;
-  const HIGHLIGHT_NODE = 1;
+  const HIGHLIGHT_DEBUG = 1;
   const HIGHLIGHT_PAWN = 2;
   // main
   var sidepanel = {};
@@ -9,14 +9,18 @@ var SIDEPANEL = (function () {
   var m_arrTabs = [];
   var m_arrButtons = [];
 
-  var ui_mainTab = new TAB(0, "Build");
+  var ui_mainTab = new TAB(HIGHLIGHT_NONE, "Build");
   m_arrTabs.push(ui_mainTab);
-  var ui_testTab2 = new TAB(1, "Look");
+  var ui_testTab2 = new TAB(HIGHLIGHT_DEBUG, "DEBUG");
   m_arrTabs.push(ui_testTab2);
-  var ui_pawnTab = new TAB(2, "Pawn");
+  var ui_pawnTab = new TAB(HIGHLIGHT_PAWN, "Pawn", true);
   m_arrTabs.push(ui_pawnTab);
 
+  // normal buttons
   var ui_pawnButton = new BUTTON("fuzz");
+  // debug buttons
+  var ui_infoButton = new BUTTON("Node Info", DEBUG.PrintNodeInfo);
+  // special buttons
   var ui_rockButton = new BUTTON("Get Rocks");
 
   sidepanel.iState = -1;
@@ -43,6 +47,25 @@ var SIDEPANEL = (function () {
     m_arrButtons = []; // clear out the array
   };
 
+  // ----------------
+  // sidepanel.HighlightNode
+  //     Logic when a node is highlighted (via mouse usually)
+  // ----------------
+  sidepanel.HighlightNode = function(cNode)
+  {
+    if (cNode == null) { return; }
+
+    FIELD.SetHighlight(cNode.idx);
+    sidepanel.objData =
+    {
+      cNode : cNode
+    };
+  };
+
+  // ----------------
+  // sidepanel.HighlightPawn
+  //     Logic when a pawn is highlighted (via mouse usually)
+  // ----------------
   sidepanel.HighlightPawn = function(cPawn)
   {
     sidepanel.objData =
@@ -52,7 +75,7 @@ var SIDEPANEL = (function () {
       objTaskData :CONST.RESOURCE_STONE
     };
 
-    ui_pawnButton.fnAction = cPawn.AddTaskByCommand;
+    ui_rockButton.fnAction = cPawn.AddTaskByCommand;
     sidepanel.Update(HIGHLIGHT_PAWN);
   };
 
@@ -62,6 +85,13 @@ var SIDEPANEL = (function () {
     {
       sidepanel.Update(iTabID);
     }
+  };
+
+  sidepanel.UpdateTextArea = function(strText="", bFormat=true)
+  {
+    var divTextArea = document.getElementById("divTextArea");
+    if (bFormat) { strText = "<p>" + strText + "</p>"; }
+    divTextArea.innerHTML = strText;
   };
 
   sidepanel.Update = function(iState = HIGHLIGHT_NONE)
@@ -94,6 +124,7 @@ var SIDEPANEL = (function () {
           domElement.iTab = iTabID;
           domElement.innerHTML = uiTab.strLabel;
           domElement.onclick = uiTab.ChangeTab;
+          if (uiTab.bIsHidden) { domElement.disabled = true; }
           divTabAnchor.appendChild(domElement);
         }
 
@@ -108,6 +139,11 @@ var SIDEPANEL = (function () {
       case HIGHLIGHT_PAWN:
       {
         m_arrButtons.push(ui_rockButton);
+        break;
+      }
+      case HIGHLIGHT_DEBUG:
+      {
+        m_arrButtons.push(ui_infoButton);
         break;
       }
       case HIGHLIGHT_NONE:
@@ -130,6 +166,7 @@ var SIDEPANEL = (function () {
         domElement.className = "panel";
         domElement.innerHTML = uiButton.strLabel;
         domElement.onclick = uiButton.Action;
+        domElement.fnAction = uiButton.fnAction;
         divButtonAnchor.appendChild(domElement);
       }
     } // end for loop
