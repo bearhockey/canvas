@@ -1,6 +1,6 @@
 // consts
-const CANVAS_WIDTH = 400;
-const CANVAS_HEIGHT = 400;
+const CANVAS_WIDTH = 768;
+const CANVAS_HEIGHT = 768;
 // globals - don't use if you can
 
 function StartGame()
