@@ -1,7 +1,7 @@
 var RENDERER = (function () {
   var renderer = {};
 
-  const GRID_SIZE = 12; // a box of AxA
+  const GRID_SIZE = 15; // a box of AxA
   const TILE_SIZE = 64; // pixels sized nodes
 
   renderer.iBorder = 0; // size of the border (in pixels)

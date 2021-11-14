@@ -6,18 +6,21 @@ canvas
 {
   border:1px solid #CCCCCC;
   background-color: #000000;
+  display: inline-block;
   padding: 0px;
   margin-left: auto;
   margin-right: auto;
 }
 
-div.divMain
+div#divMain
 {
   text-align: center;
 }
 
-div.divCanvas
+div#divCanvas
 {
-  display: inline-block;
-  width: 600px;
+  margin: auto;
+  padding: 0px;
+  text-align: center;
+  width: 100%;
 }
