@@ -1,0 +1,23 @@
+body
+{
+  background-color: #000000;
+}
+canvas
+{
+  border:1px solid #CCCCCC;
+  background-color: #000000;
+  padding: 0px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.divMain
+{
+  text-align: center;
+}
+
+div.divCanvas
+{
+  display: inline-block;
+  width: 600px;
+}
