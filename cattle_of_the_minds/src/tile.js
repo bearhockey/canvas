@@ -7,10 +7,15 @@ var TILE = (function () {
     this.idx = idx;
     this.color = color;
     this.bIsPassable = bIsPassable;
+    this.bIsDiscovered = true;
+    this.bIsVisible = false;
     this.arrEntities = [];
     // this.objPathData = null; // might need pathing?
 
-    this.GetIdx      = function() { return this.idx; };
+    this.GetIdx       = function() { return this.idx; };
+    this.GetColor     = function() { return this.color; };
+    this.IsDiscovered = function() { return this.bIsDiscovered; };
+    this.IsVisible    = function() { return this.bIsVisible; };
 
     // ----------------
     // this.IsPassable
@@ -65,16 +70,6 @@ var TILE = (function () {
       {
         this.arrEntities.splice(idx, 1);
       }
-    };
-
-    // ----------------
-    // this.Draw
-    //     Draws the node a certain color - useful for debugging
-    // ----------------
-    this.Draw = function(ctx, color=null)
-    {
-      var arrPosition = this.GetPosition();
-      var nodeColor = (color != null) ? color : this.color;
     };
 
     // ----------------

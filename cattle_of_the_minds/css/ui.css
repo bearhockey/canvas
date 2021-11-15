@@ -1,0 +1,38 @@
+button.tab_inactive
+{
+  background-color: #666666;
+  font-weight: 400;
+  height: 64px;
+  padding: 1px;
+  width: 64px;
+}
+
+button.tab_active, button.tab_active:disabled
+{
+  background-color: #9999AA;
+  color: #222244;
+  font-weight: 800;
+  height: 64px;
+  padding: 1px;
+  width: 64px;
+}
+
+button.panel
+{
+  font-weight: 700;
+  min-height: 50px;
+  width: 45%;
+}
+
+div.text_area
+{
+  background-color: #EEEEEE;
+  border: 1px solid;
+  font-size: 12px;
+  font-weight: 550;
+  margin: 2px;
+  min-height: 300px;
+  padding: 4px;
+  text-align: left;
+  width: 95%;
+}

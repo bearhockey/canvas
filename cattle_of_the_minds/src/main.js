@@ -2,11 +2,17 @@
 const CANVAS_WIDTH = 960;
 const CANVAS_HEIGHT = 960;
 // globals - don't use if you can
+var cFirstFloor;
+var iCamPosition = 895;
+var iFloorWidth = 30;
 
 function StartGame()
 {
   // Init components
   RENDERER.Init();
+  var iFloorSize = 900;
+  console.log("Floor size :", iFloorSize);
+  cFirstFloor = new FLOOR(iFloorWidth, iFloorSize);
   // start game
   myGameArea.start();
   DrawScreen();
@@ -42,9 +48,15 @@ function DrawScreen()
 {
   myGameArea.clear();
   var ctx = GetCanvas();
-  RENDERER.Draw(ctx);
-  // test
-  ctx.beginPath();
-  ctx.rect(20, 20, 150, 100);
-  ctx.stroke();
+
+  var arrTiles = cFirstFloor.GetTileArea(iCamPosition, 15);
+  RENDERER.SetVisibleTiles(arrTiles, 0);
+  RENDERER.Draw(ctx, false, 15);
+};
+
+// DEBUG STUFF
+function GoUp()
+{
+  iCamPosition -= iFloorWidth;
+  Update();
 };
