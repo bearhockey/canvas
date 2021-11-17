@@ -49,6 +49,10 @@ var RENDERER = (function () {
 
     var idx;
     var cTile;
+
+    var arrEntities;
+    var iEntityLength;
+    var iEntityIdx;
     var cEntity;
     var strIcon;
     var imgEntity;
@@ -86,18 +90,23 @@ var RENDERER = (function () {
         if (cTile.HasEntity())
         {
           // for now just draw the first entity
-          cEntity = cTile.GetEntities()[0];
-          if (cEntity != null && typeof cEntity.GetIcon === 'function')
+          arrEntities = cTile.GetEntities();
+          iEntityLength = (arrEntities != null) ? arrEntities.length : 0;
+          for (iEntityIdx = 0; iEntityIdx < iEntityLength; ++iEntityIdx)
           {
-            imgEntity = new Image();
-            imgEntity.iX = iX;
-            imgEntity.iY = iY;
-            imgEntity.addEventListener('load', function()
+            cEntity = arrEntities[iEntityIdx];
+            if (cEntity != null && typeof cEntity.GetIcon === 'function')
             {
-              ctx.drawImage(imgEntity, this.iX, this.iY);
-            }, false);
-            imgEntity.src = cEntity.GetIcon();
-          }
+              imgEntity = new Image();
+              imgEntity.iX = iX;
+              imgEntity.iY = iY;
+              imgEntity.addEventListener('load', function()
+              {
+                ctx.drawImage(this, this.iX, this.iY);
+              }, false);
+              imgEntity.src = cEntity.GetIcon();
+            }
+          } // end of entity for loop
         }
       }
     } // end for loop

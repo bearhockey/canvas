@@ -24,3 +24,28 @@ div#divCanvas
   text-align: center;
   width: 100%;
 }
+
+div#divBottom
+{
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 960px;
+  text-align: center;
+}
+
+div#divButtons
+{
+  display: inline-block;
+  float: right;
+  width: 256px;
+  height: 256px;
+}
+
+div#divInfo
+{
+  background-color: #333333;
+  display: inline-block;
+  float: left;
+  overflow: hidden;
+  min-height: 100px;
+}

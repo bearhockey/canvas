@@ -13,7 +13,18 @@ var FLOOR = (function () {
     var color;
     for (idx = 0; idx < iSize; ++idx)
     {
-      color = (Math.random() > 0.8) ? WALL_COLOR : EMPTY_COLOR;
+      if (idx % this.iWidth == 0 || idx % this.iWidth == this.iWidth -1)
+      {
+        color = WALL_COLOR;
+      }
+      else if (idx - this.iWidth < 0 || idx + this.iWidth > iSize)
+      {
+        color = WALL_COLOR;
+      }
+      else
+      {
+        color = (Math.random() > 0.85) ? WALL_COLOR : EMPTY_COLOR;
+      }
       this.arrTileMap.push(new TILE(idx, (color == EMPTY_COLOR), color));
     } // end of for loop
 

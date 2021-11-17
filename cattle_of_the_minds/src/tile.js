@@ -58,7 +58,7 @@ var TILE = (function () {
       cEntity.SetTile(this);
       if (cOldTile != null) { cOldTile.RemoveEntity(cEntity); }
     };
-    
+
     // ----------------
     // this.RemoveEntity
     //     Removes an entity from this tile
@@ -66,12 +66,15 @@ var TILE = (function () {
     // ----------------
     this.RemoveEntity = function(cEntity)
     {
-      if (cEntity == null) { return; } // no entity
+      if (cEntity == null) { return false; } // no entity
       var idx = this.arrEntities.indexOf(cEntity);
       if (idx > -1)
       {
         this.arrEntities.splice(idx, 1);
+        return true;
       }
+
+      return false;
     };
 
     // ----------------

@@ -13,6 +13,8 @@
 
 <script src="./src/pawn.js"></script>
 <script src="./src/renderer.js"></script>
+<script src="./src/inventory_container.js"></script>
+<script src="./src/inventory.js"></script>
 
 <script src="./src/main.js"></script>
 
@@ -21,18 +23,37 @@
   function MoveSouth() { GoDown(); }
   function MoveEast()  { GoRight(); }
   function MoveWest()  { GoLeft(); }
+  function Get()       { Pickup(); }
+
+  function StageButton() { SetState(CONST.STATE_STAGE); }
+  function InventoryButton() { SetState(CONST.STATE_INVENTORY); }
 </script>
 
 <div id="divMain">
   <div id="topButtons">
-    <button class="topButton">Inventory</button>
+    <button id="butStage" class="topButton" onclick="StageButton()">Stage</button>
+    <button id="butInventory" class="topButton" onclick="InventoryButton()">Inventory</button>
   </div>
   <div id="divCanvas"></div>
-  <div id="buttons">
-    <button class="arrow" onclick="MoveWest()"><</button>
-    <button class="arrow" onclick="MoveNorth()">^</button>
-    <button class="arrow" onclick="MoveSouth()">v</button>
-    <button class="arrow" onclick="MoveEast()">></button>
+  <div id="divBottom">
+    <div id="divInfo">
+      <table class="infoPanel">
+        <tr><td>Level</td><td id="playerLevel"></td></tr>
+        <tr><td>HP</td><td id="playerHealth"></td></tr>
+        <tr><td>MP</td><td id="playerMana"></td></tr>
+        <tr><td>Time</td><td id="playerTime"></td></tr>
+      </table>
+    </div>
+    <div id="divText" class="text_area"></div>
+    <div id="divButtons">
+      <button class="arrow" onclick="Get()">G</button>
+      <button class="arrow" onclick="MoveNorth()">^</button>
+      <button class="arrow" onclick="">x</button>
+      <br>
+      <button class="arrow" onclick="MoveWest()"><</button>
+      <button class="arrow" onclick="MoveSouth()">v</button>
+      <button class="arrow" onclick="MoveEast()">></button>
+    </div>
   </div>
 </div>
 

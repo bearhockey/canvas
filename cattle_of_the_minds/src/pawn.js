@@ -3,12 +3,17 @@ var PAWN = (function () {
   const PAWN_HEALTH = 100;
   const PAWN_DAMAGE = 2;
   // main
-  var pawn = function(strName = "Pawn", strIcon = "")
+  var pawn = function(iType, strName = "Pawn", strIcon = "")
   {
     // pawn specific data
+    this.iType = iType;
     this.strName = strName;
     this.strIcon = strIcon;
     this.cTile = null;
+
+    this.iLevel = 1;
+    this.iHP = 20;
+    this.iMP = 10;
     // this.cInventory = new INVENTORY();
 
     this.GetIcon = function() { return this.strIcon; };
