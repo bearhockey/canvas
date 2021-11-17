@@ -24,6 +24,25 @@ button.panel
   width: 45%;
 }
 
+button.arrow
+{
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  height: 32px;
+  margin: 0px;
+  width: 32px;
+}
+
+button.topButton
+{
+  border-radius: 5px;
+  font-size: 24px;
+  font-weight: 600;
+  height: 48px;
+  margin: 0px;
+}
+
 div.text_area
 {
   background-color: #EEEEEE;

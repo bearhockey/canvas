@@ -2,18 +2,19 @@ var FLOOR = (function () {
   // consts -- move these to a file probably
   const EMPTY_COLOR = "#DDDDDD";
   const WALL_COLOR = "#444444";
-  var floor = function(iWidth, iSize=0)
+  var floor = function(iWidth)
   {
     this.iWidth = iWidth; // the height and width of the tile array
     this.arrTileMap = [];
     this.cNullTile = new TILE(-1, false, "#111111");
 
+    var iSize = this.iWidth * this.iWidth;
     var idx;
     var color;
     for (idx = 0; idx < iSize; ++idx)
     {
       color = (Math.random() > 0.8) ? WALL_COLOR : EMPTY_COLOR;
-      this.arrTileMap.push(new TILE(idx, true, color));
+      this.arrTileMap.push(new TILE(idx, (color == EMPTY_COLOR), color));
     } // end of for loop
 
     // ----------------
@@ -21,6 +22,14 @@ var FLOOR = (function () {
     //     Returns the array of tile objects
     // ----------------
     this.GetAllTiles = function() { return this.arrTileMap; };
+
+    this.GetTile = function(idx)
+    {
+      if (idx >= 0 && idx < this.arrTileMap.length)
+      {
+        return this.arrTileMap[idx];
+      }
+    }
 
     // ----------------
     // GetTileArea
@@ -56,6 +65,65 @@ var FLOOR = (function () {
       } // end outer loop
 
       return arrReturnTiles;
+    };
+
+    // ----------------
+    // GetNorthTile
+    //     Gets the tile north of the one passed in
+    // ----------------
+    this.GetDirectionalTile = function(cTile, iDirection, bCheckPassible=true)
+    {
+      var idx = cTile.GetIdx();
+      var iReturnIdx = idx;
+      var cTargetTile;
+      var iTarget;
+      var bIsValidTile = false;
+      switch (iDirection)
+      {
+        case CONST.NORTH:
+        {
+          iTarget = idx - this.iWidth;
+          bIsValidTile = (iTarget >= 0);
+          break;
+        }
+        case CONST.SOUTH:
+        {
+          iTarget = idx + this.iWidth;
+          bIsValidTile = (iTarget < this.arrTileMap.length)
+          break;
+        }
+        case CONST.EAST:
+        {
+          iTarget = idx + 1;
+          bIsValidTile = (iTarget % this.iWidth > idx % this.iWidth);
+          break;
+        }
+        case CONST.WEST:
+        {
+          iTarget = idx - 1;
+          bIsValidTile = (iTarget % this.iWidth < idx % this.iWidth);
+          break;
+        }
+        default: break;
+      } // end switch
+
+      if (bIsValidTile)
+      {
+        cTargetTile = this.GetTile(iTarget);
+        if (cTargetTile != null)
+        {
+          if (bCheckPassible)
+          {
+            if (cTargetTile.IsPassable()) { iReturnIdx = iTarget; }
+          }
+          else
+          {
+            iReturnIdx = iTarget;
+          }
+        }
+      } // if iTarget check
+
+      return iReturnIdx;
     };
   }; // end of class
 

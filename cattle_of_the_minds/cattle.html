@@ -4,22 +4,35 @@
 <link rel="stylesheet" href="./css/ui.css">
 </head>
 <body onload="StartGame()">
+<script src="./src/const.js"></script>
+<script src="./src/utils.js"></script>
+<script src="./src/controller.js"></script>
+
 <script src="./src/tile.js"></script>
 <script src="./src/floor.js"></script>
+
+<script src="./src/pawn.js"></script>
 <script src="./src/renderer.js"></script>
+
 <script src="./src/main.js"></script>
 
 <script type="text/javascript">
   function MoveNorth() { GoUp(); }
-  // function MoveSouth() { CAMERA.PanCamera(CONST.SOUTH); }
-  // function MoveEast()  { CAMERA.PanCamera(CONST.EAST); }
-  // function MoveWest()  { CAMERA.PanCamera(CONST.WEST); }
+  function MoveSouth() { GoDown(); }
+  function MoveEast()  { GoRight(); }
+  function MoveWest()  { GoLeft(); }
 </script>
 
 <div id="divMain">
+  <div id="topButtons">
+    <button class="topButton">Inventory</button>
+  </div>
   <div id="divCanvas"></div>
   <div id="buttons">
+    <button class="arrow" onclick="MoveWest()"><</button>
     <button class="arrow" onclick="MoveNorth()">^</button>
+    <button class="arrow" onclick="MoveSouth()">v</button>
+    <button class="arrow" onclick="MoveEast()">></button>
   </div>
 </div>
 

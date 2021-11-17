@@ -1,21 +1,30 @@
 // consts
 const CANVAS_WIDTH = 960;
 const CANVAS_HEIGHT = 960;
+const MAP_WIDTH = 15; // in tiles
+const START_IDX = 895;
 // globals - don't use if you can
 var cFirstFloor;
-var iCamPosition = 895;
 var iFloorWidth = 30;
+
+var cHero;
+var cTest;
 
 function StartGame()
 {
   // Init components
   RENDERER.Init();
-  var iFloorSize = 900;
-  console.log("Floor size :", iFloorSize);
-  cFirstFloor = new FLOOR(iFloorWidth, iFloorSize);
+  cFirstFloor = new FLOOR(iFloorWidth);
+
+  cHero = new PAWN("Hero", "./res/hero.gif");
+  //cTest = new PAWN("TEST", "./res/hero.gif");
+  var cStartTile = cFirstFloor.GetTile(START_IDX);
+  //var cTestTile = cFirstFloor.GetTile(833);
+  cStartTile.PlaceEntity(cHero);
+  //cTestTile.PlaceEntity(cTest);
   // start game
   myGameArea.start();
-  DrawScreen();
+  Update();
 }
 
 var myGameArea =
@@ -41,22 +50,26 @@ function GetCanvas() { return myGameArea.context; };
 
 function Update()
 {
-  DrawScreen();
+  var iCamPosition = cHero.GetTile().GetIdx();
+  DrawScreen(iCamPosition);
 };
 
-function DrawScreen()
+function DrawScreen(iFocusIdx)
 {
   myGameArea.clear();
   var ctx = GetCanvas();
 
-  var arrTiles = cFirstFloor.GetTileArea(iCamPosition, 15);
+  var arrTiles = cFirstFloor.GetTileArea(iFocusIdx, MAP_WIDTH);
   RENDERER.SetVisibleTiles(arrTiles, 0);
-  RENDERER.Draw(ctx, false, 15);
+  RENDERER.Draw(ctx, MAP_WIDTH);
 };
 
 // DEBUG STUFF
 function GoUp()
-{
-  iCamPosition -= iFloorWidth;
-  Update();
-};
+{ cHero.Move(CONST.NORTH, cFirstFloor); Update(); };
+function GoDown()
+{ cHero.Move(CONST.SOUTH, cFirstFloor); Update(); };
+function GoLeft()
+{ cHero.Move(CONST.WEST, cFirstFloor); Update(); };
+function GoRight()
+{ cHero.Move(CONST.EAST, cFirstFloor); Update(); };

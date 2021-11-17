@@ -8,6 +8,7 @@ var RENDERER = (function () {
   renderer.iFocusIdx = 0;
 
   renderer.arrVisibleTiles = [];
+  renderer.arrVisiblePawns = [];
 
   renderer.GetGridSize = function() { return GRID_SIZE; };
 
@@ -19,6 +20,10 @@ var RENDERER = (function () {
   {
   };
 
+  // ----------------
+  // SetVisibleTiles
+  //     Sets the tiles to be drawn and the center tile
+  // ----------------
   renderer.SetVisibleTiles = function(arrTiles, iCenterTileIdx)
   {
     renderer.arrVisibleTiles = arrTiles;
@@ -26,18 +31,27 @@ var RENDERER = (function () {
   };
 
   // ----------------
+  // SetVisiblePawns
+  //     Sets the pawns that will be drawn
+  // ----------------
+  renderer.SetVisiblePawns = function(arrPawns)
+  {
+    renderer.arrVisiblePawns = arrPawns;
+  };
+
+  // ----------------
   // Draw
   //     Draws the main window
   // ----------------
-  renderer.Draw = function(ctx, bShowImpassible=false, iSizeOverride=0)
+  renderer.Draw = function(ctx, iSizeOverride=0)
   {
     var arrTiles = renderer.arrVisibleTiles;
 
-
     var idx;
-    var iTilesLength = arrTiles.length;
     var cTile;
     var cEntity;
+    var strIcon;
+    var imgEntity;
 
     var strTileColor;
     var iX, iY;
@@ -52,9 +66,9 @@ var RENDERER = (function () {
     var iStartRow = Math.floor(iDiff / 2);
     var iEndRow = GRID_SIZE - Math.floor((iDiff + 1)/2);
     var iWidth = iEndRow - iStartRow;
-    console.log("Stuff :", iStartRow, iEndRow, iWidth);
 
     ctx.beginPath();
+    var iTilesLength = arrTiles.length;
     for (idx = 0; idx < iTilesLength; ++idx)
     {
       // probably a better way to do this, but
@@ -64,23 +78,31 @@ var RENDERER = (function () {
       cTile = arrTiles[idx];
       if (cTile != null && cTile.IsDiscovered())
       {
+        // console.log("Drawing tile at :", iX, iY);
         strTileColor = cTile.GetColor();
         ctx.fillStyle = strTileColor;
         ctx.fillRect(iX, iY, TILE_SIZE, TILE_SIZE);
 
-        //if (bShowImpassible && !cNode.IsPassable())
-        //{
-        //  cNode.Draw(ctx, IMPASS_COLOR);
-        //}
-        //else
-        //{
-        //  cNode.Draw(ctx);
-        //}
+        if (cTile.HasEntity())
+        {
+          // for now just draw the first entity
+          cEntity = cTile.GetEntities()[0];
+          if (cEntity != null && typeof cEntity.GetIcon === 'function')
+          {
+            imgEntity = new Image();
+            imgEntity.iX = iX;
+            imgEntity.iY = iY;
+            imgEntity.addEventListener('load', function()
+            {
+              ctx.drawImage(imgEntity, this.iX, this.iY);
+            }, false);
+            imgEntity.src = cEntity.GetIcon();
+          }
+        }
       }
     } // end for loop
 
     ctx.stroke();
-
     // draw the grid last so its on top
     if (renderer.bShowGrid)
     {

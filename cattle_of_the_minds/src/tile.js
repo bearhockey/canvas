@@ -14,8 +14,10 @@ var TILE = (function () {
 
     this.GetIdx       = function() { return this.idx; };
     this.GetColor     = function() { return this.color; };
+    this.GetEntities  = function() { return this.arrEntities; };
     this.IsDiscovered = function() { return this.bIsDiscovered; };
     this.IsVisible    = function() { return this.bIsVisible; };
+    this.HasEntity    = function() { return (this.arrEntities.length > 0); };
 
     // ----------------
     // this.IsPassable
@@ -56,7 +58,7 @@ var TILE = (function () {
       cEntity.SetTile(this);
       if (cOldTile != null) { cOldTile.RemoveEntity(cEntity); }
     };
-
+    
     // ----------------
     // this.RemoveEntity
     //     Removes an entity from this tile
