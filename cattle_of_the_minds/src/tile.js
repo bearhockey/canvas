@@ -20,6 +20,27 @@ var TILE = (function () {
     this.HasEntity    = function() { return (this.arrEntities.length > 0); };
 
     // ----------------
+    // GetFirstEnemy
+    //     Returns the first enemy on this tile, if exists
+    // ----------------
+    this.GetFirstEnemy = function()
+    {
+      var cPawn = null;
+      var idx;
+      var iLength = this.arrEntities.length;
+      for (idx = 0; idx < iLength; ++idx)
+      {
+        cPawn = this.arrEntities[idx];
+        if (cPawn != null && cPawn.iPawnType == CONST.PAWN_ENEMY)
+        {
+          return cPawn;
+        }
+      } // end of for loop
+
+      return null;
+    };
+
+    // ----------------
     // this.IsPassable
     //     Checks if the node is passable, both intrinsicly and if any entities block movement
     // ----------------
@@ -33,8 +54,8 @@ var TILE = (function () {
       {
         objEntity = this.arrEntities[idx];
         if (objEntity != null &&
-            typeof objEntity.GetPassable === 'function' &&
-            objEntity.GetPassable() == false)
+            typeof objEntity.IsPassable === 'function' &&
+            objEntity.IsPassable() == false)
         {
           bPawnPassable = false;
           break;

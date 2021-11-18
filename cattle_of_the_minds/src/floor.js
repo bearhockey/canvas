@@ -126,6 +126,14 @@ var FLOOR = (function () {
           if (bCheckPassible)
           {
             if (cTargetTile.IsPassable()) { iReturnIdx = iTarget; }
+            else if (cTargetTile.HasEntity())
+            {
+              var cEnemy = cTargetTile.GetFirstEnemy();
+              if (cEnemy != null)
+              {
+                FightGuy(cEnemy);
+              }
+            }
           }
           else
           {

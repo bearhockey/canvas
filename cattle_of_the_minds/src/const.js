@@ -4,6 +4,7 @@ var CONST = (function () {
   // game states
   c.STATE_STAGE = 1;
   c.STATE_INVENTORY = 2;
+  c.STATE_CHARACTER = 3;
 
   // directions
   c.NORTH = 0;
@@ -15,10 +16,26 @@ var CONST = (function () {
   c.PAWN_HERO = 0; // special type, hero
   c.PAWN_ITEM = 1;
   c.PAWN_ENEMY = 2;
+  c.PAWN_TRAP = 3;
 
   // item types
+  c.ITEM_NONE = -1; // not an item
   c.ITEM_ANY = 0;
   c.ITEM_MONEY = 1;
+  c.ITEM_WEAPON = 2;
+  c.ITEM_HELMET = 3;
+  c.ITEM_ARMOR = 4;
+  c.ITEM_SHIELD = 5;
+  c.ITEM_BOOTS = 6;
+  c.ITEM_CLOAK = 7;
+  c.ITEM_ACCESSORY = 8;
+  c.ITEM_BELT = 9;
+
+  // stats
+  c.STAT_LEVEL  = 1;
+  c.STAT_HEALTH = 2;
+  c.STAT_MANA   = 3;
+  c.STAT_ATTACK = 4;
 
   return c;
 }());
