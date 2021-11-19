@@ -15,16 +15,30 @@ var ICONTAINER = (function () {
 
   const ITEM_LABEL_OFFSET = 84; // 64 (icon size) + 20 (font size)
   // main
-  var ic = function(iX, iY, iWidth, iHeight, strName="", iItemType=CONST.ITEM_ANY)
+  var ic = function(iX, iY, iWidth, iHeight, strName="", iItemType=CONST.ITEM_ANY, iSlotLimit=0)
   {
     this.xPos = iX;
     this.yPos = iY;
     this.width = iWidth;
     this.height = iHeight;
 
+    this.iContentWidth = Math.floor(ITEM_SIZE / (this.width - CONTAINER_PADDING*2));
+    this.iContentHeight = Math.floor(ITEM_SIZE / (this.height - CONTAINER_PADDING*2));
+    this.iContentPointerX = 0;
+    this.iContentPointerY = 0;
+
     this.strName = strName;
     this.iItemType = iItemType;
     this.arrContents = [];
+    this.iSlotLimit = iSlotLimit;
+
+    this.GetItemType = function() { return this.iItemType; };
+    this.GetFreeSlots = function()
+    {
+      if (this.iSlotLimit > 0)
+      { return this.iSlotLimit - this.arrContents.length; }
+      return 99;
+    }
 
     // ------------
     // AddItem
@@ -34,13 +48,15 @@ var ICONTAINER = (function () {
     {
       if (cItem != null && typeof cItem.GetItemType === 'function')
       {
-        if (this.iItemType == CONST.ITEM_ANY || cItem.GetItemType() == this.iItemType)
+        if (this.iItemType == CONST.ITEM_ANY || cItem.GetItemType() == CONST.ITEM_ADD || cItem.GetItemType() == this.iItemType)
         {
+          cItem.SetRect(this.GetNextRect());
+          cItem.SetParent(this);
           this.arrContents.push(cItem);
         }
         else
         {
-          console.log("Wrong item type");
+          console.log("Wrong item type --> ", cItem.strName + " in ", this.strName);
         }
       }
     };
@@ -49,7 +65,29 @@ var ICONTAINER = (function () {
     // Empty
     //     Empties out the contents of this container
     // ------------
-    this.Empty = function() { this.arrContents.length = 0; };
+    this.Empty = function()
+    {
+      this.arrContents.length = 0;
+      this.iContentPointerX = CONTAINER_PADDING;
+      this.iContentPointerY = CONTAINER_PADDING;
+    };
+
+    // ------------
+    // GetNextRect
+    //     Gets the next rectangle bounds for the item
+    // ------------
+    this.GetNextRect = function()
+    {
+      var cRect = new RECT(this.xPos + this.iContentPointerX,
+                           this.yPos + this.iContentPointerY,
+                          ITEM_SIZE,
+                          ITEM_SIZE);
+      var bNewLine = (this.iContentPointerX+ITEM_SIZE > this.width-CONTAINER_PADDING);
+      this.iContentPointerX = bNewLine ? CONTAINER_PADDING : this.iContentPointerX+ITEM_SIZE;
+      this.iContentPointerY = bNewLine ? this.iContentPointerY+ITEM_SIZE : this.iContentPointerY;
+
+      return cRect;
+    };
 
     // ------------
     // Draw

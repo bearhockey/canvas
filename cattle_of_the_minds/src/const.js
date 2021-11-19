@@ -30,6 +30,7 @@ var CONST = (function () {
   c.ITEM_CLOAK = 7;
   c.ITEM_ACCESSORY = 8;
   c.ITEM_BELT = 9;
+  c.ITEM_ADD = 99; // special "item" that is really just an add symbol
 
   // stats
   c.STAT_LEVEL  = 1;

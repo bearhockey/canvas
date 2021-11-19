@@ -59,9 +59,9 @@ var myGameArea =
     this.canvas.height = CANVAS_HEIGHT;
     this.context = this.canvas.getContext("2d");
     document.getElementById('divCanvas').appendChild(this.canvas);
-    // this.canvas.addEventListener('mousemove', MOUSE.Move);
-    // this.canvas.addEventListener('click', INVENTORY.MouseDownItem);
-    // this.canvas.addEventListener('contextmenu', MOUSE.RightClick);
+    this.canvas.addEventListener('mousemove', MOUSE.Move);
+    this.canvas.addEventListener('click', MOUSE.LeftClick);
+    this.canvas.addEventListener('contextmenu', MOUSE.RightClick);
   },
   clear : function()
   {
@@ -120,6 +120,7 @@ function DrawCharacter()
 }
 
 // DEBUG STUFF ---- maybe move these to a better class
+function GetState()       { return m_iState; };
 function SetState(iState) { m_iState = iState; Update(); };
 function GetHero() { return m_cHero; };
 function IncrementTime(iValue=1) { iPlaytime+=iValue; };

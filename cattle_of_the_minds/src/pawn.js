@@ -15,6 +15,8 @@ var PAWN = (function () {
     this.strName = strName;
     this.strIcon = strIcon;
     this.cTile = null;
+    this.cRect = null; // used to determine absolute positioning for mouse
+    this.cParentContainer = null;
 
     this.cStatBlock = new STATBLOCK();
     this.arrInventory = [];
@@ -26,10 +28,36 @@ var PAWN = (function () {
     this.GetEquipment = function() { return this.arrEquipped; };
     this.GetItemType  = function() { return this.iItemType; };
 
-    this.GetTile = function()          { return this.cTile; };
-    this.SetTile = function(cTile)     { this.cTile = cTile; };
-    this.IsPassable = function()       { return (this.iPawnType != CONST.PAWN_ENEMY); };
-    this.GetStat = function(iStatName) { return this.cStatBlock.GetStat(iStatName); };
+    this.GetTile    = function()          { return this.cTile; };
+    this.SetTile    = function(cTile)     { this.cTile = cTile; };
+    this.RemoveTile = function()
+    {
+      if (this.cTile != null)
+      {
+        this.cTile.RemoveEntity(this);
+        this.cTile = null;
+      }
+    };
+
+    this.IsPassable = function()          { return (this.iPawnType != CONST.PAWN_ENEMY); };
+    this.GetStat    = function(iStatName) { return this.cStatBlock.GetStat(iStatName); };
+
+    this.GetRect  = function()            { return this.cRect; };
+    this.SetRect  = function(cRectBounds) { this.cRect = cRectBounds; };
+    this.IsInRect = function(x, y)        { return this.cRect.CheckPoint(x, y); };
+
+    this.GetParent = function()                  { return this.cParentContainer; };
+    this.SetParent = function(cContainer = null) { this.cParentContainer = cContainer; };
+
+    // ----------------
+    // Copy
+    //     Makes a type-copy of the pawn - if you want every aspect copied use DeepCopy
+    // ----------------
+    this.Copy = function()
+    {
+      var cNewPawn = new PAWN(this.iPawnType, this.strName, this.strIcon, this.iItemType);
+      return cNewPawn;
+    };
 
     // ----------------
     // Move
@@ -57,9 +85,12 @@ var PAWN = (function () {
     // AddToInventory
     //     Adds a pawn to this pawns inventory - combines currency if it can
     // ----------------
-    this.AddToInventory = function(cPawn)
+    this.AddToInventory = function(cItem)
     {
-      if (cPawn.GetItemType() == CONST.ITEM_MONEY && cPawn.iQuantity > 0)
+      if (cItem == null) { return; }
+      cItem.RemoveTile(); // clear out any tile information when it enters the inventory
+
+      if (cItem.GetItemType() == CONST.ITEM_MONEY && cItem.iQuantity > 0)
       {
         var idx;
         var iLength = this.arrInventory.length;
@@ -68,18 +99,18 @@ var PAWN = (function () {
         for (idx = 0; idx < iLength; ++idx)
         {
           cMoney = this.arrInventory[idx];
-          if (cMoney != null && cMoney.GetItemType() == CONST.ITEM_MONEY && cMoney.strName == cPawn.strName)
+          if (cMoney != null && cMoney.GetItemType() == CONST.ITEM_MONEY && cMoney.strName == cItem.strName)
           {
-            cMoney.iQuantity += cPawn.iQuantity;
+            cMoney.iQuantity += parseInt(cItem.iQuantity);
             bFoundMoney = true;
             break;
           }
         } // end for loop
-        if (!bFoundMoney) { this.arrInventory.push(cPawn); }
+        if (!bFoundMoney) { this.arrInventory.push(cItem); }
       }
       else
       {
-        this.arrInventory.push(cPawn);
+        this.arrInventory.push(cItem);
       }
     };
 
@@ -107,18 +138,55 @@ var PAWN = (function () {
     };
 
     // ----------------
+    // UnequipItem
+    //     Unequips the item - but it is still owned
+    // ----------------
+    this.UnequipItem = function(cItem)
+    {
+      if (cItem != null)
+      {
+        var idx = this.arrEquipped.indexOf(cItem);
+        if (idx >= 0) { this.arrEquipped.splice(idx, 1); }
+      }
+    };
+
+    // ----------------
     // IsItemEquipped
     //     Checks if the specified item is equipped
     // ----------------
-    this.IsItemEquipped = function(cPawn)
+    this.IsItemEquipped = function(cItem) { return (cItem != null && this.arrEquipped.indexOf(cItem) >= 0); };
+
+    // ----------------
+    // IsItemOwned
+    //     Checks if the specified item is in the inventory
+    // ----------------
+    this.IsItemOwned = function(cItem) { return (cItem != null && this.arrInventory.indexOf(cItem) >= 0); };
+
+    // ----------------
+    // DropItem
+    //     Drops a specific item onto the floor of the pawn's current tile, if it exists
+    // ----------------
+    this.DropItem = function(cItem)
     {
-      return (this.arrEquipped.indexOf(cPawn) >= 0);
+      var idx;
+      if (cItem != null)
+      {
+        idx = this.arrInventory.indexOf(cItem);
+        if (idx >= 0)
+        {
+          if (this.cTile != null) { this.cTile.PlaceEntity(cItem); }
+          this.arrInventory.splice(idx, 1);
+        }
+        // remove from equipment as well
+        idx = this.arrEquipped.indexOf(cItem);
+        if (idx >= 0) { this.arrEquipped.splice(idx, 1); }
+      }
     };
 
     this.Dead = function()
     {
-      var cTile = this.GetTile();
-      cTile.RemoveEntity(this);
+      var cTile = this.GetTile(); // get the tile before it goes away
+      this.RemoveTile();
       // drop items
       var idx;
       var iLength = this.arrInventory.length;
