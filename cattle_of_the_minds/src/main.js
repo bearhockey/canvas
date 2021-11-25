@@ -88,7 +88,16 @@ function Update()
     case CONST.STATE_STAGE:
     {
       var iCamPosition = m_cHero.GetTile().GetIdx();
-      DrawStage(iCamPosition);
+      var arrVisionRange = cFirstFloor.GetTileArea(iCamPosition, 5);
+      var idx;
+      var iTiles = arrVisionRange.length;
+      var cTile;
+      for (idx = 0; idx < iTiles; ++idx)
+      {
+        cTile = arrVisionRange[idx];
+        if (cTile != null) { cTile.bIsDiscovered = true; }
+      }
+      DrawStage(iCamPosition, arrVisionRange);
       break;
     }
     case CONST.STATE_INVENTORY:
@@ -107,11 +116,11 @@ function Update()
   } // end of switch
 };
 
-function DrawStage(iFocusIdx)
+function DrawStage(iFocusIdx, arrVisionRange)
 {
   myGameArea.clear();
   var arrTiles = cFirstFloor.GetTileArea(iFocusIdx, MAP_WIDTH);
-  RENDERER.SetVisibleTiles(arrTiles, 0);
+  RENDERER.SetVisibleTiles(arrTiles, arrVisionRange);
   RENDERER.Draw(GetCanvas(), MAP_WIDTH);
 }
 

@@ -7,6 +7,7 @@ var RENDERER = (function () {
   renderer.bShowGrid = true;
   renderer.iFocusIdx = 0;
 
+  renderer.arrDrawnTiles   = [];
   renderer.arrVisibleTiles = [];
   renderer.arrVisiblePawns = [];
 
@@ -22,11 +23,12 @@ var RENDERER = (function () {
 
   // ----------------
   // SetVisibleTiles
-  //     Sets the tiles to be drawn and the center tile
+  //     Sets the tiles to be drawn, the tiles to be "visibile",  and the center tile
   // ----------------
-  renderer.SetVisibleTiles = function(arrTiles, iCenterTileIdx)
+  renderer.SetVisibleTiles = function(arrDrawnTiles, arrSeenTiles, iCenterTileIdx=0)
   {
-    renderer.arrVisibleTiles = arrTiles;
+    renderer.arrDrawnTiles = arrDrawnTiles;
+    renderer.arrVisibleTiles = arrSeenTiles;
     renderer.iFocusIdx = iCenterTileIdx;
   };
 
@@ -45,10 +47,12 @@ var RENDERER = (function () {
   // ----------------
   renderer.Draw = function(ctx, iSizeOverride=0)
   {
-    var arrTiles = renderer.arrVisibleTiles;
+    var arrTiles = renderer.arrDrawnTiles;
+    var arrVisibleTiles = renderer.arrVisibleTiles;
 
     var idx;
     var cTile;
+    var bIsVisible;
 
     var arrEntities;
     var iEntityLength;
@@ -83,11 +87,13 @@ var RENDERER = (function () {
       if (cTile != null && cTile.IsDiscovered())
       {
         // console.log("Drawing tile at :", iX, iY);
+        bIsVisible = (arrVisibleTiles.indexOf(cTile) >= 0);
+
         strTileColor = cTile.GetColor();
-        ctx.fillStyle = strTileColor;
+        ctx.fillStyle = (bIsVisible) ? strTileColor : strTileColor + "66";
         ctx.fillRect(iX, iY, TILE_SIZE, TILE_SIZE);
 
-        if (cTile.HasEntity())
+        if (bIsVisible && cTile.HasEntity())
         {
           // for now just draw the first entity
           arrEntities = cTile.GetEntities();

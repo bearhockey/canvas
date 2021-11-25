@@ -2,11 +2,14 @@ var FLOOR = (function () {
   // consts -- move these to a file probably
   const EMPTY_COLOR = "#DDDDDD";
   const WALL_COLOR = "#444444";
-  var floor = function(iWidth)
+  var floor = function(iWidth, strFloorColor = EMPTY_COLOR, strWallColor = WALL_COLOR)
   {
     this.iWidth = iWidth; // the height and width of the tile array
     this.arrTileMap = [];
     this.cNullTile = new TILE(-1, false, "#111111");
+
+    this.strFloorColor = strFloorColor;
+    this.strWallColor = strWallColor;
 
     var iSize = this.iWidth * this.iWidth;
     var idx;
@@ -15,17 +18,17 @@ var FLOOR = (function () {
     {
       if (idx % this.iWidth == 0 || idx % this.iWidth == this.iWidth -1)
       {
-        color = WALL_COLOR;
+        color = this.strWallColor;
       }
       else if (idx - this.iWidth < 0 || idx + this.iWidth > iSize)
       {
-        color = WALL_COLOR;
+        color = this.strWallColor;
       }
       else
       {
-        color = (Math.random() > 0.85) ? WALL_COLOR : EMPTY_COLOR;
+        color = (Math.random() > 0.85) ? this.strWallColor : this.strFloorColor;
       }
-      this.arrTileMap.push(new TILE(idx, (color == EMPTY_COLOR), color));
+      this.arrTileMap.push(new TILE(idx, (color == this.strFloorColor), color));
     } // end of for loop
 
     // ----------------

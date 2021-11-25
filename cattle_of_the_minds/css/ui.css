@@ -61,8 +61,21 @@ div.text_area
   font-weight: 550;
   height: 128px;
   margin: 4px;
-  min-width: 256px;
+  min-width: 550px;
+  overflow-x: hidden;
   overflow-y: scroll;
   padding: 4px;
   text-align: left;
+}
+
+div.text_area::-webkit-scrollbar
+{
+  background: #000;
+  background-color: #DCCCCC;
+  width: 64px;
+}
+
+div.text_area::-webkit-scrollbar-thumb
+{
+  background: #8E8888;
 }
