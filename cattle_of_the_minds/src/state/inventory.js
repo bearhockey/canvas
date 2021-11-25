@@ -6,25 +6,25 @@ var INVENTORY = (function () {
   inventory.cSelectedItem = null;
   inventory.arrContainers = [];
   //
-  inventory.cHelmet   = new ICONTAINER(360, 10,  100, 120, "Helmet", CONST.ITEM_HELMET, 1);
+  inventory.cHelmet   = new ICONTAINER(360, 160,  100, 120, "Helmet", CONST.ITEM_HELMET, 1);
 
-  inventory.cCloak    = new ICONTAINER(240, 140, 100, 120, "Cloak",  CONST.ITEM_CLOAK, 1);
-  inventory.cArmor    = new ICONTAINER(360, 140, 100, 120, "Armor",  CONST.ITEM_ARMOR, 1);
+  inventory.cCloak    = new ICONTAINER(240, 290, 100, 120, "Cloak",  CONST.ITEM_CLOAK, 1);
+  inventory.cArmor    = new ICONTAINER(360, 290, 100, 120, "Armor",  CONST.ITEM_ARMOR, 1);
 
-  inventory.cShield   = new ICONTAINER(120, 270, 100, 120, "Shield",    CONST.ITEM_SHIELD, 1);
-  inventory.cWeapon   = new ICONTAINER(240, 270, 100, 120, "Weapon",    CONST.ITEM_WEAPON, 1);
-  inventory.cFreeHand = new ICONTAINER(360, 270, 100, 120, "Free Hand", CONST.ITEM_ANY,    1);
+  inventory.cShield   = new ICONTAINER(120, 420, 100, 120, "Shield",    CONST.ITEM_SHIELD, 1);
+  inventory.cWeapon   = new ICONTAINER(240, 420, 100, 120, "Weapon",    CONST.ITEM_WEAPON, 1);
+  inventory.cFreeHand = new ICONTAINER(360, 420, 100, 120, "Free Hand", CONST.ITEM_ANY,    1);
 
-  inventory.cBelt     = new ICONTAINER(240, 400, 100, 120, "Belt",  CONST.ITEM_BELT,  1);
-  inventory.cBoots    = new ICONTAINER(360, 400, 100, 120, "Boots", CONST.ITEM_BOOTS, 1);
+  inventory.cBelt     = new ICONTAINER(240, 550, 100, 120, "Belt",  CONST.ITEM_BELT,  1);
+  inventory.cBoots    = new ICONTAINER(360, 550, 100, 120, "Boots", CONST.ITEM_BOOTS, 1);
 
-  inventory.cAccessory1 = new ICONTAINER(120, 530, 100, 120, "Acc. 1", CONST.ITEM_ACCESSORY, 1);
-  inventory.cAccessory2 = new ICONTAINER(240, 530, 100, 120, "Acc. 2", CONST.ITEM_ACCESSORY, 1);
-  inventory.cAccessory3 = new ICONTAINER(360, 530, 100, 120, "Acc. 3", CONST.ITEM_ACCESSORY, 1);
+  inventory.cAccessory1 = new ICONTAINER(120, 680, 100, 120, "Acc. 1", CONST.ITEM_ACCESSORY, 1);
+  inventory.cAccessory2 = new ICONTAINER(240, 680, 100, 120, "Acc. 2", CONST.ITEM_ACCESSORY, 1);
+  inventory.cAccessory3 = new ICONTAINER(360, 680, 100, 120, "Acc. 3", CONST.ITEM_ACCESSORY, 1);
   //
-  inventory.cGround = new ICONTAINER(480, 10,  460, 320, "Ground");
-  inventory.cPack   = new ICONTAINER(480, 340, 460, 320, "Pack");
-  inventory.cPurse  = new ICONTAINER(480, 670, 460, 120, "Purse", CONST.ITEM_MONEY, 4);
+  inventory.cGround = new ICONTAINER(480, 160,  460, 320, "Ground");
+  inventory.cPack   = new ICONTAINER(480, 490, 460, 320, "Pack");
+  inventory.cPurse  = new ICONTAINER(480, 830, 460, 120, "Purse", CONST.ITEM_MONEY, 4);
   // ----------------
   // Init
   //     Inits the inventory renderer

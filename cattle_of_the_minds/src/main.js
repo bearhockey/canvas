@@ -24,9 +24,11 @@ function StartGame()
 
   m_cHero = new PAWN(CONST.PAWN_HERO, "Hero", "./res/hero.gif");
   // just add the stats for now
-  m_cHero.cStatBlock.SetStat(CONST.STAT_LEVEL, 1);
-  m_cHero.cStatBlock.SetStat(CONST.STAT_HEALTH, 20);
-  m_cHero.cStatBlock.SetStat(CONST.STAT_MANA, 10);
+  m_cHero.cBaseStats.SetStat(CONST.STAT_LEVEL, 1, true);
+  m_cHero.cBaseStats.SetStat(CONST.STAT_HEALTH, 20, true);
+  m_cHero.cBaseStats.SetStat(CONST.STAT_MANA, 10, true);
+  m_cHero.cBaseStats.SetStat(CONST.STAT_ATTACK, 1, true);
+
   cGoldOne = new PAWN(CONST.PAWN_ITEM, "Gold", "./res/gold.gif", CONST.ITEM_MONEY);
   cGoldOne.iQuantity = 50;
   var cStartTile = cFirstFloor.GetTile(START_IDX);
@@ -35,11 +37,13 @@ function StartGame()
   cTestTile.PlaceEntity(cGoldOne);
   // give the hero a sword for now
   cSword = new PAWN(CONST.PAWN_ITEM, "Sword", "./res/sword.gif", CONST.ITEM_WEAPON);
+  cSword.cBaseStats.SetStat(CONST.STAT_ATTACK, 2, true);
   m_cHero.AddToInventory(cSword);
   m_cHero.EquipItem(cSword);
   // add a bad guy
   cEnemy = new PAWN(CONST.PAWN_ENEMY, "Goblin", "./res/goblin.gif");
-  cEnemy.cStatBlock.SetStat(CONST.STAT_HEALTH, 6);
+  cEnemy.cBaseStats.SetStat(CONST.STAT_HEALTH, 6, true);
+  cEnemy.CalculateTotalStats(); // for now because we aren't equipping anything
   cGoldTwo = new PAWN(CONST.PAWN_ITEM, "Gold", "./res/gold.gif", CONST.ITEM_MONEY);
   cGoldTwo.iQuantity = Math.floor(Math.random()*10)+5;
   cEnemy.AddToInventory(cGoldTwo);
@@ -127,11 +131,14 @@ function IncrementTime(iValue=1) { iPlaytime+=iValue; };
 
 function FightGuy(cPawn)
 {
-  var iEnemyHealth = cPawn.GetStat(CONST.STAT_HEALTH) - 1;
+  var iAttackPower = m_cHero.GetStat(CONST.STAT_ATTACK)[0];
+  var iEnemyHealth = cPawn.GetStat(CONST.STAT_HEALTH)[0] - iAttackPower;
   if (iEnemyHealth > 0)
   {
-    cPawn.cStatBlock.SetStat(CONST.STAT_HEALTH, iEnemyHealth);
-    AddInfo("You dealt 1 damage to " + cPawn.strName + "! (" + cPawn.GetStat(CONST.STAT_HEALTH) + ")");
+    cPawn.SetStat(CONST.STAT_HEALTH, iEnemyHealth, false);
+    AddInfo("You dealt " + iAttackPower.toString() + " damage to " + cPawn.strName + "!");
+    var arrNewHealth = cPawn.GetStat(CONST.STAT_HEALTH);
+    AddInfo(UTILS.GetHealthLevel(arrNewHealth[0], arrNewHealth[1]));
   }
   else
   {
@@ -158,9 +165,11 @@ function UpdateMenu()
 
 function PopInfo()
 {
-  document.getElementById('playerLevel').innerHTML = m_cHero.GetStat(CONST.STAT_LEVEL);
-  document.getElementById('playerHealth').innerHTML = m_cHero.GetStat(CONST.STAT_HEALTH);
-  document.getElementById('playerMana').innerHTML = m_cHero.GetStat(CONST.STAT_MANA);
+  document.getElementById('playerLevel').innerHTML = m_cHero.GetStat(CONST.STAT_LEVEL)[0].toString();
+  var arrHealth = m_cHero.GetStat(CONST.STAT_HEALTH);
+  document.getElementById('playerHealth').innerHTML = UTILS.StatPairToText(arrHealth);
+  var arrMana = m_cHero.GetStat(CONST.STAT_MANA);
+  document.getElementById('playerMana').innerHTML = UTILS.StatPairToText(arrMana);
   document.getElementById('playerTime').innerHTML = new Date(iPlaytime * 1000).toISOString().substr(11, 8);
 };
 

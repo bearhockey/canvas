@@ -33,10 +33,15 @@ var CONST = (function () {
   c.ITEM_ADD = 99; // special "item" that is really just an add symbol
 
   // stats
-  c.STAT_LEVEL  = 1;
-  c.STAT_HEALTH = 2;
-  c.STAT_MANA   = 3;
-  c.STAT_ATTACK = 4;
+  c.STAT_LEVEL     = 1;
+  c.STAT_HEALTH    = 2;
+  c.STAT_MANA      = 3;
+  c.STAT_ATTACK    = 4;
+  c.STAT_ACCURACY  = 5;
+  c.STAT_BRAWN     = 6;
+  c.STAT_AGILITY   = 7;
+  c.STAT_INTELLECT = 8;
+  c.STAT_WILLPOWER = 9;
 
   return c;
 }());

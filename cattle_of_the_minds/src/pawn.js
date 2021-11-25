@@ -18,7 +18,8 @@ var PAWN = (function () {
     this.cRect = null; // used to determine absolute positioning for mouse
     this.cParentContainer = null;
 
-    this.cStatBlock = new STATBLOCK();
+    this.cBaseStats = new STATBLOCK();
+    this.cTotalStats = new STATBLOCK();
     this.arrInventory = [];
     this.arrEquipped = [];
 
@@ -40,7 +41,6 @@ var PAWN = (function () {
     };
 
     this.IsPassable = function()          { return (this.iPawnType != CONST.PAWN_ENEMY); };
-    this.GetStat    = function(iStatName) { return this.cStatBlock.GetStat(iStatName); };
 
     this.GetRect  = function()            { return this.cRect; };
     this.SetRect  = function(cRectBounds) { this.cRect = cRectBounds; };
@@ -48,6 +48,48 @@ var PAWN = (function () {
 
     this.GetParent = function()                  { return this.cParentContainer; };
     this.SetParent = function(cContainer = null) { this.cParentContainer = cContainer; };
+
+    // ----------------
+    // GetStat
+    //     Retrieves a stat for the pawn - either the modified or the base
+    // ----------------
+    this.GetStat = function(iStatName, bUseBase=false, bUseCurrent=true)
+    {
+      var arrStat = (bUseBase) ? this.cBaseStats.GetStat(iStatName) : this.cTotalStats.GetStat(iStatName);
+      // console.log("GetStat -> ", iStatName, arrStat);
+      return arrStat;
+    };
+
+    // ----------------
+    // SetStat
+    //     Sets the stat for the pawn - always the base
+    // ----------------
+    this.SetStat = function(iStatName, iStatValue, bUseCurrent=true)
+    {
+      this.cBaseStats.SetStat(iStatName, iStatValue, bUseCurrent);
+      this.CalculateTotalStats();
+    };
+
+    // ----------------
+    // CalculateTotalStats
+    //     Goes through equipped items and adds them to the total stats
+    // ----------------
+    this.CalculateTotalStats = function()
+    {
+      this.cTotalStats = new STATBLOCK();
+      this.cTotalStats.AddStatBlock(this.cBaseStats);
+      var cItem;
+      var idx;
+      var iEquippedItems = this.arrEquipped.length;
+      for (idx = 0; idx < iEquippedItems; ++idx)
+      {
+        cItem = this.arrEquipped[idx];
+        if (cItem != null)
+        {
+          this.cTotalStats.AddStatBlock(cItem.cBaseStats);
+        }
+      } // end for loop
+    };
 
     // ----------------
     // Copy
@@ -135,6 +177,8 @@ var PAWN = (function () {
       } // end for loop
 
       if (bCanEquip) { this.arrEquipped.push(cPawn); }
+
+      this.CalculateTotalStats();
     };
 
     // ----------------
@@ -147,6 +191,7 @@ var PAWN = (function () {
       {
         var idx = this.arrEquipped.indexOf(cItem);
         if (idx >= 0) { this.arrEquipped.splice(idx, 1); }
+        this.CalculateTotalStats();
       }
     };
 
@@ -183,6 +228,10 @@ var PAWN = (function () {
       }
     };
 
+    // ----------------
+    // Dead
+    //     Causes the pawn to "die" - which removes it from the board and drops its inventory
+    // ----------------
     this.Dead = function()
     {
       var cTile = this.GetTile(); // get the tile before it goes away
