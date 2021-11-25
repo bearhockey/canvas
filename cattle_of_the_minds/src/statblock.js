@@ -30,10 +30,15 @@ var STATBLOCK = (function () {
       var arrStatPair = [];
       switch (iStatName)
       {
-        case CONST.STAT_LEVEL:  arrStatPair = [this.iLevelCurrent,  this.iLevel];  break;
-        case CONST.STAT_HEALTH: arrStatPair = [this.iHealthCurrent, this.iHealth]; break;
-        case CONST.STAT_MANA:   arrStatPair = [this.iManaCurrent,   this.iMana];   break;
-        case CONST.STAT_ATTACK: arrStatPair = [this.iAttackCurrent, this.iAttack]; break;
+        case CONST.STAT_LEVEL     : arrStatPair = [this.iLevelCurrent,     this.iLevel];     break;
+        case CONST.STAT_HEALTH    : arrStatPair = [this.iHealthCurrent,    this.iHealth];    break;
+        case CONST.STAT_MANA      : arrStatPair = [this.iManaCurrent,      this.iMana];      break;
+        case CONST.STAT_ATTACK    : arrStatPair = [this.iAttackCurrent,    this.iAttack];    break;
+        case CONST.STAT_ACCURACY  : arrStatPair = [this.iAccuracyCurrent,  this.iAccuracy];  break;
+        case CONST.STAT_BRAWN     : arrStatPair = [this.iBrawnCurrent,     this.iBrawn];     break;
+        case CONST.STAT_AGILITY   : arrStatPair = [this.iAgilityCurrent,   this.iAgility];   break;
+        case CONST.STAT_INTELLECT : arrStatPair = [this.iIntellectCurrent, this.iIntellect]; break;
+        case CONST.STAT_WILLPOWER : arrStatPair = [this.iWillpowerCurrent, this.iWillpower]; break;
         default: break;
       } // end of switch
 
@@ -49,33 +54,27 @@ var STATBLOCK = (function () {
       switch (iStatName)
       {
         case CONST.STAT_LEVEL:
-        {
-          this.iLevelCurrent = iStatValue;
-          if (bSetCap) { this.iLevel = iStatValue; }
-          break;
-        }
+        { this.iLevelCurrent = iStatValue;     if (bSetCap) { this.iLevel = iStatValue; }     break; }
         case CONST.STAT_HEALTH:
-        {
-          this.iHealthCurrent = iStatValue;
-          if (bSetCap) { this.iHealth = iStatValue; }
-          break;
-        }
+        { this.iHealthCurrent = iStatValue;    if (bSetCap) { this.iHealth = iStatValue; }    break; }
         case CONST.STAT_MANA:
-        {
-          this.iManaCurrent = iStatValue;
-          if (bSetCap) { this.iMana = iStatValue; }
-          break;
-        }
+        { this.iManaCurrent = iStatValue;      if (bSetCap) { this.iMana = iStatValue; }      break; }
         case CONST.STAT_ATTACK:
-        {
-          this.iAttackCurrent = iStatValue;
-          if (bSetCap) { this.iAttack = iStatValue; }
-          break;
-        }
+        { this.iAttackCurrent = iStatValue;    if (bSetCap) { this.iAttack = iStatValue; }    break; }
+        case CONST.STAT_ACCURACY:
+        { this.iAccuracyCurrent = iStatValue;  if (bSetCap) { this.iAccuracy = iStatValue; }  break; }
+        case CONST.STAT_BRAWN:
+        { this.iBrawnCurrent = iStatValue;     if (bSetCap) { this.iBrawn = iStatValue; }     break; }
+        case CONST.STAT_AGILITY:
+        { this.iAgilityCurrent = iStatValue;   if (bSetCap) { this.iAgility = iStatValue; }   break; }
+        case CONST.STAT_INTELLECT:
+        { this.iIntellectCurrent = iStatValue; if (bSetCap) { this.iIntellect = iStatValue; } break; }
+        case CONST.STAT_WILLPOWER:
+        { this.iWillpowerCurrent = iStatValue; if (bSetCap) { this.iWillpower = iStatValue; } break; }
         default: break;
       } // end of switch
     };
-    
+
     // ----------------
     // AddStatBlock
     //     Adds the stat block to the current stat block

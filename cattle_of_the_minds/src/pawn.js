@@ -53,7 +53,7 @@ var PAWN = (function () {
     // GetStat
     //     Retrieves a stat for the pawn - either the modified or the base
     // ----------------
-    this.GetStat = function(iStatName, bUseBase=false, bUseCurrent=true)
+    this.GetStat = function(iStatName, bUseBase=false)
     {
       var arrStat = (bUseBase) ? this.cBaseStats.GetStat(iStatName) : this.cTotalStats.GetStat(iStatName);
       // console.log("GetStat -> ", iStatName, arrStat);
@@ -223,8 +223,7 @@ var PAWN = (function () {
           this.arrInventory.splice(idx, 1);
         }
         // remove from equipment as well
-        idx = this.arrEquipped.indexOf(cItem);
-        if (idx >= 0) { this.arrEquipped.splice(idx, 1); }
+        this.UnequipItem(cItem);
       }
     };
 
@@ -244,6 +243,8 @@ var PAWN = (function () {
         cTile.PlaceEntity(this.arrInventory[idx]);
       }
     };
+
+    this.IsDead = function() { console.log("Health? ", this.GetStat(CONST.STAT_HEALTH)[0]); return (this.GetStat(CONST.STAT_HEALTH)[0] < 1); };
   }; // end of class
 
   return pawn;

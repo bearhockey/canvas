@@ -2,6 +2,15 @@ var UTILS = (function () {
   var utils = {};
 
   // ----------------
+  // Roll2d6
+  //     Simulates rolling two 6-sided dice
+  // ----------------
+  utils.Roll2d6 = function()
+  {
+    return Math.floor(Math.random()*6) + Math.floor(Math.random()*6) + 2;
+  };
+
+  // ----------------
   // GetIdxFromTiles
   //     Pass in an array of tiles and get an array of the idx values of each
   // ----------------

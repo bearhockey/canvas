@@ -28,6 +28,7 @@ function StartGame()
   m_cHero.cBaseStats.SetStat(CONST.STAT_HEALTH, 20, true);
   m_cHero.cBaseStats.SetStat(CONST.STAT_MANA, 10, true);
   m_cHero.cBaseStats.SetStat(CONST.STAT_ATTACK, 1, true);
+  m_cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 3, true);
 
   cGoldOne = new PAWN(CONST.PAWN_ITEM, "Gold", "./res/gold.gif", CONST.ITEM_MONEY);
   cGoldOne.iQuantity = 50;
@@ -38,11 +39,14 @@ function StartGame()
   // give the hero a sword for now
   cSword = new PAWN(CONST.PAWN_ITEM, "Sword", "./res/sword.gif", CONST.ITEM_WEAPON);
   cSword.cBaseStats.SetStat(CONST.STAT_ATTACK, 2, true);
+  cSword.cBaseStats.SetStat(CONST.STAT_ACCURACY, 1, true);
   m_cHero.AddToInventory(cSword);
   m_cHero.EquipItem(cSword);
   // add a bad guy
   cEnemy = new PAWN(CONST.PAWN_ENEMY, "Goblin", "./res/goblin.gif");
   cEnemy.cBaseStats.SetStat(CONST.STAT_HEALTH, 6, true);
+  cEnemy.cBaseStats.SetStat(CONST.STAT_BRAWN, 2, true);
+  cEnemy.cBaseStats.SetStat(CONST.STAT_AGILITY, 1, true);
   cEnemy.CalculateTotalStats(); // for now because we aren't equipping anything
   cGoldTwo = new PAWN(CONST.PAWN_ITEM, "Gold", "./res/gold.gif", CONST.ITEM_MONEY);
   cGoldTwo.iQuantity = Math.floor(Math.random()*10)+5;
@@ -131,19 +135,10 @@ function IncrementTime(iValue=1) { iPlaytime+=iValue; };
 
 function FightGuy(cPawn)
 {
-  var iAttackPower = m_cHero.GetStat(CONST.STAT_ATTACK)[0];
-  var iEnemyHealth = cPawn.GetStat(CONST.STAT_HEALTH)[0] - iAttackPower;
-  if (iEnemyHealth > 0)
+  COMBAT.AttackPawn(m_cHero, cPawn);
+  if (!cPawn.IsDead())
   {
-    cPawn.SetStat(CONST.STAT_HEALTH, iEnemyHealth, false);
-    AddInfo("You dealt " + iAttackPower.toString() + " damage to " + cPawn.strName + "!");
-    var arrNewHealth = cPawn.GetStat(CONST.STAT_HEALTH);
-    AddInfo(UTILS.GetHealthLevel(arrNewHealth[0], arrNewHealth[1]));
-  }
-  else
-  {
-    cPawn.Dead();
-    AddInfo(cPawn.strName + " is the dead.");
+    COMBAT.AttackPawn(cPawn, m_cHero, false);
   }
 }
 
@@ -173,12 +168,6 @@ function PopInfo()
   document.getElementById('playerTime').innerHTML = new Date(iPlaytime * 1000).toISOString().substr(11, 8);
 };
 
-function AddInfo(strLine)
-{
-  var strExisting = document.getElementById('divText').innerHTML;
-  document.getElementById('divText').innerHTML = strLine + "<br>" + strExisting;
-};
-
 function Pickup()
 {
   var cCurrentTile = m_cHero.GetTile();
@@ -203,11 +192,11 @@ function Pickup()
 
   if (strItems != "")
   {
-    AddInfo("Picked up " + strItems);
+    MBOX.AddInfo("Picked up " + strItems);
   }
   else
   {
-    AddInfo("Nothing to pick up");
+    MBOX.AddInfo("Nothing to pick up");
   }
 
   IncrementTime();

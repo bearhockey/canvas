@@ -79,8 +79,8 @@ var FLOOR = (function () {
     };
 
     // ----------------
-    // GetNorthTile
-    //     Gets the tile north of the one passed in
+    // GetDirectionalTile
+    //     Gets the tile adjacent to the one specified in the direcetion specified
     // ----------------
     this.GetDirectionalTile = function(cTile, iDirection, bCheckPassible=true)
     {
