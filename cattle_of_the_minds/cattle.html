@@ -41,12 +41,15 @@
 </script>
 
 <div id="divMain">
-  <div id="topButtons">
+  <div id="divTopButtons">
     <button id="butStage"     class="topButton" onclick="StageButton()">Stage</button>
     <button id="butInventory" class="topButton" onclick="InventoryButton()">Inventory</button>
     <button id="butCharacter" class="topButton" onclick="CharacterButton()">Character</button>
   </div>
-  <div id="divCanvas"></div>
+  <div id="divCenter">
+    <div id="divCanvas"></div>
+    <div id="divText" class="text_area"></div>
+  </div>
   <div id="divBottom">
     <div id="divInfo">
       <table class="infoPanel">
@@ -56,11 +59,10 @@
         <tr><td>Time</td><td id="playerTime"></td></tr>
       </table>
     </div>
-    <div id="divText" class="text_area"></div>
     <div id="divButtons">
       <button class="arrow" onclick="Get()">G</button>
       <button class="arrow" onclick="MoveNorth()">^</button>
-      <button class="arrow" onclick="">◍</button>
+      <button class="arrow" onclick="">@</button>
       <br>
       <button class="arrow" onclick="MoveWest()"><</button>
       <button class="arrow" onclick="MoveSouth()">v</button>

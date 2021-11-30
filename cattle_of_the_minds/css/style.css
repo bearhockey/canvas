@@ -17,6 +17,20 @@ div#divMain
   text-align: center;
 }
 
+div#divTopButtons
+{
+  display: inline-block;
+  float: left;
+  padding: 4px;
+  text-align: right;
+  width: 164px;
+}
+
+div#divCenter
+{
+  display: inline-block;
+}
+
 div#divCanvas
 {
   margin: auto;
@@ -27,19 +41,19 @@ div#divCanvas
 
 div#divBottom
 {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 960px;
-  text-align: center;
+  float: right;
+  text-align: left;
+  width: 320px;
 }
 
 div#divButtons
 {
   display: inline-block;
   float: right;
-  width: 256px;
+  width: 320px;
   height: 256px;
   padding: 4px 0px 0px 0px;
+  text-align: left;
 }
 
 div#divInfo
@@ -47,6 +61,46 @@ div#divInfo
   background-color: #333333;
   display: inline-block;
   float: left;
+  margin: 4px;
+  max-width: 320px;
+  min-height: 200px;
   overflow: hidden;
-  min-height: 100px;
+  padding: 4px 8px;
+  width: 100%;
+}
+
+/* mobile css */
+@media screen and (max-width: 1480px)
+{
+  div#divTopButtons
+  {
+    display: inline-block;
+    float: none;
+    max-width: 960px;
+    text-align: center;
+    width: 100%;
+  }
+
+  div#divCanvas
+  {
+    display: inline-block;
+    margin: auto;
+    padding: 0px;
+    text-align: center;
+    width: 100%;
+  }
+
+  div#divButtons
+  {
+    text-align: right;
+  }
+
+  div#divBottom
+  {
+    display: inline-block;
+    float: none;
+    max-width: 960px;
+    text-align: center;
+    width: 100%;
+  }
 }

@@ -5,6 +5,7 @@ const MAP_WIDTH = 15; // in tiles
 const START_IDX = 666;
 // globals - don't use if you can
 var cFirstFloor;
+var cSecondFloor;
 var iFloorWidth = 30;
 var iPlaytime = 0; // playtime in seconds
 var m_iState = CONST.STATE_STAGE;

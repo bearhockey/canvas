@@ -17,6 +17,7 @@ var CONST = (function () {
   c.PAWN_ITEM = 1;
   c.PAWN_ENEMY = 2;
   c.PAWN_TRAP = 3;
+  c.PAWN_STAIRS = 4;
 
   // item types
   c.ITEM_NONE = -1; // not an item
@@ -31,6 +32,10 @@ var CONST = (function () {
   c.ITEM_ACCESSORY = 8;
   c.ITEM_BELT = 9;
   c.ITEM_ADD = 99; // special "item" that is really just an add symbol
+
+  // door types
+  c.DOOR_UPSTAIRS = 1;
+  c.DOOR_DOWNSTAIRS = 2;
 
   // stats
   c.STAT_LEVEL     = 1;

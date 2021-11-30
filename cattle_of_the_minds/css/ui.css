@@ -26,12 +26,12 @@ button.panel
 
 button.arrow
 {
-  border-radius: 10px;
-  font-size: 32px;
-  font-weight: 600;
-  height: 64px;
-  margin: 0px;
-  width: 64px;
+  border-radius: 12px;
+  font-size: 40px;
+  font-weight: 800;
+  height: 80px;
+  margin: 4px 2px;
+  width: 80px;
 }
 
 button.topButton
@@ -40,16 +40,17 @@ button.topButton
   font-size: 32px;
   font-weight: 600;
   height: 64px;
-  margin: 0px;
+  margin: 4px 0px;
 }
 
 table.infoPanel
 {
   color: #EEEEEE;
-  font-size: 18px;
+  font-size: 26px;
   font-weight: 550;
   margin: 4px;
   min-width: 128px;
+  padding: 4px 0px;
 }
 
 div.text_area
@@ -58,24 +59,35 @@ div.text_area
   border: 1px solid;
   display: inline-block;
   font-size: 20px;
-  font-weight: 550;
+  font-weight: 500;
   height: 128px;
   margin: 4px;
+  max-width: 960px;
   min-width: 550px;
   overflow-x: hidden;
   overflow-y: scroll;
   padding: 4px;
   text-align: left;
+  width: 100%;
 }
 
-div.text_area::-webkit-scrollbar
+/* mobile css */
+@media screen and (max-width: 1160px)
 {
-  background: #000;
-  background-color: #DCCCCC;
-  width: 64px;
-}
+  div.text_area
+  {
+    font-size: 26px;
+    font-weight: 650;
+  }
 
-div.text_area::-webkit-scrollbar-thumb
-{
-  background: #8E8888;
-}
+  div.text_area::-webkit-scrollbar
+  {
+    background: #000;
+    background-color: #DCCCCC;
+    width: 64px;
+  }
+
+  div.text_area::-webkit-scrollbar-thumb
+  {
+    background: #8E8888;
+  }

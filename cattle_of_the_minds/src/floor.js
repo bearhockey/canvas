@@ -2,18 +2,51 @@ var FLOOR = (function () {
   // consts -- move these to a file probably
   const EMPTY_COLOR = "#DDDDDD";
   const WALL_COLOR = "#444444";
-  var floor = function(iWidth, strFloorColor = EMPTY_COLOR, strWallColor = WALL_COLOR)
+  var floor = function(iWidth, iUpstairs=1, strFloorColor = EMPTY_COLOR, strWallColor = WALL_COLOR)
   {
+    // pre-define functions here to use in the constructor
+    // ----------------
+    // AddPawnToEmptyTile
+    //     Adds a pawn to a random empty tile
+    // ----------------
+    this.AddPawnToEmptyTile = function(cPawn)
+    {
+      console.log("HEYH");
+      var idx;
+      var iLength = this.arrEmptyTiles.length;
+      var cTile;
+      if (iLength > 0)
+      {
+        idx = Math.floor(Math.random()*iLength);
+        cTile = this.arrEmptyTiles[idx];
+        if (cTile != null)
+        {
+          console.log("Adding to this tile: ", cTile);
+          cTile.PlaceEntity(cPawn);
+          this.arrEmptyTiles.splice(idx, 1);
+          return true;
+        }
+      }
+
+      console.log("OOPS");
+      return false;
+    };
+    
+    // constructor
     this.iWidth = iWidth; // the height and width of the tile array
+    this.iUpstairs = iUpstairs;
     this.arrTileMap = [];
+    this.arrEmptyTiles = []; // useful for placing things
     this.cNullTile = new TILE(-1, false, "#111111");
 
     this.strFloorColor = strFloorColor;
     this.strWallColor = strWallColor;
 
+    // build base room
     var iSize = this.iWidth * this.iWidth;
     var idx;
     var color;
+    var cTile;
     for (idx = 0; idx < iSize; ++idx)
     {
       if (idx % this.iWidth == 0 || idx % this.iWidth == this.iWidth -1)
@@ -28,8 +61,18 @@ var FLOOR = (function () {
       {
         color = (Math.random() > 0.85) ? this.strWallColor : this.strFloorColor;
       }
-      this.arrTileMap.push(new TILE(idx, (color == this.strFloorColor), color));
+      cTile = new TILE(idx, (color == this.strFloorColor), color);
+      this.arrTileMap.push(cTile);
+      if (color == this.strFloorColor) { this.arrEmptyTiles.push(cTile); }
     } // end of for loop
+    // add stairs
+    var iNumberOfUpstairs = this.iUpstairs;
+    var bKeepGoing = true;
+    while (iNumberOfUpstairs > 0 && bKeepGoing)
+    {
+      bKeepGoing = this.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/upstairs.gif", CONST.DOOR_UPSTAIRS));
+      if (bKeepGoing) { iNumberOfUpstairs--; }
+    }
 
     // ----------------
     // GetAllTiles
