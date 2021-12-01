@@ -3,6 +3,7 @@ var RENDERER = (function () {
 
   const GRID_SIZE = 15; // a box of AxA
   const TILE_SIZE = 64; // pixels sized nodes
+  const UNSEEN_ALPHA = "99"; // this is added as the alpha bit on unseen tiles
 
   renderer.bShowGrid = true;
   renderer.iFocusIdx = 0;
@@ -90,7 +91,7 @@ var RENDERER = (function () {
         bIsVisible = (arrVisibleTiles.indexOf(cTile) >= 0);
 
         strTileColor = cTile.GetColor();
-        ctx.fillStyle = (bIsVisible) ? strTileColor : strTileColor + "66";
+        ctx.fillStyle = (bIsVisible) ? strTileColor : strTileColor + UNSEEN_ALPHA;
         ctx.fillRect(iX, iY, TILE_SIZE, TILE_SIZE);
 
         if (bIsVisible && cTile.HasEntity())

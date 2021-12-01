@@ -2,11 +2,12 @@ var TILE = (function () {
   // privates
   const DEFAULT_NODE_COLOR = "#000000";
   // main
-  var tile = function(idx, bIsPassable=true, color=DEFAULT_NODE_COLOR)
+  var tile = function(idx, bIsPassable=true, bIsLit=false, color=DEFAULT_NODE_COLOR)
   {
     this.idx = idx;
     this.color = color;
     this.bIsPassable = bIsPassable;
+    this.bIsLit = bIsLit;
     this.bIsDiscovered = false;
     this.bIsVisible = false;
     this.arrEntities = [];

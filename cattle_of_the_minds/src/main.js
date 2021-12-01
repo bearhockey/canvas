@@ -2,19 +2,17 @@
 const CANVAS_WIDTH = 960;
 const CANVAS_HEIGHT = 960;
 const MAP_WIDTH = 15; // in tiles
-const START_IDX = 666;
 // globals - don't use if you can
 var cFirstFloor;
 var cSecondFloor;
-var iFloorWidth = 30;
+var iFloorWidth = 50;
+var iNumberOfEnemies = 10;
 var iPlaytime = 0; // playtime in seconds
 var m_iState = CONST.STATE_STAGE;
 
 var m_cHero;
-var cGoldOne;
-var cGoldTwo;
 var cSword;
-var cEnemy;
+var arrEnemies = [];
 
 function StartGame()
 {
@@ -22,6 +20,7 @@ function StartGame()
   RENDERER.Init();
   INVENTORY.Init();
   cFirstFloor = new FLOOR(iFloorWidth);
+  cFirstFloor.GenerateFloor();
 
   m_cHero = new PAWN(CONST.PAWN_HERO, "Hero", "./res/hero.gif");
   // just add the stats for now
@@ -31,29 +30,23 @@ function StartGame()
   m_cHero.cBaseStats.SetStat(CONST.STAT_ATTACK, 1, true);
   m_cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 3, true);
 
-  cGoldOne = new PAWN(CONST.PAWN_ITEM, "Gold", "./res/gold.gif", CONST.ITEM_MONEY);
-  cGoldOne.iQuantity = 50;
-  var cStartTile = cFirstFloor.GetTile(START_IDX);
-  var cTestTile = cFirstFloor.GetTile(728);
+  var cStartTile = cFirstFloor.GetEmptyTile();
   cStartTile.PlaceEntity(m_cHero);
-  cTestTile.PlaceEntity(cGoldOne);
   // give the hero a sword for now
   cSword = new PAWN(CONST.PAWN_ITEM, "Sword", "./res/sword.gif", CONST.ITEM_WEAPON);
   cSword.cBaseStats.SetStat(CONST.STAT_ATTACK, 2, true);
   cSword.cBaseStats.SetStat(CONST.STAT_ACCURACY, 1, true);
   m_cHero.AddToInventory(cSword);
   m_cHero.EquipItem(cSword);
-  // add a bad guy
-  cEnemy = new PAWN(CONST.PAWN_ENEMY, "Goblin", "./res/goblin.gif");
-  cEnemy.cBaseStats.SetStat(CONST.STAT_HEALTH, 6, true);
-  cEnemy.cBaseStats.SetStat(CONST.STAT_BRAWN, 2, true);
-  cEnemy.cBaseStats.SetStat(CONST.STAT_AGILITY, 1, true);
-  cEnemy.CalculateTotalStats(); // for now because we aren't equipping anything
-  cGoldTwo = new PAWN(CONST.PAWN_ITEM, "Gold", "./res/gold.gif", CONST.ITEM_MONEY);
-  cGoldTwo.iQuantity = Math.floor(Math.random()*10)+5;
-  cEnemy.AddToInventory(cGoldTwo);
-  var cBadTile = cFirstFloor.GetTile(602);
-  cBadTile.PlaceEntity(cEnemy);
+  
+  // add some enemies
+  var idx;
+  for (idx = 0; idx < iNumberOfEnemies; ++idx)
+  {
+    cEnemy = PAWNUTILS.MakeGoblin();
+    cFirstFloor.GetEmptyTile().PlaceEntity(cEnemy);
+    arrEnemies.push(cEnemy);
+  } // end of for loop
   // start game
   myGameArea.start();
   Update();
@@ -89,7 +82,7 @@ function Update()
     case CONST.STATE_STAGE:
     {
       var iCamPosition = m_cHero.GetTile().GetIdx();
-      var arrVisionRange = cFirstFloor.GetTileArea(iCamPosition, 5);
+      var arrVisionRange = cFirstFloor.GetVisualTiles(iCamPosition, 3);
       var idx;
       var iTiles = arrVisionRange.length;
       var cTile;

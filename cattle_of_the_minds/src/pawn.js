@@ -244,7 +244,7 @@ var PAWN = (function () {
       }
     };
 
-    this.IsDead = function() { console.log("Health? ", this.GetStat(CONST.STAT_HEALTH)[0]); return (this.GetStat(CONST.STAT_HEALTH)[0] < 1); };
+    this.IsDead = function() { return (this.GetStat(CONST.STAT_HEALTH)[0] < 1); };
   }; // end of class
 
   return pawn;
