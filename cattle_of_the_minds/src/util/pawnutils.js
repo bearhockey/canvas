@@ -14,6 +14,8 @@ var PAWNUTILS = (function () {
     cEnemy.CalculateTotalStats(); // for now because we aren't equipping anything
     // give the goblin some gold
     cEnemy.AddToInventory(pu.MakeGoldPile(Math.floor(Math.random()*10) + 5));
+    // give the goblin a brain
+    cEnemy.cController = new NPC();
     return cEnemy;
   };
 

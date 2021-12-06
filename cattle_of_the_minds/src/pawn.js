@@ -23,6 +23,8 @@ var PAWN = (function () {
     this.arrInventory = [];
     this.arrEquipped = [];
 
+    this.cController = null; // controls actions for AI - left null for items and characters
+
     // ---- Getters and setters ----
     this.GetIcon      = function() { return this.strIcon; };
     this.GetInventory = function() { return this.arrInventory; };
@@ -40,7 +42,10 @@ var PAWN = (function () {
       }
     };
 
-    this.IsPassable = function()          { return (this.iPawnType != CONST.PAWN_ENEMY); };
+    this.IsPassable = function()
+    {
+      return (this.iPawnType != CONST.PAWN_ENEMY && this.iPawnType != CONST.PAWN_HERO);
+    };
 
     this.GetRect  = function()            { return this.cRect; };
     this.SetRect  = function(cRectBounds) { this.cRect = cRectBounds; };
@@ -245,6 +250,18 @@ var PAWN = (function () {
     };
 
     this.IsDead = function() { return (this.GetStat(CONST.STAT_HEALTH)[0] < 1); };
+
+    // ----------------
+    // Update
+    //     Runs updates - runs the controller script if it exists
+    // ----------------
+    this.Update = function()
+    {
+      if (this.cController != null && !this.IsDead())
+      {
+        this.cController.Act(this);
+      }
+    };
   }; // end of class
 
   return pawn;

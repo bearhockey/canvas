@@ -11,6 +11,7 @@
 <script src="./src/util/strings.js"></script>
 <script src="./src/util/utils.js"></script>
 
+<script src="./src/ui/infobox.js"></script>
 <script src="./src/ui/messagebox.js"></script>
 
 <script src="./src/controller.js"></script>
@@ -20,9 +21,11 @@
 <script src="./src/tile.js"></script>
 <script src="./src/floor.js"></script>
 
+<script src="./src/npc.js"></script>
 <script src="./src/pawn.js"></script>
 <script src="./src/inventory_container.js"></script>
 
+<script src="./src/state/state_manager.js"></script>
 <script src="./src/state/renderer.js"></script>
 <script src="./src/state/inventory.js"></script>
 <script src="./src/state/character.js"></script>
@@ -30,15 +33,15 @@
 <script src="./src/main.js"></script>
 
 <script type="text/javascript">
-  function MoveNorth() { GoUp(); }
-  function MoveSouth() { GoDown(); }
-  function MoveEast()  { GoRight(); }
-  function MoveWest()  { GoLeft(); }
-  function Get()       { Pickup(); }
+  function MoveNorth() { CONTROLLER.MoveHero(CONST.NORTH); }
+  function MoveSouth() { CONTROLLER.MoveHero(CONST.SOUTH); }
+  function MoveEast()  { CONTROLLER.MoveHero(CONST.EAST); }
+  function MoveWest()  { CONTROLLER.MoveHero(CONST.WEST); }
+  function Get()       { CONTROLLER.HeroPickup(); }
 
-  function StageButton()     { SetState(CONST.STATE_STAGE); }
-  function InventoryButton() { SetState(CONST.STATE_INVENTORY); }
-  function CharacterButton() { SetState(CONST.STATE_CHARACTER); }
+  function StageButton()     { STATE.SetState(STATE.STATE_STAGE); }
+  function InventoryButton() { STATE.SetState(STATE.STATE_INVENTORY); }
+  function CharacterButton() { STATE.SetState(STATE.STATE_CHARACTER); }
 </script>
 
 <div id="divMain">

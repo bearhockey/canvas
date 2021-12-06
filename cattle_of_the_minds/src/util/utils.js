@@ -11,6 +11,15 @@ var UTILS = (function () {
   };
 
   // ----------------
+  // GetRandomDirection
+  //     Returns a random cardinal direction
+  // ----------------
+  utils.GetRandomDirection = function()
+  {
+    return Math.floor(Math.random()*4);
+  };
+
+  // ----------------
   // GetIdxFromTiles
   //     Pass in an array of tiles and get an array of the idx values of each
   // ----------------

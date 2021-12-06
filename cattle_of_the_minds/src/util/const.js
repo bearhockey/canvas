@@ -1,11 +1,6 @@
 var CONST = (function () {
   var c = {};
 
-  // game states
-  c.STATE_STAGE = 1;
-  c.STATE_INVENTORY = 2;
-  c.STATE_CHARACTER = 3;
-
   // directions
   c.NORTH = 0;
   c.EAST  = 1;

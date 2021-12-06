@@ -21,6 +21,8 @@ var FLOOR = (function () {
     this.strFloorColor = strFloorColor;
     this.strWallColor = strWallColor;
 
+    this.GetFloorWidth = function() { return this.iWidth; };
+
     // ----------------
     // GenerateFloor
     //     Builds a random floor

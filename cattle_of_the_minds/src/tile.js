@@ -20,6 +20,8 @@ var TILE = (function () {
     this.IsVisible    = function() { return this.bIsVisible; };
     this.HasEntity    = function() { return (this.arrEntities.length > 0); };
 
+    this.GetEntities  = function() { return this.arrEntities; };
+
     // ----------------
     // GetFirstEnemy
     //     Returns the first enemy on this tile, if exists

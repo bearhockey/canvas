@@ -6,14 +6,17 @@ const MAP_WIDTH = 15; // in tiles
 var cFirstFloor;
 var cSecondFloor;
 var iFloorWidth = 50;
-var iNumberOfEnemies = 10;
+var iNumberOfEnemies = 10;CONST
 var iPlaytime = 0; // playtime in seconds
-var m_iState = CONST.STATE_STAGE;
 
 var m_cHero;
 var cSword;
-var arrEnemies = [];
+var m_arrEnemies = [];
 
+// ----------------
+// StartGame
+//     Starts the game
+// ----------------
 function StartGame()
 {
   // Init components
@@ -21,6 +24,7 @@ function StartGame()
   INVENTORY.Init();
   cFirstFloor = new FLOOR(iFloorWidth);
   cFirstFloor.GenerateFloor();
+  m_cCurrentFloor = cFirstFloor;
 
   m_cHero = new PAWN(CONST.PAWN_HERO, "Hero", "./res/hero.gif");
   // just add the stats for now
@@ -30,7 +34,7 @@ function StartGame()
   m_cHero.cBaseStats.SetStat(CONST.STAT_ATTACK, 1, true);
   m_cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 3, true);
 
-  var cStartTile = cFirstFloor.GetEmptyTile();
+  var cStartTile = m_cCurrentFloor.GetEmptyTile();
   cStartTile.PlaceEntity(m_cHero);
   // give the hero a sword for now
   cSword = new PAWN(CONST.PAWN_ITEM, "Sword", "./res/sword.gif", CONST.ITEM_WEAPON);
@@ -38,14 +42,14 @@ function StartGame()
   cSword.cBaseStats.SetStat(CONST.STAT_ACCURACY, 1, true);
   m_cHero.AddToInventory(cSword);
   m_cHero.EquipItem(cSword);
-  
+
   // add some enemies
   var idx;
   for (idx = 0; idx < iNumberOfEnemies; ++idx)
   {
     cEnemy = PAWNUTILS.MakeGoblin();
-    cFirstFloor.GetEmptyTile().PlaceEntity(cEnemy);
-    arrEnemies.push(cEnemy);
+    m_cCurrentFloor.GetEmptyTile().PlaceEntity(cEnemy);
+    m_arrEnemies.push(cEnemy);
   } // end of for loop
   // start game
   myGameArea.start();
@@ -71,18 +75,37 @@ var myGameArea =
   }
 };
 
+// ----------------
+// GetCanvas
+//     Returns the canvas object
+// ----------------
 function GetCanvas() { return myGameArea.context; };
 
-function Update()
+// ----------------
+// Update
+//     Updates the game loop
+// ----------------
+function Update(iTimeIncrease=0)
 {
-  UpdateMenu();
-  PopInfo();
-  switch (m_iState)
+  IncrementTime(iTimeIncrease);
+  IBOX.UpdateInfo();
+  // update enemies
+  var cEnemy;
+  var iEnemies = m_arrEnemies.length;
+  var idx;
+  for (idx = 0; idx < iEnemies; ++idx)
   {
-    case CONST.STATE_STAGE:
+    cEnemy = m_arrEnemies[idx];
+    if (cEnemy != null) { cEnemy.Update(); }
+  }
+  
+  var iState = STATE.GetState();
+  switch (iState)
+  {
+    case STATE.STATE_STAGE:
     {
       var iCamPosition = m_cHero.GetTile().GetIdx();
-      var arrVisionRange = cFirstFloor.GetVisualTiles(iCamPosition, 3);
+      var arrVisionRange = m_cCurrentFloor.GetVisualTiles(iCamPosition, 3);
       var idx;
       var iTiles = arrVisionRange.length;
       var cTile;
@@ -94,13 +117,13 @@ function Update()
       DrawStage(iCamPosition, arrVisionRange);
       break;
     }
-    case CONST.STATE_INVENTORY:
+    case STATE.STATE_INVENTORY:
     {
       INVENTORY.Update();
       DrawInventory();
       break;
     }
-    case CONST.STATE_CHARACTER:
+    case STATE.STATE_CHARACTER:
     {
       CHARACTER.Update();
       DrawCharacter();
@@ -110,20 +133,32 @@ function Update()
   } // end of switch
 };
 
+// ----------------
+// DrawStage
+//     Draws the stage state
+// ----------------
 function DrawStage(iFocusIdx, arrVisionRange)
 {
   myGameArea.clear();
-  var arrTiles = cFirstFloor.GetTileArea(iFocusIdx, MAP_WIDTH);
+  var arrTiles = m_cCurrentFloor.GetTileArea(iFocusIdx, MAP_WIDTH);
   RENDERER.SetVisibleTiles(arrTiles, arrVisionRange);
   RENDERER.Draw(GetCanvas(), MAP_WIDTH);
 }
 
+// ----------------
+// DrawInventory
+//     Draws the inventory state
+// ----------------
 function DrawInventory()
 {
   myGameArea.clear();
   INVENTORY.Draw(GetCanvas());
 }
 
+// ----------------
+// DrawCharacater
+//     Draws the character information state
+// ----------------
 function DrawCharacter()
 {
   myGameArea.clear();
@@ -131,9 +166,9 @@ function DrawCharacter()
 }
 
 // DEBUG STUFF ---- maybe move these to a better class
-function GetState()       { return m_iState; };
-function SetState(iState) { m_iState = iState; Update(); };
 function GetHero() { return m_cHero; };
+function GetFloor() { return m_cCurrentFloor; };
+function GetTime() { return iPlaytime; };
 function IncrementTime(iValue=1) { iPlaytime+=iValue; };
 
 function FightGuy(cPawn)
@@ -143,65 +178,4 @@ function FightGuy(cPawn)
   {
     COMBAT.AttackPawn(cPawn, m_cHero, false);
   }
-}
-
-function GoUp()
-{ m_cHero.Move(CONST.NORTH, cFirstFloor); IncrementTime(); Update(); };
-function GoDown()
-{ m_cHero.Move(CONST.SOUTH, cFirstFloor); IncrementTime(); Update(); };
-function GoLeft()
-{ m_cHero.Move(CONST.WEST, cFirstFloor); IncrementTime(); Update(); };
-function GoRight()
-{ m_cHero.Move(CONST.EAST, cFirstFloor); IncrementTime(); Update(); };
-
-function UpdateMenu()
-{
-  document.getElementById('butStage').disabled = (m_iState == CONST.STATE_STAGE);
-  document.getElementById('butInventory').disabled = (m_iState == CONST.STATE_INVENTORY);
-  document.getElementById('butCharacter').disabled = (m_iState == CONST.STATE_CHARACTER);
-};
-
-function PopInfo()
-{
-  document.getElementById('playerLevel').innerHTML = m_cHero.GetStat(CONST.STAT_LEVEL)[0].toString();
-  var arrHealth = m_cHero.GetStat(CONST.STAT_HEALTH);
-  document.getElementById('playerHealth').innerHTML = UTILS.StatPairToText(arrHealth);
-  var arrMana = m_cHero.GetStat(CONST.STAT_MANA);
-  document.getElementById('playerMana').innerHTML = UTILS.StatPairToText(arrMana);
-  document.getElementById('playerTime').innerHTML = new Date(iPlaytime * 1000).toISOString().substr(11, 8);
-};
-
-function Pickup()
-{
-  var cCurrentTile = m_cHero.GetTile();
-  var arrItems = cCurrentTile.GetEntities();
-  var iLength = arrItems.length;
-  var idx;
-  var cItem;
-  var strItems = "";
-  for (idx = 0; idx < iLength; ++idx)
-  {
-    cItem = arrItems[idx];
-    if (cItem != null && cItem.iPawnType == CONST.PAWN_ITEM)
-    {
-      if (cCurrentTile.RemoveEntity(cItem))
-      {
-        m_cHero.AddToInventory(cItem);
-        var strSingleItem = (cItem.iQuantity > 0) ? cItem.iQuantity.toString() + " " + cItem.strName : cItem.strName;
-        strItems += (strItems != "") ? (", " + strSingleItem) : strSingleItem;
-      }
-    }
-  }
-
-  if (strItems != "")
-  {
-    MBOX.AddInfo("Picked up " + strItems);
-  }
-  else
-  {
-    MBOX.AddInfo("Nothing to pick up");
-  }
-
-  IncrementTime();
-  Update();
 };
