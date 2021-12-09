@@ -23,6 +23,29 @@ var TILE = (function () {
     this.GetEntities  = function() { return this.arrEntities; };
 
     // ----------------
+    // GetStore
+    //     Returns the first store on this tile - if it exists (assumes only one store per tile)
+    // ----------------
+    this.GetStore = function()
+    {
+      var bHasStore = false;
+      var idx;
+      var cPawn;
+      var iLength = this.arrEntities.length;
+      for (idx = 0; idx < iLength; ++idx)
+      {
+        cPawn = this.arrEntities[idx];
+        if (cPawn != null && cPawn.GetPawnType() == CONST.PAWN_STORE)
+        {
+          bHasStore = true;
+          break;
+        }
+      } // end for loop
+
+      return (bHasStore) ? cPawn : null;
+    };
+
+    // ----------------
     // GetFirstEnemy
     //     Returns the first enemy on this tile, if exists
     // ----------------

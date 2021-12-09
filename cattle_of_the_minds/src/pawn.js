@@ -8,6 +8,7 @@ var PAWN = (function () {
     // pawn specific data
     this.iPawnType = iPawnType;
     this.iItemType = iItemType;
+    this.iPrice    = 0; // value of the item for buying and selling
     this.iQuantity = 0; // assume that any value less than one means its not an item
     this.iBulk     = 0;
     this.iCapacity = 0;
@@ -26,9 +27,11 @@ var PAWN = (function () {
     this.cController = null; // controls actions for AI - left null for items and characters
 
     // ---- Getters and setters ----
+    this.GetName      = function() { return this.strName; };
     this.GetIcon      = function() { return this.strIcon; };
     this.GetInventory = function() { return this.arrInventory; };
     this.GetEquipment = function() { return this.arrEquipped; };
+    this.GetPawnType  = function() { return this.iPawnType; };
     this.GetItemType  = function() { return this.iItemType; };
 
     this.GetTile    = function()          { return this.cTile; };
@@ -129,6 +132,65 @@ var PAWN = (function () {
     };
 
     // ----------------
+    // GetGoldItem
+    //     Returns the item that represents the pawn's gold pile
+    // ----------------
+    this.GetGoldItem = function()
+    {
+      var idx;
+      var iLength = this.arrInventory.length;
+      var cMoney = null;
+      for (idx = 0; idx < iLength; ++idx)
+      {
+        cMoney = this.arrInventory[idx];
+        if (cMoney != null && cMoney.GetItemType() == CONST.ITEM_MONEY)
+        {
+          return cMoney;
+        }
+      } // end for loop
+
+      return null;
+    };
+
+
+    // ----------------
+    // GetGold
+    //     Returns the amount of gold this pawn has
+    // ----------------
+    this.GetGold = function()
+    {
+      var cMoney = this.GetGoldItem();
+      var iAmount = (cMoney != null) ? cMoney.iQuantity : 0;
+      return iAmount;
+    };
+
+    // ----------------
+    // DeductGold
+    //     Removes a specified amount of gold from the pawn - if it can
+    // ----------------
+    this.DeductGold = function(iAmount)
+    {
+      var cMoney = this.GetGoldItem();
+      var iDiff = -1;
+      if (cMoney != null)
+      {
+        if (cMoney.iQuantity >= iAmount)
+        {
+          cMoney.iQuantity -= iAmount;
+          return iAmount;
+        }
+        else
+        {
+          iDiff = cMoney.iQuantity;
+          cMoney.iQuantity = 0;
+          return iDiff;
+        }
+      }
+
+      return -1;
+    };
+
+    // ----------------
     // AddToInventory
     //     Adds a pawn to this pawns inventory - combines currency if it can
     // ----------------
@@ -225,6 +287,26 @@ var PAWN = (function () {
         if (idx >= 0)
         {
           if (this.cTile != null) { this.cTile.PlaceEntity(cItem); }
+          this.arrInventory.splice(idx, 1);
+        }
+        // remove from equipment as well
+        this.UnequipItem(cItem);
+      }
+    };
+
+    // ----------------
+    // TransferItem
+    //     Moves one item to this pawn to another pawn's inventory - useful for store transactions
+    // ----------------
+    this.TransferItem = function(cItem, cPawn)
+    {
+      var idx;
+      if (cItem != null && cPawn != null)
+      {
+        idx = this.arrInventory.indexOf(cItem);
+        if (idx >= 0)
+        {
+          cPawn.AddToInventory(cItem);
           this.arrInventory.splice(idx, 1);
         }
         // remove from equipment as well

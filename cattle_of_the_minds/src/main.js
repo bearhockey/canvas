@@ -6,7 +6,7 @@ const MAP_WIDTH = 15; // in tiles
 var cFirstFloor;
 var cSecondFloor;
 var iFloorWidth = 50;
-var iNumberOfEnemies = 10;CONST
+var iNumberOfEnemies = 10;
 var iPlaytime = 0; // playtime in seconds
 
 var m_cHero;
@@ -22,8 +22,8 @@ function StartGame()
   // Init components
   RENDERER.Init();
   INVENTORY.Init();
-  cFirstFloor = new FLOOR(iFloorWidth);
-  cFirstFloor.GenerateFloor();
+  // cFirstFloor = D_FLOOR.RandomFloor(iFloorWidth);
+  cFirstFloor = D_FLOOR.DebugFloor(MAP_WIDTH);
   m_cCurrentFloor = cFirstFloor;
 
   m_cHero = new PAWN(CONST.PAWN_HERO, "Hero", "./res/hero.gif");
@@ -40,20 +40,35 @@ function StartGame()
   cSword = new PAWN(CONST.PAWN_ITEM, "Sword", "./res/sword.gif", CONST.ITEM_WEAPON);
   cSword.cBaseStats.SetStat(CONST.STAT_ATTACK, 2, true);
   cSword.cBaseStats.SetStat(CONST.STAT_ACCURACY, 1, true);
+  cSword.iPrice = 50;
   m_cHero.AddToInventory(cSword);
   m_cHero.EquipItem(cSword);
 
+  // give the player some gold
+  m_cHero.AddToInventory(PAWNUTILS.MakeGoldPile(90));
+
   // add some enemies
   var idx;
+  var cEnemy;
   for (idx = 0; idx < iNumberOfEnemies; ++idx)
   {
     cEnemy = PAWNUTILS.MakeGoblin();
     m_cCurrentFloor.GetEmptyTile().PlaceEntity(cEnemy);
     m_arrEnemies.push(cEnemy);
   } // end of for loop
+
+  // add a store
+  var cStore = new PAWN(CONST.PAWN_STORE, "Debug Store", "./res/sign.gif");
+  var cItem1 = new PAWN(CONST.PAWN_ITEM, "Sword 1", "./res/sword.gif", CONST.ITEM_WEAPON);
+  cItem1.cBaseStats.SetStat(CONST.STAT_ATTACK, 2, true);
+  cItem1.cBaseStats.SetStat(CONST.STAT_ACCURACY, 1, true);
+  cItem1.iPrice = 50;
+  cStartTile.PlaceEntity(cStore);
+  cStore.AddToInventory(cItem1);
   // start game
   myGameArea.start();
-  Update();
+
+  STATE.SetState(STATE.STATE_STAGE);
 }
 
 var myGameArea =
@@ -98,7 +113,7 @@ function Update(iTimeIncrease=0)
     cEnemy = m_arrEnemies[idx];
     if (cEnemy != null) { cEnemy.Update(); }
   }
-  
+
   var iState = STATE.GetState();
   switch (iState)
   {

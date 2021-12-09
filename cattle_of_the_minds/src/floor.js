@@ -24,145 +24,21 @@ var FLOOR = (function () {
     this.GetFloorWidth = function() { return this.iWidth; };
 
     // ----------------
-    // GenerateFloor
-    //     Builds a random floor
+    // FillFloor
+    //     Fills the floor with wall tiles
     // ----------------
-    this.GenerateFloor = function()
+    this.FillFloor = function()
     {
-      var iSize = this.iWidth * this.iWidth;
       var idx;
-      var color;
+      var iSize = this.iWidth * this.iWidth;
       var cTile;
-
-      // step one - fill the room with walls
       for (idx = 0; idx < iSize; ++idx)
       {
         cTile = new TILE(idx, false, false, this.strWallColor);
         this.arrTileMap.push(cTile);
       } // end of for loop
-
-      // step two - generate rooms
-      var iRoomIdx;
-      var iRoomX;
-      var iRoomY;
-      var iRoomHeight;
-      var iRoomWidth;
-
-      var arrRoom;
-      var iRoomLength;
-      var bValidRoom;
-      var arrCenterTiles = [];
-
-      var x;
-      var y;
-      var nEmptyPercentage = 0;
-      var iTries = 0;
-      while (nEmptyPercentage < EMPTY_PERCENTAGE && iTries < ROOM_GENERATION_RETRIES)
-      {
-        arrRoom = [];
-        bValidRoom = true;
-
-        iRoomX = Math.floor(Math.random()*this.iWidth);
-        iRoomY = Math.floor(Math.random()*this.iWidth)*this.iWidth;
-        iRoomIdx = iRoomY+iRoomX;
-        iRoomHeight = Math.floor(Math.random()*(MAXIMUM_ROOM_WDTH-MINIMUM_ROOM_WIDTH)) + MINIMUM_ROOM_WIDTH;
-        iRoomWidth = Math.floor(Math.random()*(MAXIMUM_ROOM_WDTH-MINIMUM_ROOM_WIDTH)) + MINIMUM_ROOM_WIDTH;
-        for (y = 0; y < iRoomHeight; ++y)
-        {
-          for (x = 0; x < iRoomWidth; ++x)
-          {
-            idx = iRoomIdx + x + (y * this.iWidth);
-            // first check if idx is valid
-            if (!this.IsValidIdx(idx))
-            {
-              bValidRoom = false;
-              break;
-            }
-            else if (this.arrTileMap[idx].bIsPassable)
-            {
-              bValidRoom = false;
-              break;
-            }
-            else
-            {
-              arrRoom.push(idx);
-            }
-
-          } // end x loop
-        } // end y loop
-
-        if (bValidRoom)
-        {
-          color = Math.random() < ROOM_LIT_CHANCE ? LIT_COLOR : this.strFloorColor;
-          iRoomLength = arrRoom.length;
-          for (x = 0; x < iRoomLength; ++x)
-          {
-            idx = arrRoom[x];
-            cTile = new TILE(idx, true, (color == LIT_COLOR), color);
-            this.arrTileMap[idx] = cTile;
-            this.arrEmptyTiles.push(cTile);
-            // estimate trying to find the middle of trhe room
-            if (x == Math.floor(iRoomLength*0.5))
-            {
-              arrCenterTiles.push(idx);
-            }
-          } // end for loop
-        }
-        else
-        {
-          iTries++;
-        }
-
-        nEmptyPercentage = this.arrEmptyTiles.length / this.arrTileMap.length;
-      } // end while loop
-
-      // step three - connect the rooms
-      var iDestination;
-      while (arrCenterTiles.length > 0)
-      {
-        idx = arrCenterTiles.shift();
-        iDestination = (arrCenterTiles.length > 0) ? arrCenterTiles[0] : idx;
-        while (idx != iDestination)
-        {
-          if (idx < iDestination)
-          {
-            if (idx + this.iWidth < iDestination) { idx += this.iWidth; }
-            else                                  { idx += 1;}
-          }
-          else if (idx > iDestination)
-          {
-            if (idx - this.iWidth > iDestination) { idx -= this.iWidth; }
-            else                                  { idx -= 1; }
-          }
-
-          cTile = this.arrTileMap[idx];
-          if (this.IsValidIdx(idx) && this.arrTileMap[idx] != null && !this.arrTileMap[idx].bIsPassable)
-          {
-            cTile = new TILE(idx, true, false, this.strFloorColor);
-            this.arrTileMap[idx] = cTile;
-            this.arrEmptyTiles.push(cTile);
-          }
-        } // end idx while loop
-      } // end arrCenterTiles while loop
-
-      // add upstairs
-      var iNumberOfUpstairs = this.iUpstairs;
-      var bKeepGoing = true;
-      while (iNumberOfUpstairs > 0 && bKeepGoing)
-      {
-        bKeepGoing = this.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/upstairs.gif", CONST.DOOR_UPSTAIRS));
-        if (bKeepGoing) { iNumberOfUpstairs--; }
-      }
-
-      // add downstairs
-      var iNumberOfDownstairs = Math.floor(Math.random()*3) + 1;
-      while (iNumberOfDownstairs > 0)
-      {
-        this.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/downstairs.gif", CONST.DOOR_DOWNSTAIRS));
-        iNumberOfDownstairs--;
-      }
     };
-
+    
     // ----------------
     // IsValidIdx
     //     Checks if the idx is valid - leaving a border of tiles around the edges

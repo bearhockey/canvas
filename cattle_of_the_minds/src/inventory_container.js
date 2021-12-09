@@ -38,7 +38,16 @@ var ICONTAINER = (function () {
       if (this.iSlotLimit > 0)
       { return this.iSlotLimit - this.arrContents.length; }
       return 99;
-    }
+    };
+
+    // ------------
+    // UpdateName
+    //     Updates the name of the conatiner
+    // ------------
+    this.UpdateName = function(strName)
+    {
+      this.strName = strName;
+    };
 
     // ------------
     // AddItem

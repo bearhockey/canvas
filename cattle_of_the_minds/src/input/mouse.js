@@ -19,7 +19,7 @@ var MOUSE = (function () {
     var idx;
     if (mouse.IsInView())
     {
-      if (GetState() == CONST.STATE_INVENTORY)
+      if (STATE.GetState() == STATE.STATE_INVENTORY)
       {
         INVENTORY.HandleMouseClick(mouse.arrPosition[0], mouse.arrPosition[1]);
       }

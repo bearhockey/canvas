@@ -3,6 +3,7 @@ var INVENTORY = (function () {
   // consts
   // const ADD_ICON = new PAWN(CONST.PAWN_ITEM, "Add", "./res/add.gif", CONST.ITEM_ADD);
   // member vars
+  inventory.cStore = null;
   inventory.cSelectedItem = null;
   inventory.arrContainers = [];
   //
@@ -22,9 +23,10 @@ var INVENTORY = (function () {
   inventory.cAccessory2 = new ICONTAINER(240, 680, 100, 120, "Acc. 2", CONST.ITEM_ACCESSORY, 1);
   inventory.cAccessory3 = new ICONTAINER(360, 680, 100, 120, "Acc. 3", CONST.ITEM_ACCESSORY, 1);
   //
-  inventory.cGround = new ICONTAINER(480, 160,  460, 320, "Ground");
+  inventory.cMain   = new ICONTAINER(480, 160,  460, 320, "Ground");
   inventory.cPack   = new ICONTAINER(480, 490, 460, 320, "Pack");
   inventory.cPurse  = new ICONTAINER(480, 830, 460, 120, "Purse", CONST.ITEM_MONEY, 4);
+  //
   // ----------------
   // Init
   //     Inits the inventory renderer
@@ -44,21 +46,55 @@ var INVENTORY = (function () {
     inventory.arrContainers.push(inventory.cAccessory2);
     inventory.arrContainers.push(inventory.cAccessory3);
 
-    inventory.arrContainers.push(inventory.cGround);
+    inventory.arrContainers.push(inventory.cMain);
     inventory.arrContainers.push(inventory.cPack);
     inventory.arrContainers.push(inventory.cPurse);
   };
 
+  // ----------------
+  // BuyFromStore
+  //     Wrapper logic for purchasing an item from the store
+  // ----------------
+  inventory.BuyFromStore = function(cHero)
+  {
+    var bAcquiredItem = false;
+    var iPrice = inventory.cSelectedItem.iPrice;
+    var bConfirm = confirm("I'll sell it for " + iPrice.toString() + " gold. Deal?"); // TODO - loc
+    if (bConfirm)
+    {
+      if (cHero.GetGold() > iPrice)
+      {
+        cHero.DeductGold(iPrice);
+        inventory.cStore.TransferItem(inventory.cSelectedItem, cHero);
+        bAcquiredItem = true;
+      }
+      else
+      {
+        var iDiff = iPrice - cHero.GetGold();
+        alert("You don't have the gold! You need " + iDiff.toString() + " more!"); // TODO - loc
+      }
+    }
+
+    return bAcquiredItem;
+  };
+
+  // ----------------
+  // HandleMouseClick
+  //     Handles logic for when clicking / tapping the screen
+  // ----------------
   inventory.HandleMouseClick = function(x, y)
   {
     var cItem = inventory.CheckRects(x, y);
     var cHero = GetHero();
     var cTile;
     var bNewItem = false;
+    var iTimeInterval = 0;
+    var iPrice;
+    var bConfirm;
 
     if (cItem != null)
     {
-      if (inventory.cSelectedItem != null && cItem.GetItemType() == CONST.ITEM_ADD)
+      if (inventory.cSelectedItem != null && cItem.GetItemType() == CONST.ITEM_ADD && cContainer != inventory.cSelectedItem.GetParent())
       {
         var iSplit;
         if (inventory.cSelectedItem.iQuantity > 1)
@@ -67,7 +103,7 @@ var INVENTORY = (function () {
           if (iSplit == null || iSplit == 0) // not moving anything, do nothing
           {
             inventory.cSelectedItem = null;
-            Update();
+            Update(iTimeInterval);
             return;
           }
           else if (iSplit != inventory.cSelectedItem.iQuantity)
@@ -80,24 +116,38 @@ var INVENTORY = (function () {
           }
         }
         var cContainer = cItem.GetParent();
-        if (cContainer == inventory.cGround)
+        if (cContainer == inventory.cMain)
         {
           if (bNewItem)
           {
             cHero.GetTile().PlaceEntity(inventory.cSelectedItem);
+          }
+          else if (inventory.cStore != null)
+          {
+            iPrice = inventory.cSelectedItem.iPrice / 2; // TODO - get this value
+            bConfirm = confirm("I'll give ya " + iPrice.toString() + " for it. Deal?");
+            if (bConfirm)
+            {
+              cHero.TransferItem(inventory.cSelectedItem, inventory.cStore);
+              cHero.AddToInventory(PAWNUTILS.MakeGoldPile(iPrice));
+            }
           }
           else
           {
             cHero.DropItem(inventory.cSelectedItem);
           }
         }
-        else if (cContainer != inventory.cSelectedItem.GetParent())
+        else
         {
           if (cContainer == inventory.cPack)
           {
             if (cHero.IsItemOwned(inventory.cSelectedItem))
             {
               cHero.UnequipItem(inventory.cSelectedItem);
+            }
+            else if (inventory.cSelectedItem.GetParent() == inventory.cMain && inventory.cStore != null)
+            {
+              inventory.BuyFromStore(cHero);
             }
             else
             {
@@ -107,18 +157,29 @@ var INVENTORY = (function () {
           }
           else
           {
+            var bAcquiredItem = true;
             if (!cHero.IsItemOwned(inventory.cSelectedItem))
             {
-              cHero.AddToInventory(inventory.cSelectedItem);
+              if (inventory.cSelectedItem.GetParent() == inventory.cMain && inventory.cStore != null)
+              {
+                bAcquiredItem = inventory.BuyFromStore(cHero);
+              }
+              else
+              {
+                cHero.AddToInventory(inventory.cSelectedItem);
+              }
             }
 
-            cHero.EquipItem(inventory.cSelectedItem);
+            if (bAcquiredItem)
+            {
+              cHero.EquipItem(inventory.cSelectedItem);
+            }
           }
         }
 
         inventory.cSelectedItem.SetParent(cContainer);
         inventory.cSelectedItem = null;
-        IncrementTime();
+        iTimeInterval = 1;
       }
       else
       {
@@ -130,9 +191,13 @@ var INVENTORY = (function () {
       inventory.cSelectedItem = null;
     }
 
-    Update();
+    Update(iTimeInterval);
   };
 
+  // ----------------
+  // CheckRects
+  //     Checks if a given x,y  cordinate intersects any item rectangle
+  // ----------------
   inventory.CheckRects = function(x=0, y=0)
   {
     var idxContainers;
@@ -196,14 +261,26 @@ var INVENTORY = (function () {
     { inventory.arrContainers[idx].Empty(); }
 
     var cCurrentTile = cHero.GetTile();
-    var arrFloorItems = cCurrentTile.GetEntities();
-    iLength = arrFloorItems.length;
+    inventory.cStore = cCurrentTile.GetStore();
+    var arrItems;
+    if (inventory.cStore != null)
+    {
+      arrItems = inventory.cStore.GetInventory();
+      inventory.cMain.UpdateName(inventory.cStore.GetName());
+    }
+    else
+    {
+      arrItems = cCurrentTile.GetEntities();
+      inventory.cMain.UpdateName("Ground"); // TODO - const this
+    }
+
+    iLength = arrItems.length;
     for (idx = 0; idx < iLength; ++idx)
     {
-      cItem = arrFloorItems[idx];
+      cItem = arrItems[idx];
       if (cItem != null && cItem.GetItemType() != CONST.ITEM_NONE)
       {
-        inventory.cGround.AddItem(cItem);
+        inventory.cMain.AddItem(cItem);
       }
     }
 
@@ -221,7 +298,7 @@ var INVENTORY = (function () {
         }
         else if (cHero.IsItemEquipped(cItem))
         {
-          if (iItemType == CONST.ITEM_WEAPON) { inventory.cWeapon.AddItem(cItem); }
+          if (iItemType == CONST.ITEM_WEAPON) { inventory.cWeapon.AddItem(cItem); } // TODO - do all the items here, or maybe make a dict
         }
         else if (iItemType != CONST.ITEM_NONE)
         {

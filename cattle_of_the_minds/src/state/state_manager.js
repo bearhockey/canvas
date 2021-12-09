@@ -14,12 +14,17 @@ var STATE = (function () {
   state.m_iCurrentState = 1;
 
   state.GetState = function() { return state.m_iCurrentState; };
-  state.SetState = function(iState)
+  state.SetState = function(iState, bUpdateScreen = true)
   {
     state.m_iCurrentState = iState;
     state.UpdateMenu();
+    if (bUpdateScreen) { Update(); }
   };
 
+  // ----------------
+  // UpdateMenu
+  //     Updates the UI buttons
+  // ----------------
   state.UpdateMenu = function()
   {
     document.getElementById(STAGE_BUTTON).disabled     = (state.m_iCurrentState  == state.STATE_STAGE);
