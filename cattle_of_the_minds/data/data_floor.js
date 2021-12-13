@@ -18,7 +18,10 @@ var D_FLOOR = (function () {
   // ----------------
   df.DebugFloor = function(iFloorWidth=13)
   {
-    var cFloor = new FLOOR(iFloorWidth);
+    var iBorder = 3;
+    var cFloor = new FLOOR(iFloorWidth, 0);
+    cFloor.SetSpawnMap([D_ENEMY.ID_GOBLIN, D_ENEMY.ID_HOBGOBLIN, D_ENEMY.ID_BEAR]);
+    cFloor.SetNPCLimit(3);
 
     // make a border around the room
     cFloor.FillFloor();
@@ -26,9 +29,9 @@ var D_FLOOR = (function () {
     var idx;
     var iSize = iFloorWidth * iFloorWidth;
     var color;
-    for (idx = 0; idx < iSize; ++idx)
+    for (idx = iFloorWidth*iBorder; idx < iSize - iFloorWidth*iBorder; ++idx)
     {
-      if (idx < iFloorWidth || idx > iSize-iFloorWidth || idx % iFloorWidth == 0 || idx % iFloorWidth == iFloorWidth -1)
+      if (idx % iFloorWidth < iBorder || idx % iFloorWidth > iFloorWidth - iBorder)
       {
         continue;
       }
@@ -41,6 +44,8 @@ var D_FLOOR = (function () {
       }
     }
 
+    cFloor.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/downstairs.gif", CONST.DOOR_DOWNSTAIRS, 0));
+
     return cFloor;
 
   };
@@ -49,9 +54,13 @@ var D_FLOOR = (function () {
   // RandomFloor
   //     Builds a random floor
   // ----------------
-  df.RandomFloor = function(iWidth)
+  df.RandomFloor = function(iWidth, iStairEntrances=1)
   {
     var cFloor = new FLOOR(iWidth);
+    cFloor.SetSpawnMap([D_ENEMY.ID_GOBLIN, D_ENEMY.ID_GOBLIN, D_ENEMY.ID_GOBLIN,
+                        D_ENEMY.ID_HOBGOBLIN, D_ENEMY.ID_HOBGOBLIN, D_ENEMY.ID_BEAR]);
+    cFloor.SetNPCLimit(8);
+
     var iSize = cFloor.iWidth * cFloor.iWidth;
     var idx;
     var color;
@@ -165,11 +174,11 @@ var D_FLOOR = (function () {
     } // end arrCenterTiles while loop
 
     // add upstairs
-    var iNumberOfUpstairs = cFloor.iUpstairs;
+    var iNumberOfUpstairs = iStairEntrances;
     var bKeepGoing = true;
     while (iNumberOfUpstairs > 0 && bKeepGoing)
     {
-      bKeepGoing = cFloor.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/upstairs.gif", CONST.DOOR_UPSTAIRS));
+      bKeepGoing = cFloor.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/upstairs.gif", CONST.DOOR_UPSTAIRS, iNumberOfUpstairs-1));
       if (bKeepGoing) { iNumberOfUpstairs--; }
     }
 
@@ -177,7 +186,7 @@ var D_FLOOR = (function () {
     var iNumberOfDownstairs = Math.floor(Math.random()*3) + 1;
     while (iNumberOfDownstairs > 0)
     {
-      cFloor.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/downstairs.gif", CONST.DOOR_DOWNSTAIRS));
+      cFloor.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/downstairs.gif", CONST.DOOR_DOWNSTAIRS, iNumberOfDownstairs-1));
       iNumberOfDownstairs--;
     }
 

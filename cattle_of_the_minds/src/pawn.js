@@ -3,12 +3,12 @@ var PAWN = (function () {
   const PAWN_HEALTH = 100;
   const PAWN_DAMAGE = 2;
   // main
-  var pawn = function(iPawnType, strName = "Pawn", strIcon = "", iItemType=CONST.ITEM_NONE)
+  var pawn = function(iPawnType, strName = "Pawn", strIcon = "", iItemType=CONST.ITEM_NONE, iValue=0)
   {
     // pawn specific data
     this.iPawnType = iPawnType;
     this.iItemType = iItemType;
-    this.iPrice    = 0; // value of the item for buying and selling
+    this.iValue    = iValue; // value of the item for buying and selling
     this.iQuantity = 0; // assume that any value less than one means its not an item
     this.iBulk     = 0;
     this.iCapacity = 0;
@@ -33,6 +33,7 @@ var PAWN = (function () {
     this.GetEquipment = function() { return this.arrEquipped; };
     this.GetPawnType  = function() { return this.iPawnType; };
     this.GetItemType  = function() { return this.iItemType; };
+    this.GetValue     = function() { return this.iValue; };
 
     this.GetTile    = function()          { return this.cTile; };
     this.SetTile    = function(cTile)     { this.cTile = cTile; };
@@ -194,7 +195,7 @@ var PAWN = (function () {
     // AddToInventory
     //     Adds a pawn to this pawns inventory - combines currency if it can
     // ----------------
-    this.AddToInventory = function(cItem)
+    this.AddToInventory = function(cItem, bEquip=false)
     {
       if (cItem == null) { return; }
       cItem.RemoveTile(); // clear out any tile information when it enters the inventory
@@ -220,6 +221,7 @@ var PAWN = (function () {
       else
       {
         this.arrInventory.push(cItem);
+        if (bEquip) { this.EquipItem(cItem); }
       }
     };
 

@@ -46,7 +46,6 @@ var COMBAT = (function () {
       }
       else
       {
-        cDefender.Dead();
         MBOX.AddInfo(cDefender.strName + " is the dead.");
       }
     }

@@ -18,7 +18,9 @@
 <script src="./src/input/mouse.js"></script>
 <script src="./src/statblock.js"></script>
 
+<script src="./data/data_enemy.js"></script>
 <script src="./data/data_floor.js"></script>
+<script src="./data/data_weapon.js"></script>
 
 <script src="./src/tile.js"></script>
 <script src="./src/floor.js"></script>
@@ -40,6 +42,7 @@
   function MoveEast()  { CONTROLLER.MoveHero(CONST.EAST); }
   function MoveWest()  { CONTROLLER.MoveHero(CONST.WEST); }
   function Get()       { CONTROLLER.HeroPickup(); }
+  function Action()    { CONTROLLER.HeroAction(); }
 
   function StageButton()     { STATE.SetState(STATE.STATE_STAGE); }
   function InventoryButton() { STATE.SetState(STATE.STATE_INVENTORY); }
@@ -68,7 +71,7 @@
     <div id="divButtons">
       <button class="arrow" onclick="Get()">G</button>
       <button class="arrow" onclick="MoveNorth()">^</button>
-      <button class="arrow" onclick="">@</button>
+      <button class="arrow" onclick="Action()">@</button>
       <br>
       <button class="arrow" onclick="MoveWest()"><</button>
       <button class="arrow" onclick="MoveSouth()">v</button>

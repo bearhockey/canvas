@@ -2,16 +2,16 @@
 const CANVAS_WIDTH = 960;
 const CANVAS_HEIGHT = 960;
 const MAP_WIDTH = 15; // in tiles
+const PLAYER_SIGHT_RANGE = 3;
 // globals - don't use if you can
 var cFirstFloor;
 var cSecondFloor;
 var iFloorWidth = 50;
-var iNumberOfEnemies = 10;
 var iPlaytime = 0; // playtime in seconds
 
 var m_cHero;
-var cSword;
-var m_arrEnemies = [];
+var m_cCurrentFloor;
+var m_arrFloors = [];
 
 // ----------------
 // StartGame
@@ -24,6 +24,7 @@ function StartGame()
   INVENTORY.Init();
   // cFirstFloor = D_FLOOR.RandomFloor(iFloorWidth);
   cFirstFloor = D_FLOOR.DebugFloor(MAP_WIDTH);
+  m_arrFloors.push(cFirstFloor);
   m_cCurrentFloor = cFirstFloor;
 
   m_cHero = new PAWN(CONST.PAWN_HERO, "Hero", "./res/hero.gif");
@@ -36,38 +37,17 @@ function StartGame()
 
   var cStartTile = m_cCurrentFloor.GetEmptyTile();
   cStartTile.PlaceEntity(m_cHero);
-  // give the hero a sword for now
-  cSword = new PAWN(CONST.PAWN_ITEM, "Sword", "./res/sword.gif", CONST.ITEM_WEAPON);
-  cSword.cBaseStats.SetStat(CONST.STAT_ATTACK, 2, true);
-  cSword.cBaseStats.SetStat(CONST.STAT_ACCURACY, 1, true);
-  cSword.iPrice = 50;
-  m_cHero.AddToInventory(cSword);
-  m_cHero.EquipItem(cSword);
+  m_cHero.AddToInventory(D_WEAPON.Sword(), true);
 
   // give the player some gold
   m_cHero.AddToInventory(PAWNUTILS.MakeGoldPile(90));
 
-  // add some enemies
-  var idx;
-  var cEnemy;
-  for (idx = 0; idx < iNumberOfEnemies; ++idx)
-  {
-    cEnemy = PAWNUTILS.MakeGoblin();
-    m_cCurrentFloor.GetEmptyTile().PlaceEntity(cEnemy);
-    m_arrEnemies.push(cEnemy);
-  } // end of for loop
-
   // add a store
   var cStore = new PAWN(CONST.PAWN_STORE, "Debug Store", "./res/sign.gif");
-  var cItem1 = new PAWN(CONST.PAWN_ITEM, "Sword 1", "./res/sword.gif", CONST.ITEM_WEAPON);
-  cItem1.cBaseStats.SetStat(CONST.STAT_ATTACK, 2, true);
-  cItem1.cBaseStats.SetStat(CONST.STAT_ACCURACY, 1, true);
-  cItem1.iPrice = 50;
   cStartTile.PlaceEntity(cStore);
-  cStore.AddToInventory(cItem1);
+  cStore.AddToInventory(D_WEAPON.Sword("New Sword"));
   // start game
   myGameArea.start();
-
   STATE.SetState(STATE.STATE_STAGE);
 }
 
@@ -102,16 +82,17 @@ function GetCanvas() { return myGameArea.context; };
 // ----------------
 function Update(iTimeIncrease=0)
 {
-  IncrementTime(iTimeIncrease);
   IBOX.UpdateInfo();
-  // update enemies
-  var cEnemy;
-  var iEnemies = m_arrEnemies.length;
-  var idx;
-  for (idx = 0; idx < iEnemies; ++idx)
+  // first check if you are the dead
+  if (m_cHero.IsDead())
   {
-    cEnemy = m_arrEnemies[idx];
-    if (cEnemy != null) { cEnemy.Update(); }
+    STATE.SetState(STATE.STATE_DEATH);
+  }
+  else
+  {
+    IncrementTime(iTimeIncrease);
+    // update NPCs
+    m_cCurrentFloor.UpdateNPCs();
   }
 
   var iState = STATE.GetState();
@@ -120,7 +101,7 @@ function Update(iTimeIncrease=0)
     case STATE.STATE_STAGE:
     {
       var iCamPosition = m_cHero.GetTile().GetIdx();
-      var arrVisionRange = m_cCurrentFloor.GetVisualTiles(iCamPosition, 3);
+      var arrVisionRange = m_cCurrentFloor.GetVisualTiles(iCamPosition, PLAYER_SIGHT_RANGE);
       var idx;
       var iTiles = arrVisionRange.length;
       var cTile;
@@ -142,6 +123,11 @@ function Update(iTimeIncrease=0)
     {
       CHARACTER.Update();
       DrawCharacter();
+      break;
+    }
+    case STATE.STATE_DEATH:
+    {
+
       break;
     }
     default: break;
@@ -181,8 +167,62 @@ function DrawCharacter()
 }
 
 // DEBUG STUFF ---- maybe move these to a better class
+function GetFloor(idx=-1)
+{
+  var cFloor = (idx < 0) ? m_cCurrentFloor : null;
+  if (idx >= 0 && idx < m_arrFloors.length)
+  {
+    cFloor = m_arrFloors[idx];
+  }
+
+  return cFloor;
+};
+
+function GetCurrentFloorIdx() { return m_arrFloors.indexOf(m_cCurrentFloor); };
+function GoToFloor(idx, iDoorType, iDoor=-1)
+{
+  var cFloor = GetFloor(idx);
+  if (cFloor == null)
+  {
+    cFloor = D_FLOOR.RandomFloor(iFloorWidth, m_cCurrentFloor.CountStairs(iDoorType));
+    m_arrFloors.push(cFloor);
+  }
+
+  if (cFloor != null)
+  {
+    var cEntranceTile;
+    if (iDoor >= 0)
+    {
+      var iDestinationStairsType = (iDoorType == CONST.DOOR_UPSTAIRS) ? CONST.DOOR_DOWNSTAIRS : CONST.DOOR_UPSTAIRS;
+      var cStairs = cFloor.GetStairs(iDestinationStairsType, iDoor);
+      cEntranceTile = (cStairs != null) ? cStairs.GetTile() : cFloor.GetEmptyTile();
+    }
+    else
+    {
+      cEntranceTile = cFloor.GetEmptyTile();
+    }
+
+    // spawn enemies -- TODO: make a timer to spawn them staggered
+    var arrSpawnMap = [...cFloor.GetSpawnMap()]; // returns a shallow copy for altering the data
+    var idx;
+    var iSpawns = cFloor.GetNPCLimit() - cFloor.GetNPCs().length;
+    var iEnemyID;
+    var cEnemy;
+    for (idx = 0; idx < iSpawns; ++idx)
+    {
+      iEnemyID = arrSpawnMap[Math.floor(Math.random() * arrSpawnMap.length)];
+      cEnemy = D_ENEMY.MakeEnemy(iEnemyID);
+      cFloor.GetEmptyTile().PlaceEntity(cEnemy);
+      cFloor.AddNPC(cEnemy);
+    } // end for loop
+
+
+    cEntranceTile.PlaceEntity(m_cHero);
+    m_cCurrentFloor = cFloor;
+  }
+};
+
 function GetHero() { return m_cHero; };
-function GetFloor() { return m_cCurrentFloor; };
 function GetTime() { return iPlaytime; };
 function IncrementTime(iValue=1) { iPlaytime+=iValue; };
 

@@ -9,19 +9,103 @@ var FLOOR = (function () {
   const EMPTY_COLOR = "#CCCCCC";
   const LIT_COLOR   = "#EEEEFF";
   const WALL_COLOR = "#444444";
-  var floor = function(iWidth, iUpstairs=1, strFloorColor = EMPTY_COLOR, strWallColor = WALL_COLOR)
+  var floor = function(iWidth, strFloorColor = EMPTY_COLOR, strWallColor = WALL_COLOR)
   {
     // constructor
     this.iWidth = iWidth; // the height and width of the tile array
-    this.iUpstairs = iUpstairs;
+    this.iTimeLastEntered = 0;
+    this.iNPCLimit = 0;
+
     this.arrTileMap = [];
     this.arrEmptyTiles = []; // useful for placing things
+    this.arrStairs = [];
+    this.arrSpawnMap = [];
+    this.arrNPCs = [];
     this.cNullTile = new TILE(-1, false, false, "#111111");
 
     this.strFloorColor = strFloorColor;
     this.strWallColor = strWallColor;
 
-    this.GetFloorWidth = function() { return this.iWidth; };
+    this.GetFloorWidth  = function() { return this.iWidth; };
+    this.GetEnteredTime = function() { return this.iTimeLastEntered; };
+    this.SetEnteredTime = function(iTime) { this.iTimeLastEntered = iTime; };
+
+    this.GetSpawnMap = function()            { return this.arrSpawnMap; };
+    this.SetSpawnMap = function(arrSpawnMap) { this.arrSpawnMap = arrSpawnMap; };
+
+    this.GetNPCLimit = function() { return this.iNPCLimit; };
+    this.SetNPCLimit = function(iLimit) { this.iNPCLimit = iLimit; };
+    this.GetNPCs = function() { return this.arrNPCs; };
+    this.AddNPC = function(cPawn) { this.arrNPCs.push(cPawn); };
+
+    // ----------------
+    // UpdateNPCs
+    //     Runs the update loop on all NPCs
+    // ----------------
+    this.UpdateNPCs = function()
+    {
+      var idx;
+      var iLength = this.arrNPCs.length;
+      var cNPC;
+      for (idx = 0; idx < iLength; ++idx)
+      {
+        cNPC = this.arrNPCs[idx];
+        if (cNPC != null)
+        {
+          if (cNPC.IsDead())
+          {
+            this.RemovePawn(cNPC);
+          }
+          else
+          {
+            cNPC.Update();
+          }
+        }
+      }
+    };
+
+    // ----------------
+    // CountStairs
+    //     Counts the amount of stairs - type 0 for both
+    // ----------------
+    this.CountStairs = function(iStairsType = 0)
+    {
+      var iCount = 0;
+      var idx;
+      var iLength = this.arrStairs.length;
+      var cStairs;
+      for (idx = 0; idx < iLength; ++idx)
+      {
+        cStairs = this.arrStairs[idx];
+        if (cStairs != null)
+        {
+          if (iStairsType < 1 || iStairsType == cStairs.GetItemType()) { iCount++; }
+        }
+      } // end for loop
+
+      return iCount;
+    };
+
+    // ----------------
+    // GetStairs
+    //     Returns the stairs pawn specified
+    // ----------------
+    this.GetStairs = function(iStairsType, iStairsID)
+    {
+      var cStairs = null;
+      var idx;
+      var iLength = this.arrStairs.length;
+      for (idx = 0; idx < iLength; ++idx)
+      {
+        cStairs = this.arrStairs[idx];
+        if (cStairs != null && cStairs.GetItemType() == iStairsType && cStairs.GetValue() == iStairsID)
+        {
+          return cStairs;
+        }
+      } // end for loop
+
+      return null;
+    };
 
     // ----------------
     // FillFloor
@@ -38,7 +122,7 @@ var FLOOR = (function () {
         this.arrTileMap.push(cTile);
       } // end of for loop
     };
-    
+
     // ----------------
     // IsValidIdx
     //     Checks if the idx is valid - leaving a border of tiles around the edges
@@ -66,11 +150,31 @@ var FLOOR = (function () {
         {
           cTile.PlaceEntity(cPawn);
           this.arrEmptyTiles.splice(idx, 1);
+          if (cPawn.GetPawnType() == CONST.PAWN_STAIRS)
+          {
+            this.arrStairs.push(cPawn);
+          }
+
           return true;
         }
       }
 
       return false;
+    };
+
+    // ----------------
+    // RemovePawn
+    //     ARemoves a pawn from the floor
+    // ----------------
+    this.RemovePawn = function(cPawn)
+    {
+      var idx = this.arrNPCs.indexOf(cPawn);
+      if (idx >= 0)
+      {
+        var cFound = this.arrNPCs[idx];
+        this.arrNPCs.splice(idx, 1);
+        cFound.Dead();
+      }
     };
 
     // ----------------

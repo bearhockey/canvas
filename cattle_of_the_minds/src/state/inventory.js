@@ -58,7 +58,7 @@ var INVENTORY = (function () {
   inventory.BuyFromStore = function(cHero)
   {
     var bAcquiredItem = false;
-    var iPrice = inventory.cSelectedItem.iPrice;
+    var iPrice = inventory.cSelectedItem.GetValue();
     var bConfirm = confirm("I'll sell it for " + iPrice.toString() + " gold. Deal?"); // TODO - loc
     if (bConfirm)
     {
@@ -124,7 +124,7 @@ var INVENTORY = (function () {
           }
           else if (inventory.cStore != null)
           {
-            iPrice = inventory.cSelectedItem.iPrice / 2; // TODO - get this value
+            iPrice = inventory.cSelectedItem.GetValue() / 2; // TODO - get this value
             bConfirm = confirm("I'll give ya " + iPrice.toString() + " for it. Deal?");
             if (bConfirm)
             {

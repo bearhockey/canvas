@@ -9,7 +9,14 @@ var CONTROLLER = (function () {
   //     Moves the player in a specified direction
   // ----------------
   controller.MoveHero = function(iDirection)
-  { GetHero().Move(iDirection, GetFloor()); Update(MOVE_TIME); };
+  {
+    var cHero = GetHero();
+    if (!cHero.IsDead())
+    {
+      cHero.Move(iDirection, GetFloor());
+      Update(MOVE_TIME);
+    }
+  };
 
   // ----------------
   // HeroPickup
@@ -51,6 +58,45 @@ var CONTROLLER = (function () {
 
     var iTimeElapsed = iLength; // self is an item technically
     Update(iTimeElapsed);
+  };
+
+  // ----------------
+  // HeroAction
+  //     An adaptive request to interact wih the current tile - right now just goes up and down stairs
+  // ----------------
+  controller.HeroAction = function()
+  {
+    var cHero = GetHero();
+    var cCurrentTile = cHero.GetTile();
+    var arrItems = cCurrentTile.GetEntities();
+    var iLength = arrItems.length;
+    var idx;
+    var cItem;
+
+    var cCurrentFloor = GetFloor();
+    var iStairsType;
+    var iFloorIdx;
+    var cNewFloor;
+
+    for (idx = 0; idx < iLength; ++idx)
+    {
+      cItem = arrItems[idx];
+      if (cItem != null)
+      {
+        if (cItem.GetPawnType() == CONST.PAWN_STAIRS)
+        {
+          iFloorIdx = GetCurrentFloorIdx();
+          iStairsType = cItem.GetItemType();
+          iFloorIdx += (iStairsType == CONST.DOOR_UPSTAIRS) ? -1 : 1;
+          if (iFloorIdx >= 0)
+          {
+            GoToFloor(iFloorIdx, iStairsType, cItem.GetValue());
+          } // iFloorIdx check
+        } // GetPawnType() check
+      } // cItem check
+    } // for loop
+
+    Update(MOVE_TIME);
   };
 
   return controller;
