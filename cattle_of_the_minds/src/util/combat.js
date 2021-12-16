@@ -41,8 +41,11 @@ var COMBAT = (function () {
       if (iEnemyHealth > 0)
       {
         MBOX.AddInfo(strAttacker + " dealt " + iDamage.toString() + " damage to " + strDefender + "!");
-        var arrNewHealth = cDefender.GetStat(CONST.STAT_HEALTH);
-        MBOX.AddInfo(UTILS.GetHealthLevel(arrNewHealth[0], arrNewHealth[1]));
+        if (cDefender != GetHero())
+        {
+          var arrNewHealth = cDefender.GetStat(CONST.STAT_HEALTH);
+          MBOX.AddInfo(UTILS.GetHealthLevel(arrNewHealth[0], arrNewHealth[1]));
+        }
       }
       else
       {

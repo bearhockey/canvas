@@ -28,6 +28,7 @@ var NPC = (function () {
       var cFloor = GetFloor();
       var cThisTile = cPawn.GetTile();
       var cTargetTile = this.cChaseTarget.GetTile();
+      var iFloorWidth = cFloor.GetFloorWidth();
       if (cThisTile != null && cTargetTile != null)
       {
         var idxSource = cThisTile.GetIdx();
@@ -35,9 +36,13 @@ var NPC = (function () {
         // TODO - make this into a utils function
         if (idxTarget > idxSource)
         {
-          if (idxSource + cFloor.GetFloorWidth() <= idxTarget)
+          if (idxSource + iFloorWidth <= idxTarget)
           {
             cPawn.Move(CONST.SOUTH, cFloor);
+          }
+          else if (idxTarget % iFloorWidth < idxSource % iFloorWidth)
+          {
+            cPawn.Move(CONST.WEST, cFloor);
           }
           else
           {
@@ -46,17 +51,31 @@ var NPC = (function () {
         }
         else if (idxTarget < idxSource)
         {
-          if (idxSource - cFloor.GetFloorWidth() >= idxTarget)
+          if (idxSource - iFloorWidth >= idxTarget)
           {
             cPawn.Move(CONST.NORTH, cFloor);
           }
-          else
+          else if (idxTarget % iFloorWidth < idxSource % iFloorWidth)
           {
             cPawn.Move(CONST.WEST, cFloor);
+          }
+          else
+          {
+            cPawn.Move(CONST.EAST, cFloor);
           }
         }
       }
     };
+
+    // ----------------
+    // MeleeAttack
+    //     Melee attacks the enemy
+    // ----------------
+    this.MeleeAttack = function(cPawn, cTarget)
+    {
+      COMBAT.AttackPawn(cPawn, cTarget, false);
+    };
+
     // ----------------
     // Act
     //     Has the NPC do their actions
@@ -82,13 +101,21 @@ var NPC = (function () {
           if (arrEntities != null && arrEntities.indexOf(cHero) >= 0)
           {
             this.cChaseTarget = cHero;
+            break; // should be fine to break unless we ever want to have priority targets
           }
         }
       } // end of for loop
 
       if (this.cChaseTarget != null)
       {
-        this.Chase(cPawn);
+        if ( cPawn.IsTileAdjacent(this.cChaseTarget.GetTile(), GetFloor()) )
+        {
+          this.MeleeAttack(cPawn, this.cChaseTarget);
+        }
+        else
+        {
+          this.Chase(cPawn);
+        }
       }
       else
       {

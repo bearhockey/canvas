@@ -6,6 +6,7 @@ var CONST = (function () {
   c.EAST  = 1;
   c.SOUTH = 2;
   c.WEST  = 3;
+  c.DIRECTIONS = [0, 1, 2, 3];
 
   // pawn types
   c.PAWN_HERO = 0; // special type, hero

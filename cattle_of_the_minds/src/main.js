@@ -82,7 +82,6 @@ function GetCanvas() { return myGameArea.context; };
 // ----------------
 function Update(iTimeIncrease=0)
 {
-  IBOX.UpdateInfo();
   // first check if you are the dead
   if (m_cHero.IsDead())
   {
@@ -95,6 +94,7 @@ function Update(iTimeIncrease=0)
     m_cCurrentFloor.UpdateNPCs();
   }
 
+  IBOX.UpdateInfo();
   var iState = STATE.GetState();
   switch (iState)
   {
@@ -225,12 +225,3 @@ function GoToFloor(idx, iDoorType, iDoor=-1)
 function GetHero() { return m_cHero; };
 function GetTime() { return iPlaytime; };
 function IncrementTime(iValue=1) { iPlaytime+=iValue; };
-
-function FightGuy(cPawn)
-{
-  COMBAT.AttackPawn(m_cHero, cPawn);
-  if (!cPawn.IsDead())
-  {
-    COMBAT.AttackPawn(cPawn, m_cHero, false);
-  }
-};

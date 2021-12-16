@@ -133,6 +133,32 @@ var PAWN = (function () {
     };
 
     // ----------------
+    // IsTileAdjacent
+    //     Returns true if the given tile is adjacent to this pawn
+    // ----------------
+    this.IsTileAdjacent = function(cTile, cFloor, bIncludeSelf=false)
+    {
+      var bAdjacent = false;
+      if (bIncludeSelf && cTile == this.cTile) { return true; } // easy return
+
+      var iThisIdx = this.cTile.GetIdx();
+      var iCheckIdx;
+      var idx;
+      var iLength = CONST.DIRECTIONS.length;
+      for (idx = 0; idx < iLength; ++idx)
+      {
+        iCheckIdx = cFloor.GetDirectionIdx(iThisIdx, CONST.DIRECTIONS[idx]);
+        if (iCheckIdx == cTile.GetIdx())
+        {
+          bAdjacent = true;
+          break;
+        }
+      } // end for loop
+
+      return bAdjacent;
+    };
+
+    // ----------------
     // GetGoldItem
     //     Returns the item that represents the pawn's gold pile
     // ----------------

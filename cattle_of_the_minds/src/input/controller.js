@@ -1,6 +1,7 @@
 var CONTROLLER = (function () {
   // consts
   const MOVE_TIME = 1; // moving takes one second
+  const ATTACK_TIME = 2; // attacking takes a little longer
   // main
   var controller = {};
 
@@ -11,11 +12,28 @@ var CONTROLLER = (function () {
   controller.MoveHero = function(iDirection)
   {
     var cHero = GetHero();
+    var cFloor = GetFloor();
     if (!cHero.IsDead())
     {
-      cHero.Move(iDirection, GetFloor());
-      Update(MOVE_TIME);
-    }
+      var bMoved = cHero.Move(iDirection, cFloor);
+      if (bMoved)
+      {
+        Update(MOVE_TIME);
+      }
+      else
+      {
+        var cTargetTile = cFloor.GetTile(cFloor.GetDirectionIdx(cHero.GetTile().GetIdx(), iDirection));
+        if (cTargetTile.HasEntity())
+        {
+          var cEnemy = cTargetTile.GetFirstEnemy();
+          if (cEnemy != null)
+          {
+            COMBAT.AttackPawn(cHero, cEnemy);
+            Update(ATTACK_TIME);
+          }
+        }
+      }
+    } // if dead check
   };
 
   // ----------------
