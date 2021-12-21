@@ -15,6 +15,7 @@ var CONST = (function () {
   c.PAWN_TRAP = 3;
   c.PAWN_STAIRS = 4;
   c.PAWN_STORE = 5;
+  c.PAWN_DECOR = 6;
 
   // item types
   c.ITEM_NONE = -1; // not an item

@@ -23,7 +23,8 @@ function StartGame()
   RENDERER.Init();
   INVENTORY.Init();
   // cFirstFloor = D_FLOOR.RandomFloor(iFloorWidth);
-  cFirstFloor = D_FLOOR.DebugFloor(MAP_WIDTH);
+  // cFirstFloor = D_FLOOR.DebugFloor(MAP_WIDTH);
+  cFirstFloor = D_FLOOR.TownOne();
   m_arrFloors.push(cFirstFloor);
   m_cCurrentFloor = cFirstFloor;
 
@@ -35,17 +36,22 @@ function StartGame()
   m_cHero.cBaseStats.SetStat(CONST.STAT_ATTACK, 1, true);
   m_cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 3, true);
 
-  var cStartTile = m_cCurrentFloor.GetEmptyTile();
+  var cStartTile;
+  if (m_cCurrentFloor.GetEntranceIdx() >= 0)
+  {
+    cStartTile = m_cCurrentFloor.GetTile(m_cCurrentFloor.GetEntranceIdx());
+  }
+  else
+  {
+    cStartTile = m_cCurrentFloor.GetEmptyTile();
+  }
+
   cStartTile.PlaceEntity(m_cHero);
   m_cHero.AddToInventory(D_WEAPON.Sword(), true);
 
   // give the player some gold
   m_cHero.AddToInventory(PAWNUTILS.MakeGoldPile(90));
 
-  // add a store
-  var cStore = new PAWN(CONST.PAWN_STORE, "Debug Store", "./res/sign.gif");
-  cStartTile.PlaceEntity(cStore);
-  cStore.AddToInventory(D_WEAPON.Sword("New Sword"));
   // start game
   myGameArea.start();
   STATE.SetState(STATE.STATE_STAGE);
@@ -64,9 +70,14 @@ var myGameArea =
     this.canvas.addEventListener('click', MOUSE.LeftClick);
     this.canvas.addEventListener('contextmenu', MOUSE.RightClick);
   },
-  clear : function()
+  clear : function(strFill=null)
   {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    if (strFill != null)
+    {
+      this.context.fillStyle = strFill;
+      this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
   }
 };
 
@@ -82,19 +93,16 @@ function GetCanvas() { return myGameArea.context; };
 // ----------------
 function Update(iTimeIncrease=0)
 {
-  // first check if you are the dead
+  IncrementTime(iTimeIncrease);
+  // update NPCs
+  m_cCurrentFloor.UpdateNPCs();
+  IBOX.UpdateInfo();
+
   if (m_cHero.IsDead())
   {
-    STATE.SetState(STATE.STATE_DEATH);
-  }
-  else
-  {
-    IncrementTime(iTimeIncrease);
-    // update NPCs
-    m_cCurrentFloor.UpdateNPCs();
+    STATE.SetState(STATE.STATE_DEATH, false);
   }
 
-  IBOX.UpdateInfo();
   var iState = STATE.GetState();
   switch (iState)
   {
@@ -127,7 +135,7 @@ function Update(iTimeIncrease=0)
     }
     case STATE.STATE_DEATH:
     {
-
+      DrawDeath();
       break;
     }
     default: break;
@@ -164,6 +172,24 @@ function DrawCharacter()
 {
   myGameArea.clear();
   CHARACTER.Draw(GetCanvas());
+}
+
+// ----------------
+// DrawDeath
+//     Draws the end of game scene
+// ----------------
+function DrawDeath()
+{
+  myGameArea.clear("#FFFFFF");
+
+  var imgEntity = new Image();
+  imgEntity.iX = 50;
+  imgEntity.iY = 100;
+  imgEntity.addEventListener('load', function()
+  {
+    GetCanvas().drawImage(this, this.iX, this.iY);
+  }, false);
+  imgEntity.src = "./res/death_screen.png";
 }
 
 // DEBUG STUFF ---- maybe move these to a better class
@@ -225,3 +251,10 @@ function GoToFloor(idx, iDoorType, iDoor=-1)
 function GetHero() { return m_cHero; };
 function GetTime() { return iPlaytime; };
 function IncrementTime(iValue=1) { iPlaytime+=iValue; };
+
+function DebugGetIdx()
+{
+  var idx = m_cHero.GetTile().GetIdx();
+  var iWidth = m_cCurrentFloor.GetFloorWidth();
+  console.log("IDX: ", idx, " X: ", idx % iWidth, " Y: ", Math.floor(idx / iWidth));
+}

@@ -30,6 +30,7 @@
 <script src="./src/inventory_container.js"></script>
 
 <script src="./src/state/state_manager.js"></script>
+<script src="./src/state/store_manager.js"></script>
 <script src="./src/state/renderer.js"></script>
 <script src="./src/state/inventory.js"></script>
 <script src="./src/state/character.js"></script>
@@ -76,6 +77,10 @@
       <button class="arrow" onclick="MoveWest()"><</button>
       <button class="arrow" onclick="MoveSouth()">v</button>
       <button class="arrow" onclick="MoveEast()">></button>
+    </div>
+
+    <div id="debugButtons">
+      <button class="arrow" onclick="DebugGetIdx()">IDX</button>
     </div>
   </div>
 </div>

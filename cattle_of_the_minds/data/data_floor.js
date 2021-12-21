@@ -8,7 +8,9 @@ var D_FLOOR = (function () {
 
   const EMPTY_COLOR = "#CCCCCC";
   const LIT_COLOR   = "#EEEEFF";
-  const WALL_COLOR = "#444444";
+  const WALL_COLOR  = "#444444";
+  const GRASS_COLOR = "#008000";
+  const PATH_COLOR  = "#808000";
 
   var df = {};
 
@@ -18,36 +20,18 @@ var D_FLOOR = (function () {
   // ----------------
   df.DebugFloor = function(iFloorWidth=13)
   {
-    var iBorder = 3;
-    var cFloor = new FLOOR(iFloorWidth, 0);
+    var iBorder = 4;
+    var cFloor = new FLOOR(iFloorWidth);
     cFloor.SetSpawnMap([D_ENEMY.ID_GOBLIN, D_ENEMY.ID_HOBGOBLIN, D_ENEMY.ID_BEAR]);
     cFloor.SetNPCLimit(3);
 
     // make a border around the room
     cFloor.FillFloor();
-    var cTile;
-    var idx;
-    var iSize = iFloorWidth * iFloorWidth;
-    var color;
-    for (idx = iFloorWidth*iBorder; idx < iSize - iFloorWidth*iBorder; ++idx)
-    {
-      if (idx % iFloorWidth < iBorder || idx % iFloorWidth > iFloorWidth - iBorder)
-      {
-        continue;
-      }
-      else
-      {
-        color = LIT_COLOR
-        cTile = new TILE(idx, true, (color == LIT_COLOR), color);
-        cFloor.arrTileMap[idx] = cTile;
-        cFloor.arrEmptyTiles.push(cTile);
-      }
-    }
+    var cRoomTile = new TILE(-1, true, true, LIT_COLOR);
+    cFloor.FillFloorSection(iBorder, iBorder, iFloorWidth-(iBorder*2), iFloorWidth-(iBorder*2), cRoomTile);
 
-    cFloor.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/downstairs.gif", CONST.DOOR_DOWNSTAIRS, 0));
-
+    cFloor.AddPawnToEmptyTile(PAWNUTILS.MakeStairs(CONST.DOOR_DOWNSTAIRS, 0));
     return cFloor;
-
   };
 
   // ----------------
@@ -178,7 +162,7 @@ var D_FLOOR = (function () {
     var bKeepGoing = true;
     while (iNumberOfUpstairs > 0 && bKeepGoing)
     {
-      bKeepGoing = cFloor.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/upstairs.gif", CONST.DOOR_UPSTAIRS, iNumberOfUpstairs-1));
+      bKeepGoing = cFloor.AddPawnToEmptyTile(PAWNUTILS.MakeStairs(CONST.DOOR_UPSTAIRS, iNumberOfUpstairs-1));
       if (bKeepGoing) { iNumberOfUpstairs--; }
     }
 
@@ -186,10 +170,60 @@ var D_FLOOR = (function () {
     var iNumberOfDownstairs = Math.floor(Math.random()*3) + 1;
     while (iNumberOfDownstairs > 0)
     {
-      cFloor.AddPawnToEmptyTile(new PAWN(CONST.PAWN_STAIRS, "Stairs", "./res/downstairs.gif", CONST.DOOR_DOWNSTAIRS, iNumberOfDownstairs-1));
+      cFloor.AddPawnToEmptyTile(PAWNUTILS.MakeStairs(CONST.DOOR_DOWNSTAIRS, iNumberOfDownstairs-1));
       iNumberOfDownstairs--;
     }
 
+    return cFloor;
+  };
+
+  // ----------------
+  // TownOne
+  //     Builds the starting town
+  // ----------------
+  df.TownOne = function()
+  {
+    var cFloor = new FLOOR(21);
+    cFloor.FillFloor();
+    var cGrassTile = new TILE(-1, true, true, GRASS_COLOR);
+    cFloor.FillFloorSection(2, 1, 16, 18, cGrassTile);
+
+    cFloor.FillFloorSection(8, 2, 3, 2);
+    cFloor.PlaceTile(72, new TILE(-1, true, true, EMPTY_COLOR));
+
+    var cPathTile = new TILE(-1, true, true, PATH_COLOR);
+    cFloor.FillFloorSection(9, 4, 1, 11, cPathTile);
+    cFloor.FillFloorSection(7, 11, 5, 1, cPathTile);
+    cFloor.FillFloorSection(8, 15, 3, 3, cPathTile);
+    cFloor.FillFloorSection(7, 16, 1, 1, cPathTile);
+    cFloor.FillFloorSection(11, 16, 1, 1, cPathTile);
+
+    // houses
+    var cHouseGrass = new TILE(-1, false, true, GRASS_COLOR);
+
+    cFloor.FillFloorSection(4, 15, 3, 3, cHouseGrass);
+    cFloor.PlaceTile(342, cPathTile);
+    var cBlacksmith = PAWNUTILS.MakeStore("Blacksmith");
+    cFloor.AddPawnToTile(cBlacksmith, 342);
+    cFloor.AddPawnToTile(PAWNUTILS.MakeHouse(), 319);
+    cFloor.AddPawnToTile(PAWNUTILS.MakeSign(), 322);
+
+    cFloor.FillFloorSection(12, 15, 3, 3, cHouseGrass);
+    cFloor.PlaceTile(348, cPathTile);
+    cFloor.AddPawnToTile(PAWNUTILS.MakeHouse(), 327);
+    cFloor.AddPawnToTile(PAWNUTILS.MakeSign(), 326);
+
+    cFloor.AddPawnToTile(PAWNUTILS.MakeWell(), 345);
+
+    STORE.SetStore("Blacksmith", cBlacksmith);
+    cBlacksmith.AddToInventory(D_WEAPON.Sword()); // TODO - have stores not be defined like this (need to be static)
+    cBlacksmith.AddToInventory(D_WEAPON.Spear());
+    cBlacksmith.AddToInventory(D_WEAPON.Axe());
+    cBlacksmith.AddToInventory(D_WEAPON.Hammer());
+
+    cFloor.AddPawnToTile(PAWNUTILS.MakeStairs(CONST.DOOR_DOWNSTAIRS, 0), 72);
+
+    cFloor.SetEntranceIdx(324);
     return cFloor;
   };
 

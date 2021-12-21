@@ -16,6 +16,7 @@ var TILE = (function () {
     this.GetIdx       = function() { return this.idx; };
     this.GetColor     = function() { return this.color; };
     this.GetEntities  = function() { return this.arrEntities; };
+    this.IsPassable   = function() { return this.bIsPassable; };
     this.IsDiscovered = function() { return this.bIsDiscovered; };
     this.IsVisible    = function() { return this.bIsVisible; };
     this.HasEntity    = function() { return (this.arrEntities.length > 0); };
@@ -122,6 +123,15 @@ var TILE = (function () {
       }
 
       return false;
+    };
+
+    // ----------------
+    // Copy
+    //     Returns a shallow copy of this tile
+    // ----------------
+    this.Copy = function(idx=-1)
+    {
+      return new TILE(idx, this.bIsPassable, this.bIsLit, this.color);
     };
 
     // ----------------

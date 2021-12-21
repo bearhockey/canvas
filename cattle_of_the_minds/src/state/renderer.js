@@ -3,9 +3,9 @@ var RENDERER = (function () {
 
   const GRID_SIZE = 15; // a box of AxA
   const TILE_SIZE = 64; // pixels sized nodes
-  const UNSEEN_ALPHA = "99"; // this is added as the alpha bit on unseen tiles
+  const UNSEEN_ALPHA = "66"; // this is added as the alpha bit on unseen tiles
 
-  renderer.bShowGrid = true;
+  renderer.bShowGrid = false;
   renderer.iFocusIdx = 0;
 
   renderer.arrDrawnTiles   = [];

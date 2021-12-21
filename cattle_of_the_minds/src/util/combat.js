@@ -27,6 +27,8 @@ var COMBAT = (function () {
   // ----------------
   combat.AttackPawn = function(cAttacker, cDefender, bIsHeroAttacker=true)
   {
+    if (cDefender.IsDead()) { return; } // don't beat a dead horse
+    
     var bHit = combat.CheckHit(cAttacker.GetStat(CONST.STAT_AGILITY)[0],
                                cAttacker.GetStat(CONST.STAT_ACCURACY)[0],
                                cDefender.GetStat(CONST.STAT_AGILITY)[0]);

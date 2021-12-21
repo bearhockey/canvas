@@ -1,25 +1,70 @@
 var D_ENEMY = (function () {
-
+  const ENEMY_ICON_DIR = "./res/enemy/";
   var de = {};
 
   // enemy consts
-  de.ID_GOBLIN = 1;
-  de.ENEMY_GOBLIN = { id:de.ID_GOBLIN, strName:"Goblin", strIcon:"./res/goblin.gif",
-                      arrStats:[ [CONST.STAT_HEALTH, 4], [CONST.STAT_BRAWN, 2], [CONST.STAT_AGILITY, 1] ] };
+  de.ID_GOBLIN    = 1;
+  de.ENEMY_GOBLIN =
+  {
+    id      : de.ID_GOBLIN,
+    strName : "Goblin",
+    strIcon : "goblin.gif",
+    arrStats: [ [CONST.STAT_HEALTH, 4], [CONST.STAT_BRAWN, 2], [CONST.STAT_AGILITY, 1] ]
+  };
 
-  de.ID_HOBGOBLIN = 2;
-  de.ENEMY_HOBGOBLIN = {id:de.ID_HOBGOBLIN, strName:"Hobgoblin", strIcon:"./res/hobgoblin.gif",
-                      arrStats:[ [CONST.STAT_HEALTH, 8], [CONST.STAT_BRAWN, 3], [CONST.STAT_AGILITY, 2] ] };
+  de.ID_HOBGOBLIN    = 2;
+  de.ENEMY_HOBGOBLIN =
+  {
+    id      : de.ID_HOBGOBLIN,
+    strName : "Hobgoblin",
+    strIcon : "hobgoblin.gif",
+    arrStats: [ [CONST.STAT_HEALTH, 8], [CONST.STAT_BRAWN, 3], [CONST.STAT_AGILITY, 2] ]
+  };
 
-  de.ID_BEAR = 3;
-  de.ENEMY_BEAR = {id:de.ID_BEAR, strName:"Bear", strIcon:"./res/bear.gif",
-                      arrStats:[ [CONST.STAT_HEALTH, 12], [CONST.STAT_BRAWN, 5], [CONST.STAT_AGILITY, 3] ] };
+  de.ID_BEAR    = 3;
+  de.ENEMY_BEAR =
+  {
+    id      : de.ID_BEAR,
+    strName : "Bear",
+    strIcon : "bear.gif",
+    arrStats: [ [CONST.STAT_HEALTH, 12], [CONST.STAT_BRAWN, 5], [CONST.STAT_AGILITY, 3] ]
+  };
+
+  de.ID_RAT    = 4;
+  de.ENEMY_RAT =
+  {
+    id      : de.ID_RAT,
+    strName : "Rat",
+    strIcon : "rat.gif",
+    arrStats: [ [CONST.STAT_HEALTH, 2], [CONST.STAT_BRAWN, 1], [CONST.STAT_AGILITY, 3] ]
+  };
+
+  de.ID_SKELETON    = 5;
+  de.ENEMY_SKELETON =
+  {
+    id      : de.ID_SKELETON,
+    strName : "Skeleton",
+    strIcon : "skeleton.gif",
+    arrStats: [ [CONST.STAT_HEALTH, 11], [CONST.STAT_BRAWN, 2], [CONST.STAT_AGILITY, 2] ]
+  };
+
+  de.ID_GHOST    = 6;
+  de.ENEMY_GHOST =
+  {
+    id      : de.ID_GHOST,
+    strName : "Ghost",
+    strIcon : "ghost.gif",
+    arrStats: [ [CONST.STAT_HEALTH, 14], [CONST.STAT_BRAWN, 1], [CONST.STAT_AGILITY, 3] ]
+  };
 
   de.m_arrEnemyBank =
   [
     de.ENEMY_GOBLIN,
     de.ENEMY_HOBGOBLIN,
-    de.ENEMY_BEAR
+    de.ENEMY_BEAR,
+    de.ENEMY_RAT,
+    de.ENEMY_SKELETON,
+    de.ENEMY_GHOST
   ];
 
   // ----------------
@@ -54,7 +99,8 @@ var D_ENEMY = (function () {
     var objEnemyInfo = de.GetEnemyData(id);
     if (objEnemyInfo != null)
     {
-      cEnemy = new PAWN(CONST.PAWN_ENEMY, objEnemyInfo.strName, objEnemyInfo.strIcon);
+      var strIconPath = ENEMY_ICON_DIR + objEnemyInfo.strIcon;
+      cEnemy = new PAWN(CONST.PAWN_ENEMY, objEnemyInfo.strName, strIconPath);
       // TODO - make this better
       var arrStatPairs = objEnemyInfo.arrStats;
       var idx;

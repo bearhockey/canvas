@@ -15,6 +15,7 @@ var FLOOR = (function () {
     this.iWidth = iWidth; // the height and width of the tile array
     this.iTimeLastEntered = 0;
     this.iNPCLimit = 0;
+    this.iEntranceIdx = -1;
 
     this.arrTileMap = [];
     this.arrEmptyTiles = []; // useful for placing things
@@ -37,6 +38,9 @@ var FLOOR = (function () {
     this.SetNPCLimit = function(iLimit) { this.iNPCLimit = iLimit; };
     this.GetNPCs = function() { return this.arrNPCs; };
     this.AddNPC = function(cPawn) { this.arrNPCs.push(cPawn); };
+
+    this.GetEntranceIdx = function()    { return this.iEntranceIdx; };
+    this.SetEntranceIdx = function(idx) { this.iEntranceIdx = idx; };
 
     // ----------------
     // UpdateNPCs
@@ -124,6 +128,52 @@ var FLOOR = (function () {
     };
 
     // ----------------
+    // FillFloorSection
+    //     Fills part of the floor specified with the specified tile
+    // ----------------
+    this.FillFloorSection = function(x, y, iWidth, iHeight, cTile=null)
+    {
+      var idx;
+      var iOriginalX = x;;
+      var cTileCopy = (cTile != null) ? cTile : new TILE(-1, false, false, this.strWallColor);
+      var iHeightLimit = y + iHeight;
+      var iWidthLimit = x + iWidth;
+      var cOldTile;
+      var iOldIdx;
+      for (; y < iHeightLimit; ++y)
+      {
+        for (x = iOriginalX; x < iWidthLimit; ++x)
+        {
+          idx = (y * this.iWidth) + x;
+          this.PlaceTile(idx, cTileCopy);
+        } // end for loop (x)
+      } // end for loop (y)
+    };
+
+    // ----------------
+    // PlaceTile
+    //     Places a single tile at the given idx
+    // ----------------
+    this.PlaceTile = function(idx, cTile)
+    {
+      if (this.IsValidIdx(idx))
+      {
+        var cOldTile = this.arrTileMap[idx];
+        var iOldIdx = this.arrEmptyTiles.indexOf(cOldTile);
+        if (iOldIdx >= 0)
+        {
+          this.arrEmptyTiles.splice(iOldIdx, 1);
+        }
+
+        this.arrTileMap[idx] = cTile.Copy(idx);
+        if (cTile.IsPassable())
+        {
+          this.arrEmptyTiles.push(this.arrTileMap[idx]);
+        }
+      }
+    };
+
+    // ----------------
     // IsValidIdx
     //     Checks if the idx is valid - leaving a border of tiles around the edges
     // ----------------
@@ -131,6 +181,30 @@ var FLOOR = (function () {
     {
       var iSize = this.iWidth * this.iWidth;
       return !(idx - this.iWidth < 0 || idx + this.iWidth > iSize || idx % this.iWidth == 0 || idx % this.iWidth == this.iWidth-1);
+    };
+
+    // ----------------
+    // AddPawnToTile
+    //     Adds a pawn to a specified tile idx
+    // ----------------
+    this.AddPawnToTile = function(cPawn, idx)
+    {
+      var iEmptyIdx;
+      var cTile;
+      if (this.IsValidIdx(idx))
+      {
+        cTile = this.arrTileMap[idx];
+        cTile.PlaceEntity(cPawn);
+        iEmptyIdx = this.arrEmptyTiles.indexOf(cTile);
+        if (iEmptyIdx >= 0)
+        {
+          this.arrEmptyTiles.splice(iEmptyIdx, 1);
+        }
+        if (cPawn.GetPawnType() == CONST.PAWN_STAIRS)
+        {
+          this.arrStairs.push(cPawn);
+        }
+      }
     };
 
     // ----------------
@@ -164,7 +238,7 @@ var FLOOR = (function () {
 
     // ----------------
     // RemovePawn
-    //     ARemoves a pawn from the floor
+    //     Removes a pawn from the floor
     // ----------------
     this.RemovePawn = function(cPawn)
     {
