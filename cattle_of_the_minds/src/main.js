@@ -251,10 +251,3 @@ function GoToFloor(idx, iDoorType, iDoor=-1)
 function GetHero() { return m_cHero; };
 function GetTime() { return iPlaytime; };
 function IncrementTime(iValue=1) { iPlaytime+=iValue; };
-
-function DebugGetIdx()
-{
-  var idx = m_cHero.GetTile().GetIdx();
-  var iWidth = m_cCurrentFloor.GetFloorWidth();
-  console.log("IDX: ", idx, " X: ", idx % iWidth, " Y: ", Math.floor(idx / iWidth));
-}

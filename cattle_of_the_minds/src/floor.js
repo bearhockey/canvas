@@ -327,16 +327,40 @@ var FLOOR = (function () {
       var bIsValidTile = false;
       switch (iDirection)
       {
+        case CONST.NORTHWEST:
+        {
+          iTarget = idx - this.iWidth - 1;
+          bIsValidTile = ( (iTarget >= 0) && (iTarget % this.iWidth < idx % this.iWidth) );
+          break;
+        }
         case CONST.NORTH:
         {
           iTarget = idx - this.iWidth;
           bIsValidTile = (iTarget >= 0);
           break;
         }
+        case CONST.NORTHEAST:
+        {
+          iTarget = idx - this.iWidth + 1;
+          bIsValidTile = ( (iTarget >= 0) && (iTarget % this.iWidth > idx % this.iWidth) );
+          break;
+        }
+        case CONST.SOUTHWEST:
+        {
+          iTarget = idx + this.iWidth - 1;
+          bIsValidTile = ( (iTarget < this.arrTileMap.length) && (iTarget % this.iWidth < idx % this.iWidth) );
+          break;
+        }
         case CONST.SOUTH:
         {
           iTarget = idx + this.iWidth;
-          bIsValidTile = (iTarget < this.arrTileMap.length)
+          bIsValidTile = (iTarget < this.arrTileMap.length);
+          break;
+        }
+        case CONST.SOUTHEAST:
+        {
+          iTarget = idx + this.iWidth + 1;
+          bIsValidTile = ( (iTarget < this.arrTileMap.length) && (iTarget % this.iWidth > idx % this.iWidth) );
           break;
         }
         case CONST.EAST:

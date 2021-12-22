@@ -6,6 +6,7 @@
 <body onload="StartGame()">
 <script src="./src/util/combat.js"></script>
 <script src="./src/util/const.js"></script>
+<script src="./src/util/debug.js"></script>
 <script src="./src/util/pawnutils.js"></script>
 <script src="./src/util/rect.js"></script>
 <script src="./src/util/strings.js"></script>
@@ -38,12 +39,16 @@
 <script src="./src/main.js"></script>
 
 <script type="text/javascript">
-  function MoveNorth() { CONTROLLER.MoveHero(CONST.NORTH); }
-  function MoveSouth() { CONTROLLER.MoveHero(CONST.SOUTH); }
-  function MoveEast()  { CONTROLLER.MoveHero(CONST.EAST); }
-  function MoveWest()  { CONTROLLER.MoveHero(CONST.WEST); }
-  function Get()       { CONTROLLER.HeroPickup(); }
-  function Action()    { CONTROLLER.HeroAction(); }
+  function MoveNorthWest() { CONTROLLER.MoveHero(CONST.NORTHWEST); }
+  function MoveNorth()     { CONTROLLER.MoveHero(CONST.NORTH); }
+  function MoveNorthEast() { CONTROLLER.MoveHero(CONST.NORTHEAST); }
+  function MoveSouthWest() { CONTROLLER.MoveHero(CONST.SOUTHWEST); }
+  function MoveSouth()     { CONTROLLER.MoveHero(CONST.SOUTH); }
+  function MoveSouthEast() { CONTROLLER.MoveHero(CONST.SOUTHEAST); }
+  function MoveEast()      { CONTROLLER.MoveHero(CONST.EAST); }
+  function MoveWest()      { CONTROLLER.MoveHero(CONST.WEST); }
+  function Get()           { CONTROLLER.HeroPickup(); }
+  function Action()        { CONTROLLER.HeroAction(); }
 
   function StageButton()     { STATE.SetState(STATE.STATE_STAGE); }
   function InventoryButton() { STATE.SetState(STATE.STATE_INVENTORY); }
@@ -70,17 +75,22 @@
       </table>
     </div>
     <div id="divButtons">
-      <button class="arrow" onclick="Get()">G</button>
-      <button class="arrow" onclick="MoveNorth()">^</button>
-      <button class="arrow" onclick="Action()">@</button>
+      <button class="ui" id="button_pickup" onclick="Get()"></button>
+      <button class="ui" id="button_stairs" onclick="Action()"></button>
       <br>
-      <button class="arrow" onclick="MoveWest()"><</button>
-      <button class="arrow" onclick="MoveSouth()">v</button>
-      <button class="arrow" onclick="MoveEast()">></button>
-    </div>
-
-    <div id="debugButtons">
-      <button class="arrow" onclick="DebugGetIdx()">IDX</button>
+      <button class="ui" id="button_upleft" onclick="MoveNorthWest()"></button>
+      <button class="ui" id="button_up" onclick="MoveNorth()"></button>
+      <button class="ui" id="button_upright" onclick="MoveNorthEast()"></button>
+      <br>
+      <button class="ui" id="button_left" onclick="MoveWest()"></button>
+      <button class="ui" id="button_what" onclick="Get()"></button>
+      <button class="ui" id="button_right" onclick="MoveEast()"></button>
+      <br>
+      <button class="ui" id="button_downleft" onclick="MoveSouthWest()"></button>
+      <button class="ui" id="button_down" onclick="MoveSouth()"></button>
+      <button class="ui" id="button_downright" onclick="MoveSouthEast()"></button>
+      <br>
+      <button class="ui" onclick="DEBUG.DebugGetIdx()">IDX</button>
     </div>
   </div>
 </div>

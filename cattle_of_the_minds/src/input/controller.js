@@ -23,7 +23,7 @@ var CONTROLLER = (function () {
       else
       {
         var cTargetTile = cFloor.GetTile(cFloor.GetDirectionIdx(cHero.GetTile().GetIdx(), iDirection));
-        if (cTargetTile.HasEntity())
+        if (cTargetTile != null && cTargetTile.HasEntity())
         {
           var cEnemy = cTargetTile.GetFirstEnemy();
           if (cEnemy != null)

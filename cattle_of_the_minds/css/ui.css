@@ -24,14 +24,14 @@ button.panel
   width: 45%;
 }
 
-button.arrow
+button.ui
 {
+  background-color: #CCCCDD;
   border-radius: 12px;
-  font-size: 40px;
-  font-weight: 800;
   height: 80px;
   margin: 4px 2px;
   width: 80px;
+  background-size: cover;
 }
 
 button.topButton
@@ -70,6 +70,50 @@ div.text_area
   text-align: left;
   width: 100%;
 }
+
+/* ui buttons */
+button#button_pickup        { background-image: url('../res/ui/button_pickup.png'); }
+button#button_pickup:hover  { background-image: url('../res/ui/hover_pickup.png'); }
+button#button_pickup:active { background-image: url('../res/ui/button_pickup.png'); background-color: #9999AA; }
+
+button#button_stairs        { background-image: url('../res/ui/button_stairs.png'); }
+button#button_stairs:hover  { background-image: url('../res/ui/hover_stairs.png'); }
+button#button_stairs:active { background-image: url('../res/ui/button_stairs.png'); background-color: #9999AA; }
+
+
+button#button_upleft           { background-image: url('../res/ui/button_upleft.png'); }
+button#button_upleft:hover     { background-image: url('../res/ui/hover_upleft.png'); }
+button#button_upleft:active    { background-image: url('../res/ui/button_upleft.png'); background-color: #9999AA; }
+
+button#button_up           { background-image: url('../res/ui/button_up.png'); }
+button#button_up:hover     { background-image: url('../res/ui/hover_up.png'); }
+button#button_up:active    { background-image: url('../res/ui/button_up.png'); background-color: #9999AA; }
+
+button#button_upright           { background-image: url('../res/ui/button_upright.png'); }
+button#button_upright:hover     { background-image: url('../res/ui/hover_upright.png'); }
+button#button_upright:active    { background-image: url('../res/ui/button_upright.png'); background-color: #9999AA; }
+
+
+button#button_left         { background-image: url('../res/ui/button_left.png'); }
+button#button_left:hover   { background-image: url('../res/ui/hover_left.png'); }
+button#button_left:active  { background-image: url('../res/ui/button_left.png'); background-color: #9999AA; }
+
+button#button_right        { background-image: url('../res/ui/button_right.png'); }
+button#button_right:hover  { background-image: url('../res/ui/hover_right.png'); }
+button#button_right:active { background-image: url('../res/ui/button_right.png'); background-color: #9999AA; }
+
+
+button#button_downleft         { background-image: url('../res/ui/button_downleft.png'); }
+button#button_downleft:hover   { background-image: url('../res/ui/hover_downleft.png'); }
+button#button_downleft:active  { background-image: url('../res/ui/button_downleft.png'); background-color: #9999AA; }
+
+button#button_down         { background-image: url('../res/ui/button_down.png'); }
+button#button_down:hover   { background-image: url('../res/ui/hover_down.png'); }
+button#button_down:active  { background-image: url('../res/ui/button_down.png'); background-color: #9999AA; }
+
+button#button_downright         { background-image: url('../res/ui/button_downright.png'); }
+button#button_downright:hover   { background-image: url('../res/ui/hover_downright.png'); }
+button#button_downright:active  { background-image: url('../res/ui/button_downright.png'); background-color: #9999AA; }
 
 /* mobile css */
 @media screen and (max-width: 1160px)

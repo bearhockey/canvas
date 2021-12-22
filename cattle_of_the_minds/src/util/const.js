@@ -2,11 +2,15 @@ var CONST = (function () {
   var c = {};
 
   // directions
-  c.NORTH = 0;
-  c.EAST  = 1;
-  c.SOUTH = 2;
-  c.WEST  = 3;
-  c.DIRECTIONS = [0, 1, 2, 3];
+  c.NORTHWEST  = 1;
+  c.NORTH      = 2;
+  c.NORTHWEST  = 3;
+  c.EAST       = 4;
+  c.SOUTHEAST  = 5;
+  c.SOUTH      = 6;
+  c.SOUTHWEST  = 7;
+  c.WEST       = 8;
+  c.DIRECTIONS = [1, 2, 3, 4 , 5, 6, 7, 8];
 
   // pawn types
   c.PAWN_HERO = 0; // special type, hero
