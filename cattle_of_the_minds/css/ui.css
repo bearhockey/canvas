@@ -28,6 +28,8 @@ button.ui
 {
   background-color: #CCCCDD;
   border-radius: 12px;
+  font-size: 32px;
+  font-weight: 800;
   height: 80px;
   margin: 4px 2px;
   width: 80px;
@@ -79,6 +81,10 @@ button#button_pickup:active { background-image: url('../res/ui/button_pickup.png
 button#button_stairs        { background-image: url('../res/ui/button_stairs.png'); }
 button#button_stairs:hover  { background-image: url('../res/ui/hover_stairs.png'); }
 button#button_stairs:active { background-image: url('../res/ui/button_stairs.png'); background-color: #9999AA; }
+
+button#button_lens          { background-image: url('../res/ui/button_lens.png'); }
+button#button_lens:hover    { background-image: url('../res/ui/hover_lens.png'); }
+button#button_lens:active   { background-image: url('../res/ui/button_lens.png'); background-color: #9999AA; }
 
 
 button#button_upleft           { background-image: url('../res/ui/button_upleft.png'); }

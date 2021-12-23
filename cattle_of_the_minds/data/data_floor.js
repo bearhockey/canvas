@@ -27,7 +27,7 @@ var D_FLOOR = (function () {
 
     // make a border around the room
     cFloor.FillFloor();
-    var cRoomTile = new TILE(-1, true, true, LIT_COLOR);
+    var cRoomTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, LIT_COLOR);
     cFloor.FillFloorSection(iBorder, iBorder, iFloorWidth-(iBorder*2), iFloorWidth-(iBorder*2), cRoomTile);
 
     cFloor.AddPawnToEmptyTile(PAWNUTILS.MakeStairs(CONST.DOOR_DOWNSTAIRS, 0));
@@ -47,6 +47,7 @@ var D_FLOOR = (function () {
 
     var iSize = cFloor.iWidth * cFloor.iWidth;
     var idx;
+    var iLength;
     var color;
     var cTile;
 
@@ -110,7 +111,7 @@ var D_FLOOR = (function () {
         for (x = 0; x < iRoomLength; ++x)
         {
           idx = arrRoom[x];
-          cTile = new TILE(idx, true, (color == LIT_COLOR), color);
+          cTile = new TILE(idx, true, (color == LIT_COLOR), CONST.SHAPE_SQUARE, color);
           cFloor.arrTileMap[idx] = cTile;
           cFloor.arrEmptyTiles.push(cTile);
           // estimate trying to find the middle of trhe room
@@ -130,32 +131,61 @@ var D_FLOOR = (function () {
 
     // step three - connect the rooms
     var iDestination;
+    var iHandbreak;
+    var cEmptyTile = new TILE(idx, true, false, CONST.SHAPE_SQUARE, cFloor.strFloorColor);
     while (arrCenterTiles.length > 0)
     {
       idx = arrCenterTiles.shift();
       iDestination = (arrCenterTiles.length > 0) ? arrCenterTiles[0] : idx;
-      while (idx != iDestination)
+      iHandbreak = 100; // stop infinite generation
+      while (idx != iDestination && iHandbreak > 0)
       {
-        if (idx < iDestination)
-        {
-          if (idx + cFloor.iWidth < iDestination) { idx += cFloor.iWidth; }
-          else                                  { idx += 1;}
-        }
-        else if (idx > iDestination)
-        {
-          if (idx - cFloor.iWidth > iDestination) { idx -= cFloor.iWidth; }
-          else                                  { idx -= 1; }
-        }
+        if      (idx < iDestination && idx + cFloor.iWidth < iDestination) { idx += cFloor.iWidth; }
+        else if (idx > iDestination && idx - cFloor.iWidth > iDestination) { idx -= cFloor.iWidth; }
+        if (idx % cFloor.iWidth < iDestination % cFloor.iWidth)      { idx += 1; }
+        else if (idx % cFloor.iWidth > iDestination % cFloor.iWidth) { idx -= 1;}
 
         cTile = cFloor.arrTileMap[idx];
         if (cFloor.IsValidIdx(idx) && cFloor.arrTileMap[idx] != null && !cFloor.arrTileMap[idx].bIsPassable)
         {
-          cTile = new TILE(idx, true, false, cFloor.strFloorColor);
-          cFloor.arrTileMap[idx] = cTile;
-          cFloor.arrEmptyTiles.push(cTile);
+          cFloor.PlaceTile(idx, cEmptyTile);
         }
+
+        iHandbreak--;
       } // end idx while loop
     } // end arrCenterTiles while loop
+
+    // step four - make some diagonals (TODO - maybe make this a function somewhere else)
+    var cTopLeftCorner     = new TILE(-1, false, false, CONST.SHAPE_TOPLEFT_CORNER, cFloor.strWallColor, cFloor.strFloorColor);
+    var cTopRightCorner    = new TILE(-1, false, false, CONST.SHAPE_TOPRIGHT_CORNER, cFloor.strWallColor, cFloor.strFloorColor);
+    var cBottomRightCorner = new TILE(-1, false, false, CONST.SHAPE_BOTTOMRIGHT_CORNER, cFloor.strWallColor, cFloor.strFloorColor);
+    var cBottomLeftCorner  = new TILE(-1, false, false, CONST.SHAPE_BOTTOMLEFT_CORNER, cFloor.strWallColor, cFloor.strFloorColor);
+    var bIsNorthEmpty;
+    var bIsEastEmpty;
+    var bIsSouthEmpty;
+    var bIsWestEmpty;
+    var arrAllTiles = cFloor.GetAllTiles();
+    var arrNeighbors;
+    var iWalls;
+    var cCurrentTile;
+    iLength = arrAllTiles.length;
+    for (idx = 0; idx < iLength; ++idx)
+    {
+      cCurrentTile = cFloor.GetTile(idx);
+      arrNeighbors = cFloor.GetAdjacentTiles(idx);
+      iWalls = UTILS.CountWalls(arrNeighbors, cFloor);
+      if (cCurrentTile != null && !cCurrentTile.IsPassable() && iWalls == 2)
+      {
+        bIsNorthEmpty = (arrNeighbors[0] != null) ? arrNeighbors[0].IsPassable() : false;
+        bIsEastEmpty  = (arrNeighbors[1] != null) ? arrNeighbors[1].IsPassable() : false;
+        bIsSouthEmpty = (arrNeighbors[2] != null) ? arrNeighbors[2].IsPassable() : false;
+        bIsWestEmpty  = (arrNeighbors[3] != null) ? arrNeighbors[3].IsPassable() : false;
+        if      (bIsNorthEmpty && bIsEastEmpty)  { cFloor.PlaceTile(idx, cBottomLeftCorner); }
+        else if (bIsEastEmpty  && bIsSouthEmpty) { cFloor.PlaceTile(idx, cTopLeftCorner); }
+        else if (bIsSouthEmpty && bIsWestEmpty)  { cFloor.PlaceTile(idx, cTopRightCorner); }
+        else if (bIsWestEmpty  && bIsNorthEmpty) { cFloor.PlaceTile(idx, cBottomRightCorner); }
+      }
+    } // end for loop
 
     // add upstairs
     var iNumberOfUpstairs = iStairEntrances;
@@ -185,21 +215,35 @@ var D_FLOOR = (function () {
   {
     var cFloor = new FLOOR(21);
     cFloor.FillFloor();
-    var cGrassTile = new TILE(-1, true, true, GRASS_COLOR);
+    var cGrassTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, GRASS_COLOR);
     cFloor.FillFloorSection(2, 1, 16, 18, cGrassTile);
 
     cFloor.FillFloorSection(8, 2, 3, 2);
-    cFloor.PlaceTile(72, new TILE(-1, true, true, EMPTY_COLOR));
+    cFloor.PlaceTile(72, new TILE(-1, true, true, CONST.SHAPE_SQUARE, EMPTY_COLOR));
 
-    var cPathTile = new TILE(-1, true, true, PATH_COLOR);
+    var cPathTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, PATH_COLOR);
+    var cPathCornerBL = new TILE(-1, true, true, CONST.SHAPE_BOTTOMLEFT_CORNER, PATH_COLOR, GRASS_COLOR);
+    var cPathCornerBR = new TILE(-1, true, true, CONST.SHAPE_BOTTOMRIGHT_CORNER, PATH_COLOR, GRASS_COLOR);
     cFloor.FillFloorSection(9, 4, 1, 11, cPathTile);
     cFloor.FillFloorSection(7, 11, 5, 1, cPathTile);
     cFloor.FillFloorSection(8, 15, 3, 3, cPathTile);
     cFloor.FillFloorSection(7, 16, 1, 1, cPathTile);
     cFloor.FillFloorSection(11, 16, 1, 1, cPathTile);
+    cFloor.PlaceTile(302, cPathCornerBR);
+    cFloor.PlaceTile(304, cPathCornerBL);
 
     // houses
-    var cHouseGrass = new TILE(-1, false, true, GRASS_COLOR);
+    var cHouseGrass = new TILE(-1, false, true, CONST.SHAPE_SQUARE,GRASS_COLOR); // impassible grass
+
+    cFloor.FillFloorSection(5, 11, 2, 2, cHouseGrass);
+    cFloor.PlaceTile(237, cPathTile);
+    cFloor.AddPawnToTile(PAWNUTILS.MakeHouse("Junk", 2), 236);
+    cFloor.AddPawnToTile(PAWNUTILS.MakeSign(), 259);
+
+    cFloor.FillFloorSection(12, 10, 3, 3, cHouseGrass);
+    cFloor.PlaceTile(243, cPathTile);
+    cFloor.AddPawnToTile(PAWNUTILS.MakeHouse("What"), 222);
+    cFloor.AddPawnToTile(PAWNUTILS.MakeSign(), 221);
 
     cFloor.FillFloorSection(4, 15, 3, 3, cHouseGrass);
     cFloor.PlaceTile(342, cPathTile);
@@ -220,6 +264,7 @@ var D_FLOOR = (function () {
     cBlacksmith.AddToInventory(D_WEAPON.Spear());
     cBlacksmith.AddToInventory(D_WEAPON.Axe());
     cBlacksmith.AddToInventory(D_WEAPON.Hammer());
+    cBlacksmith.AddToInventory(D_ARMOR.Leather());
 
     cFloor.AddPawnToTile(PAWNUTILS.MakeStairs(CONST.DOOR_DOWNSTAIRS, 0), 72);
 

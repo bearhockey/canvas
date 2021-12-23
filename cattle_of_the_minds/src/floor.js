@@ -22,7 +22,7 @@ var FLOOR = (function () {
     this.arrStairs = [];
     this.arrSpawnMap = [];
     this.arrNPCs = [];
-    this.cNullTile = new TILE(-1, false, false, "#111111");
+    this.cNullTile = new TILE(-1, false, false, CONST.SHAPE_SQUARE, "#111111");
 
     this.strFloorColor = strFloorColor;
     this.strWallColor = strWallColor;
@@ -122,7 +122,7 @@ var FLOOR = (function () {
       var cTile;
       for (idx = 0; idx < iSize; ++idx)
       {
-        cTile = new TILE(idx, false, false, this.strWallColor);
+        cTile = new TILE(idx, false, false, CONST.SHAPE_SQUARE, this.strWallColor);
         this.arrTileMap.push(cTile);
       } // end of for loop
     };
@@ -135,7 +135,7 @@ var FLOOR = (function () {
     {
       var idx;
       var iOriginalX = x;;
-      var cTileCopy = (cTile != null) ? cTile : new TILE(-1, false, false, this.strWallColor);
+      var cTileCopy = (cTile != null) ? cTile : new TILE(-1, false, false, CONST.SHAPE_SQUARE, this.strWallColor);
       var iHeightLimit = y + iHeight;
       var iWidthLimit = x + iWidth;
       var cOldTile;
@@ -409,6 +409,20 @@ var FLOOR = (function () {
       } // if iTarget check
 
       return iReturnIdx;
+    };
+
+    // ----------------
+    // GetAdjacentTiles
+    //     Returns the tiles adjacent to the tile passed in
+    // ----------------
+    this.GetAdjacentTiles = function(idx, bIncludeDiagonals=false)
+    {
+      var arrTiles = [];
+      arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, CONST.NORTH)) );
+      arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, CONST.EAST)) );
+      arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, CONST.SOUTH)) );
+      arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, CONST.WEST)) );
+      return arrTiles;
     };
 
     // ----------------

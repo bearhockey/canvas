@@ -23,6 +23,12 @@ var RENDERER = (function () {
   };
 
   // ----------------
+  // ToggleGrid
+  //     Toggles the grid to show/hide
+  // ----------------
+  renderer.ToggleGrid = function() { renderer.bShowGrid = !renderer.bShowGrid; };
+
+  // ----------------
   // SetVisibleTiles
   //     Sets the tiles to be drawn, the tiles to be "visibile",  and the center tile
   // ----------------
@@ -76,7 +82,6 @@ var RENDERER = (function () {
     var iEndRow = GRID_SIZE - Math.floor((iDiff + 1)/2);
     var iWidth = iEndRow - iStartRow;
 
-    ctx.beginPath();
     var iTilesLength = arrTiles.length;
     for (idx = 0; idx < iTilesLength; ++idx)
     {
@@ -89,10 +94,7 @@ var RENDERER = (function () {
       {
         // console.log("Drawing tile at :", iX, iY);
         bIsVisible = (arrVisibleTiles.indexOf(cTile) >= 0);
-
-        strTileColor = cTile.GetColor();
-        ctx.fillStyle = (bIsVisible) ? strTileColor : strTileColor + UNSEEN_ALPHA;
-        ctx.fillRect(iX, iY, TILE_SIZE, TILE_SIZE);
+        cTile.DrawTile(ctx, iX, iY, TILE_SIZE, UNSEEN_ALPHA, bIsVisible);
 
         if (bIsVisible && cTile.HasEntity())
         {
@@ -118,7 +120,6 @@ var RENDERER = (function () {
       }
     } // end for loop
 
-    ctx.stroke();
     // draw the grid last so its on top
     if (renderer.bShowGrid)
     {

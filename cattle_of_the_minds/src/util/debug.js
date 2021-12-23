@@ -2,6 +2,15 @@ var DEBUG = (function () {
   var dbg = {};
 
   // ----------------
+  // DebugAddGold
+  //     Adds some gold to the player's inventory
+  // ----------------
+  dbg.DebugAddGold = function()
+  {
+    GetHero().AddToInventory(PAWNUTILS.MakeGoldPile(100));
+  };
+
+  // ----------------
   // DebugGetIdx
   //     Returns some stats on where the current hero pawn is located
   // ----------------

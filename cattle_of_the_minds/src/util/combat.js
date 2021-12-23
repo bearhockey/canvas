@@ -2,13 +2,29 @@ var COMBAT = (function () {
   var combat = {};
 
   // ----------------
+  // RollStat
+  //     Rolls a given stat and returns a value back
+  // ----------------
+  combat.RollStat = function(iStat)
+  {
+    var iHits = 0;
+    var idx;
+    for (idx = 0; idx < (iStat/10); ++idx)
+    {
+      iHits += (UTILS.Roll1d6() == 6) ? 1 : 0;
+    }
+
+    return iHits;
+  };
+
+  // ----------------
   // CheckHit
   //     Checks if an attack hits
   // ----------------
   combat.CheckHit = function(iAttackerAgility, iAttackerAccuracy, iDefenderAgility)
   {
-    var iAttackerCheck = UTILS.Roll2d6() + iAttackerAgility;
-    var iDefenderCheck = UTILS.Roll2d6() + iDefenderAgility;
+    var iAttackerCheck = combat.RollStat(iAttackerAgility);
+    var iDefenderCheck = combat.RollStat(iDefenderAgility);
     return (iAttackerCheck + iAttackerAccuracy >= iDefenderCheck);
   };
 
@@ -28,7 +44,7 @@ var COMBAT = (function () {
   combat.AttackPawn = function(cAttacker, cDefender, bIsHeroAttacker=true)
   {
     if (cDefender.IsDead()) { return; } // don't beat a dead horse
-    
+
     var bHit = combat.CheckHit(cAttacker.GetStat(CONST.STAT_AGILITY)[0],
                                cAttacker.GetStat(CONST.STAT_ACCURACY)[0],
                                cDefender.GetStat(CONST.STAT_AGILITY)[0]);

@@ -4,14 +4,19 @@ var STATBLOCK = (function () {
   {
     this.iLevel = 0;
     this.iLevelCurrent = 0;
+
     this.iHealth = 0;
     this.iHealthCurrent = 0;
     this.iMana = 0;
     this.iManaCurrent = 0;
+
     this.iAttack = 0;
     this.iAttackCurrent = 0;
     this.iAccuracy = 0;
     this.iAccuracyCurrent = 0;
+    this.iArmor = 0;
+    this.iArmorCurrent = 0;
+
     this.iBrawn = 0;
     this.iBrawnCurrent = 0;
     this.iAgility = 0;
@@ -35,6 +40,7 @@ var STATBLOCK = (function () {
         case CONST.STAT_MANA      : arrStatPair = [this.iManaCurrent,      this.iMana];      break;
         case CONST.STAT_ATTACK    : arrStatPair = [this.iAttackCurrent,    this.iAttack];    break;
         case CONST.STAT_ACCURACY  : arrStatPair = [this.iAccuracyCurrent,  this.iAccuracy];  break;
+        case CONST.STAT_ARMOR     : arrStatPair = [this.iArmorCurrent,     this.iArmor];     break;
         case CONST.STAT_BRAWN     : arrStatPair = [this.iBrawnCurrent,     this.iBrawn];     break;
         case CONST.STAT_AGILITY   : arrStatPair = [this.iAgilityCurrent,   this.iAgility];   break;
         case CONST.STAT_INTELLECT : arrStatPair = [this.iIntellectCurrent, this.iIntellect]; break;
@@ -63,6 +69,8 @@ var STATBLOCK = (function () {
         { this.iAttackCurrent = iStatValue;    if (bSetCap) { this.iAttack = iStatValue; }    break; }
         case CONST.STAT_ACCURACY:
         { this.iAccuracyCurrent = iStatValue;  if (bSetCap) { this.iAccuracy = iStatValue; }  break; }
+        case CONST.STAT_ARMOR:
+        { this.iArmorCurrent = iStatValue;     if (bSetCap) { this.iArmor = iStatValue; }     break; }
         case CONST.STAT_BRAWN:
         { this.iBrawnCurrent = iStatValue;     if (bSetCap) { this.iBrawn = iStatValue; }     break; }
         case CONST.STAT_AGILITY:
@@ -88,6 +96,7 @@ var STATBLOCK = (function () {
         this.iMana      += cStatBlock.iMana;
         this.iAttack    += cStatBlock.iAttack;
         this.iAccuracy  += cStatBlock.iAccuracy;
+        this.iArmor     += cStatBlock.iArmor;
         this.iBrawn     += cStatBlock.iBrawn;
         this.iAgility   += cStatBlock.iAgility;
         this.iIntellect += cStatBlock.iIntellect;
@@ -99,6 +108,7 @@ var STATBLOCK = (function () {
           this.iManaCurrent      += cStatBlock.iManaCurrent;
           this.iAttackCurrent    += cStatBlock.iAttackCurrent;
           this.iAccuracyCurrent  += cStatBlock.iAccuracyCurrent;
+          this.iArmor            += cStatBlock.iArmorCurrent;
           this.iBrawnCurrent     += cStatBlock.iBrawnCurrent;
           this.iAgilityCurrent   += cStatBlock.iAgilityCurrent;
           this.iIntellectCurrent += cStatBlock.iIntellectCurrent;
@@ -118,6 +128,7 @@ var STATBLOCK = (function () {
       if (this.iManaCurrent      > this.iMana)      { this.iManaCurrent      = this.iMana; }
       if (this.iAttackCurrent    > this.iAttack)    { this.iAttackCurrent    = this.iAttack; }
       if (this.iAccuracyCurrent  > this.iAccuracy)  { this.iAccuracyCurrent  = this.iAccuracy; }
+      if (this.iArmorCurrent     > this.iArmor)     { this.iArmorCurrent     = this.iArmor; }
       if (this.iBrawnCurrent     > this.iBrawn)     { this.iBrawnCurrent     = this.iBrawn; }
       if (this.iAgilityCurrent   > this.iAgility)   { this.iAgilityCurrent   = this.iAgility; }
       if (this.iIntellectCurrent > this.iIntellect) { this.iIntellectCurrent = this.iIntellect; }

@@ -2,10 +2,12 @@ var TILE = (function () {
   // privates
   const DEFAULT_NODE_COLOR = "#000000";
   // main
-  var tile = function(idx, bIsPassable=true, bIsLit=false, color=DEFAULT_NODE_COLOR)
+  var tile = function(idx, bIsPassable=true, bIsLit=false, iShape=0, color=DEFAULT_NODE_COLOR, bgcolor=DEFAULT_NODE_COLOR)
   {
     this.idx = idx;
+    this.iShape = iShape;
     this.color = color;
+    this.bgcolor = bgcolor;
     this.bIsPassable = bIsPassable;
     this.bIsLit = bIsLit;
     this.bIsDiscovered = false;
@@ -14,7 +16,9 @@ var TILE = (function () {
     // this.objPathData = null; // might need pathing?
 
     this.GetIdx       = function() { return this.idx; };
+    this.GetShape     = function() { return this.iShape; };
     this.GetColor     = function() { return this.color; };
+    this.GetColorBack = function() { return this.bgcolor; };
     this.GetEntities  = function() { return this.arrEntities; };
     this.IsPassable   = function() { return this.bIsPassable; };
     this.IsDiscovered = function() { return this.bIsDiscovered; };
@@ -131,7 +135,59 @@ var TILE = (function () {
     // ----------------
     this.Copy = function(idx=-1)
     {
-      return new TILE(idx, this.bIsPassable, this.bIsLit, this.color);
+      return new TILE(idx, this.bIsPassable, this.bIsLit, this.iShape, this.color, this.bgcolor);
+    };
+
+    // ----------------
+    // DrawTile
+    //     Draws the tile
+    // ----------------
+    this.DrawTile = function(ctx, x, y, iSize, strFogAlpha, bIsVisible)
+    {
+        var strTileColor = (this.iShape != CONST.SHAPE_SQUARE) ? this.GetColorBack() : this.GetColor();
+        ctx.fillStyle = (bIsVisible) ? strTileColor : strTileColor + strFogAlpha;
+        ctx.fillRect(x, y, iSize, iSize);
+        if (this.iShape != CONST.SHAPE_SQUARE)
+        {
+          strTileColor = this.GetColor();
+          ctx.fillStyle = (bIsVisible) ? strTileColor : strTileColor + strFogAlpha;
+          ctx.beginPath();
+          switch (this.iShape)
+          {
+            case CONST.SHAPE_TOPLEFT_CORNER:
+            {
+              ctx.moveTo(x, y);
+              ctx.lineTo(x+iSize, y);
+              ctx.lineTo(x, y+iSize);
+              break;
+            }
+            case CONST.SHAPE_TOPRIGHT_CORNER:
+            {
+              ctx.moveTo(x, y);
+              ctx.lineTo(x+iSize, y);
+              ctx.lineTo(x+iSize, y+iSize);
+              break;
+            }
+            case CONST.SHAPE_BOTTOMRIGHT_CORNER:
+            {
+              ctx.moveTo(x, y+iSize);
+              ctx.lineTo(x+iSize, y+iSize);
+              ctx.lineTo(x+iSize, y);
+              break;
+            }
+            case CONST.SHAPE_BOTTOMLEFT_CORNER:
+            {
+              ctx.moveTo(x, y);
+              ctx.lineTo(x+iSize, y+iSize);
+              ctx.lineTo(x, y+iSize);
+              break;
+            }
+            default: break;
+          } // end switch
+
+          ctx.closePath();
+          ctx.fill();
+        }
     };
 
     // ----------------

@@ -2,12 +2,21 @@ var UTILS = (function () {
   var utils = {};
 
   // ----------------
+  // Roll1d6
+  //     Simulates rolling one 6-sided dice
+  // ----------------
+  utils.Roll1d6 = function()
+  {
+    return Math.floor(Math.random()*6) + 1;
+  };
+
+  // ----------------
   // Roll2d6
   //     Simulates rolling two 6-sided dice
   // ----------------
   utils.Roll2d6 = function()
   {
-    return Math.floor(Math.random()*6) + Math.floor(Math.random()*6) + 2;
+    return utils.Roll1d6() + utils.Roll1d6();
   };
 
   // ----------------
@@ -39,6 +48,23 @@ var UTILS = (function () {
     } // end for loop
 
     return arrIndicies;
+  };
+
+  // ----------------
+  // CountWalls
+  //     Pass in an array of tiles and get the number of walls (is passible) tiles
+  // ----------------
+  utils.CountWalls = function(arrTiles, cFloor)
+  {
+    var iWalls = 0;
+    var idx;
+    var iLength = arrTiles.length;
+    for (idx = 0; idx < iLength; ++idx)
+    {
+      if (arrTiles[idx] != null && !arrTiles[idx].IsPassable()) { iWalls++; }
+    } // end for loop
+
+    return iWalls;
   };
 
   // ----------------

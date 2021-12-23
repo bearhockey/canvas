@@ -12,6 +12,13 @@ var CONST = (function () {
   c.WEST       = 8;
   c.DIRECTIONS = [1, 2, 3, 4 , 5, 6, 7, 8];
 
+  // tile shapes
+  c.SHAPE_SQUARE = 0;
+  c.SHAPE_TOPLEFT_CORNER = 1;
+  c.SHAPE_TOPRIGHT_CORNER = 2;
+  c.SHAPE_BOTTOMRIGHT_CORNER = 3;
+  c.SHAPE_BOTTOMLEFT_CORNER = 4;
+
   // pawn types
   c.PAWN_HERO = 0; // special type, hero
   c.PAWN_ITEM = 1;
@@ -43,12 +50,13 @@ var CONST = (function () {
   c.STAT_LEVEL     = 1;
   c.STAT_HEALTH    = 2;
   c.STAT_MANA      = 3;
-  c.STAT_ATTACK    = 4;
-  c.STAT_ACCURACY  = 5;
-  c.STAT_BRAWN     = 6;
-  c.STAT_AGILITY   = 7;
-  c.STAT_INTELLECT = 8;
-  c.STAT_WILLPOWER = 9;
+  c.STAT_ATTACK    = 11;
+  c.STAT_ACCURACY  = 12;
+  c.STAT_ARMOR     = 13;
+  c.STAT_BRAWN     = 21;
+  c.STAT_AGILITY   = 22;
+  c.STAT_INTELLECT = 23;
+  c.STAT_WILLPOWER = 24;
 
   return c;
 }());

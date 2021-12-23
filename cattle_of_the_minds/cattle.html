@@ -19,6 +19,7 @@
 <script src="./src/input/mouse.js"></script>
 <script src="./src/statblock.js"></script>
 
+<script src="./data/data_armor.js"></script>
 <script src="./data/data_enemy.js"></script>
 <script src="./data/data_floor.js"></script>
 <script src="./data/data_weapon.js"></script>
@@ -49,6 +50,7 @@
   function MoveWest()      { CONTROLLER.MoveHero(CONST.WEST); }
   function Get()           { CONTROLLER.HeroPickup(); }
   function Action()        { CONTROLLER.HeroAction(); }
+  function Look()          { CONTROLLER.HeroLook(); }
 
   function StageButton()     { STATE.SetState(STATE.STATE_STAGE); }
   function InventoryButton() { STATE.SetState(STATE.STATE_INVENTORY); }
@@ -77,6 +79,7 @@
     <div id="divButtons">
       <button class="ui" id="button_pickup" onclick="Get()"></button>
       <button class="ui" id="button_stairs" onclick="Action()"></button>
+      <button class="ui" id="button_lens" onclick="Look()"></button>
       <br>
       <button class="ui" id="button_upleft" onclick="MoveNorthWest()"></button>
       <button class="ui" id="button_up" onclick="MoveNorth()"></button>
@@ -91,6 +94,7 @@
       <button class="ui" id="button_downright" onclick="MoveSouthEast()"></button>
       <br>
       <button class="ui" onclick="DEBUG.DebugGetIdx()">IDX</button>
+      <button class="ui" onclick="DEBUG.DebugAddGold()">$$$</button>
     </div>
   </div>
 </div>

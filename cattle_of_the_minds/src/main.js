@@ -22,8 +22,6 @@ function StartGame()
   // Init components
   RENDERER.Init();
   INVENTORY.Init();
-  // cFirstFloor = D_FLOOR.RandomFloor(iFloorWidth);
-  // cFirstFloor = D_FLOOR.DebugFloor(MAP_WIDTH);
   cFirstFloor = D_FLOOR.TownOne();
   m_arrFloors.push(cFirstFloor);
   m_cCurrentFloor = cFirstFloor;
@@ -33,8 +31,8 @@ function StartGame()
   m_cHero.cBaseStats.SetStat(CONST.STAT_LEVEL, 1, true);
   m_cHero.cBaseStats.SetStat(CONST.STAT_HEALTH, 20, true);
   m_cHero.cBaseStats.SetStat(CONST.STAT_MANA, 10, true);
-  m_cHero.cBaseStats.SetStat(CONST.STAT_ATTACK, 1, true);
-  m_cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 3, true);
+  m_cHero.cBaseStats.SetStat(CONST.STAT_BRAWN, 10, true);
+  m_cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 30, true);
 
   var cStartTile;
   if (m_cCurrentFloor.GetEntranceIdx() >= 0)

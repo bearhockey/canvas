@@ -117,5 +117,15 @@ var CONTROLLER = (function () {
     Update(MOVE_TIME);
   };
 
+  // ----------------
+  // HeroLook
+  //     Looks at a thing on the map
+  // ----------------
+  controller.HeroLook = function()
+  {
+    RENDERER.ToggleGrid();
+    Update();
+  };
+
   return controller;
 }());

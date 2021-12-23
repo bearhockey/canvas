@@ -61,9 +61,10 @@ var PAWNUTILS = (function () {
   // MakeHouse
   //     Returns a house
   // ----------------
-  pu.MakeHouse = function(strName="House")
+  pu.MakeHouse = function(strName="House", iSize=3)
   {
-    return new PAWN(CONST.PAWN_DECOR, strName, TERRAIN_ICON_DIR+"house3x3.gif");
+    var strHouseIcon = (iSize == 2) ? "house2x2.gif" : "house3x3.gif";
+    return new PAWN(CONST.PAWN_DECOR, strName, TERRAIN_ICON_DIR+strHouseIcon);
   };
 
   return pu;
