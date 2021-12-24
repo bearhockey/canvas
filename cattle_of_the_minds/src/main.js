@@ -86,6 +86,12 @@ var myGameArea =
 function GetCanvas() { return myGameArea.context; };
 
 // ----------------
+// GetCanvasWidth
+//     Returns how wide ( and thus how tall ) the canvas is in pixels
+// ----------------
+function GetCanvasWidth() { return CANVAS_WIDTH; };
+
+// ----------------
 // Update
 //     Updates the game loop
 // ----------------
@@ -102,6 +108,7 @@ function Update(iTimeIncrease=0)
   }
 
   var iState = STATE.GetState();
+  myGameArea.clear();
   switch (iState)
   {
     case STATE.STATE_STAGE:
@@ -122,13 +129,21 @@ function Update(iTimeIncrease=0)
     case STATE.STATE_INVENTORY:
     {
       INVENTORY.Update();
-      DrawInventory();
+      // myGameArea.clear();
+      INVENTORY.Draw(GetCanvas());
       break;
     }
     case STATE.STATE_CHARACTER:
     {
       CHARACTER.Update();
-      DrawCharacter();
+      // myGameArea.clear();
+      CHARACTER.Draw(GetCanvas());
+      break;
+    }
+    case STATE.STATE_MAP:
+    {
+      // myGameArea.clear();
+      MINIMAP.Draw(GetCanvas(), m_cCurrentFloor);
       break;
     }
     case STATE.STATE_DEATH:
@@ -146,30 +161,10 @@ function Update(iTimeIncrease=0)
 // ----------------
 function DrawStage(iFocusIdx, arrVisionRange)
 {
-  myGameArea.clear();
+  // myGameArea.clear();
   var arrTiles = m_cCurrentFloor.GetTileArea(iFocusIdx, MAP_WIDTH);
   RENDERER.SetVisibleTiles(arrTiles, arrVisionRange);
   RENDERER.Draw(GetCanvas(), MAP_WIDTH);
-}
-
-// ----------------
-// DrawInventory
-//     Draws the inventory state
-// ----------------
-function DrawInventory()
-{
-  myGameArea.clear();
-  INVENTORY.Draw(GetCanvas());
-}
-
-// ----------------
-// DrawCharacater
-//     Draws the character information state
-// ----------------
-function DrawCharacter()
-{
-  myGameArea.clear();
-  CHARACTER.Draw(GetCanvas());
 }
 
 // ----------------
@@ -178,7 +173,7 @@ function DrawCharacter()
 // ----------------
 function DrawDeath()
 {
-  myGameArea.clear("#FFFFFF");
+  myGameArea.clear("#FFFFFF"); // double clear but get a white background so
 
   var imgEntity = new Image();
   imgEntity.iX = 50;

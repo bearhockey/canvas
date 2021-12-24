@@ -36,6 +36,7 @@
 <script src="./src/state/renderer.js"></script>
 <script src="./src/state/inventory.js"></script>
 <script src="./src/state/character.js"></script>
+<script src="./src/state/map.js"></script>
 
 <script src="./src/main.js"></script>
 
@@ -55,6 +56,7 @@
   function StageButton()     { STATE.SetState(STATE.STATE_STAGE); }
   function InventoryButton() { STATE.SetState(STATE.STATE_INVENTORY); }
   function CharacterButton() { STATE.SetState(STATE.STATE_CHARACTER); }
+  function MapButton()       { STATE.SetState(STATE.STATE_MAP); }
 </script>
 
 <div id="divMain">
@@ -62,6 +64,7 @@
     <button id="butStage"     class="topButton" onclick="StageButton()">Stage</button>
     <button id="butInventory" class="topButton" onclick="InventoryButton()">Inventory</button>
     <button id="butCharacter" class="topButton" onclick="CharacterButton()">Character</button>
+    <button id="butMap"       class="topButton" onclick="MapButton()">Map</button>
   </div>
   <div id="divCenter">
     <div id="divCanvas"></div>

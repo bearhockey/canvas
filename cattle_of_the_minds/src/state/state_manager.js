@@ -1,8 +1,9 @@
 var STATE = (function () {
   // consts
-  const STAGE_BUTTON = "butStage";
+  const STAGE_BUTTON     = "butStage";
   const INVENTORY_BUTTON = "butInventory";
   const CHARACTER_BUTTON = "butCharacter"
+  const MAP_BUTTON       = "butMap";
 
   // main
   var state = {};
@@ -10,7 +11,8 @@ var STATE = (function () {
   state.STATE_STAGE = 1;
   state.STATE_INVENTORY = 2;
   state.STATE_CHARACTER = 3;
-  state.STATE_DEATH = 4;
+  state.STATE_MAP = 4;
+  state.STATE_DEATH = 9;
 
   state.m_iCurrentState = 1;
 
@@ -32,6 +34,7 @@ var STATE = (function () {
     document.getElementById(STAGE_BUTTON).disabled     = (bDead || state.m_iCurrentState  == state.STATE_STAGE);
     document.getElementById(INVENTORY_BUTTON).disabled = (bDead || state.m_iCurrentState  == state.STATE_INVENTORY);
     document.getElementById(CHARACTER_BUTTON).disabled = (bDead || state.m_iCurrentState  == state.STATE_CHARACTER);
+    document.getElementById(MAP_BUTTON).disabled       = (bDead || state.m_iCurrentState  == state.STATE_MAP);
   };
 
   return state;
