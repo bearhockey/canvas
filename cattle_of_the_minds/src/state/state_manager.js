@@ -12,6 +12,7 @@ var STATE = (function () {
   state.STATE_INVENTORY = 2;
   state.STATE_CHARACTER = 3;
   state.STATE_MAP = 4;
+  state.STATE_DIALOG = 5;
   state.STATE_DEATH = 9;
 
   state.m_iCurrentState = 1;
@@ -30,11 +31,11 @@ var STATE = (function () {
   // ----------------
   state.UpdateMenu = function()
   {
-    var bDead = state.m_iCurrentState == state.STATE_DEATH;
-    document.getElementById(STAGE_BUTTON).disabled     = (bDead || state.m_iCurrentState  == state.STATE_STAGE);
-    document.getElementById(INVENTORY_BUTTON).disabled = (bDead || state.m_iCurrentState  == state.STATE_INVENTORY);
-    document.getElementById(CHARACTER_BUTTON).disabled = (bDead || state.m_iCurrentState  == state.STATE_CHARACTER);
-    document.getElementById(MAP_BUTTON).disabled       = (bDead || state.m_iCurrentState  == state.STATE_MAP);
+    var bTurnOffButtons = (state.GetState() == state.STATE_DIALOG || state.GetState() == state.STATE_DEATH);
+    document.getElementById(STAGE_BUTTON).disabled     = (bTurnOffButtons || state.m_iCurrentState  == state.STATE_STAGE);
+    document.getElementById(INVENTORY_BUTTON).disabled = (bTurnOffButtons || state.m_iCurrentState  == state.STATE_INVENTORY);
+    document.getElementById(CHARACTER_BUTTON).disabled = (bTurnOffButtons || state.m_iCurrentState  == state.STATE_CHARACTER);
+    document.getElementById(MAP_BUTTON).disabled       = (bTurnOffButtons || state.m_iCurrentState  == state.STATE_MAP);
   };
 
   return state;

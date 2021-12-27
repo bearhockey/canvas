@@ -3,6 +3,7 @@ var NPC = (function () {
   // main
   var npc = function(iSight = 4)
   {
+    this.iReactionTime = 1;
     this.iSightRange = iSight;
     this.cChaseTarget = null;
     // ----------------

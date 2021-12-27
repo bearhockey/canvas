@@ -43,6 +43,7 @@ button.topButton
   font-weight: 600;
   height: 64px;
   margin: 4px 0px;
+  min-width: 170px;
 }
 
 table.infoPanel

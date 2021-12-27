@@ -5,34 +5,23 @@ const MAP_WIDTH = 15; // in tiles
 const PLAYER_SIGHT_RANGE = 3;
 // globals - don't use if you can
 var cFirstFloor;
-var cSecondFloor;
 var iFloorWidth = 50;
 var iPlaytime = 0; // playtime in seconds
+
+var cStartButton;
+var cLoadButton;
 
 var m_cHero;
 var m_cCurrentFloor;
 var m_arrFloors = [];
 
-// ----------------
-// StartGame
-//     Starts the game
-// ----------------
-function StartGame()
+function LoadMap()
 {
-  // Init components
-  RENDERER.Init();
-  INVENTORY.Init();
   cFirstFloor = D_FLOOR.TownOne();
   m_arrFloors.push(cFirstFloor);
   m_cCurrentFloor = cFirstFloor;
 
-  m_cHero = new PAWN(CONST.PAWN_HERO, "Hero", "./res/hero.gif");
-  // just add the stats for now
-  m_cHero.cBaseStats.SetStat(CONST.STAT_LEVEL, 1, true);
-  m_cHero.cBaseStats.SetStat(CONST.STAT_HEALTH, 20, true);
-  m_cHero.cBaseStats.SetStat(CONST.STAT_MANA, 10, true);
-  m_cHero.cBaseStats.SetStat(CONST.STAT_BRAWN, 10, true);
-  m_cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 30, true);
+  m_cHero = PAWNUTILS.MakeHero();
 
   var cStartTile;
   if (m_cCurrentFloor.GetEntranceIdx() >= 0)
@@ -45,13 +34,6 @@ function StartGame()
   }
 
   cStartTile.PlaceEntity(m_cHero);
-  m_cHero.AddToInventory(D_WEAPON.Sword(), true);
-
-  // give the player some gold
-  m_cHero.AddToInventory(PAWNUTILS.MakeGoldPile(90));
-
-  // start game
-  myGameArea.start();
   STATE.SetState(STATE.STATE_STAGE);
 }
 
@@ -99,17 +81,25 @@ function Update(iTimeIncrease=0)
 {
   IncrementTime(iTimeIncrease);
   // update NPCs
-  m_cCurrentFloor.UpdateNPCs();
+  if (m_cCurrentFloor != null) { m_cCurrentFloor.UpdateNPCs(); }
   IBOX.UpdateInfo();
 
-  if (m_cHero.IsDead())
+  if (m_cHero != null && m_cHero.IsDead() && STATE.GetState() != STATE.STATE_DIALOG)
   {
-    STATE.SetState(STATE.STATE_DEATH, false);
+    DIALOG.OpenDialog("./res/screen/death_screen.png", 800, 600, "#FFFFFF");
   }
 
-  var iState = STATE.GetState();
   myGameArea.clear();
-  switch (iState)
+  HandleStateUpdate();
+};
+
+// ----------------
+// HandleStateUpdate
+//     Updates the state-specific triggers
+// ----------------
+function HandleStateUpdate()
+{
+  switch (STATE.GetState())
   {
     case STATE.STATE_STAGE:
     {
@@ -128,22 +118,24 @@ function Update(iTimeIncrease=0)
     }
     case STATE.STATE_INVENTORY:
     {
-      INVENTORY.Update();
-      // myGameArea.clear();
+      INVENTORY.Update();  // myGameArea.clear();
       INVENTORY.Draw(GetCanvas());
       break;
     }
     case STATE.STATE_CHARACTER:
     {
       CHARACTER.Update();
-      // myGameArea.clear();
       CHARACTER.Draw(GetCanvas());
       break;
     }
     case STATE.STATE_MAP:
     {
-      // myGameArea.clear();
       MINIMAP.Draw(GetCanvas(), m_cCurrentFloor);
+      break;
+    }
+    case STATE.STATE_DIALOG:
+    {
+      DIALOG.Draw(GetCanvas());
       break;
     }
     case STATE.STATE_DEATH:
@@ -153,7 +145,7 @@ function Update(iTimeIncrease=0)
     }
     default: break;
   } // end of switch
-};
+}
 
 // ----------------
 // DrawStage
@@ -161,28 +153,25 @@ function Update(iTimeIncrease=0)
 // ----------------
 function DrawStage(iFocusIdx, arrVisionRange)
 {
-  // myGameArea.clear();
   var arrTiles = m_cCurrentFloor.GetTileArea(iFocusIdx, MAP_WIDTH);
   RENDERER.SetVisibleTiles(arrTiles, arrVisionRange);
   RENDERER.Draw(GetCanvas(), MAP_WIDTH);
 }
 
 // ----------------
-// DrawDeath
-//     Draws the end of game scene
+// StartGame
+//     Starts the game
 // ----------------
-function DrawDeath()
+function StartGame()
 {
-  myGameArea.clear("#FFFFFF"); // double clear but get a white background so
+  cStartButton = new BUTTON(0, 860, 200, 50, "Start", LoadMap);
+  // cLoadButton = new BUTTON(0, 860, 200, 50, "Load");
+  // Init components
+  INVENTORY.Init();
 
-  var imgEntity = new Image();
-  imgEntity.iX = 50;
-  imgEntity.iY = 100;
-  imgEntity.addEventListener('load', function()
-  {
-    GetCanvas().drawImage(this, this.iX, this.iY);
-  }, false);
-  imgEntity.src = "./res/death_screen.png";
+  // start game
+  myGameArea.start();
+  DIALOG.OpenDialog("./res/screen/title.png", 410, 330, "#000000", [cStartButton]);
 }
 
 // DEBUG STUFF ---- maybe move these to a better class

@@ -5,6 +5,26 @@ var PAWNUTILS = (function () {
   var pu = {};
 
   // ----------------
+  // MakeHero
+  //     Returns a starting hero - probably move this and make it more dynamic
+  // ----------------
+  pu.MakeHero = function()
+  {
+    var cHero = new PAWN(CONST.PAWN_HERO, "Hero", "./res/hero.gif");
+    // just add the stats for now
+    cHero.cBaseStats.SetStat(CONST.STAT_LEVEL, 1, true);
+    cHero.cBaseStats.SetStat(CONST.STAT_HEALTH, 20, true);
+    cHero.cBaseStats.SetStat(CONST.STAT_MANA, 10, true);
+    cHero.cBaseStats.SetStat(CONST.STAT_BRAWN, 10, true);
+    cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 30, true);
+    // give the player some gold and a sword
+    cHero.AddToInventory(D_WEAPON.Sword(), true);
+    cHero.AddToInventory(PAWNUTILS.MakeGoldPile(90));
+
+    return cHero;
+  };
+
+  // ----------------
   // MakeStairs
   //     Returns a set of stairs
   // ----------------
@@ -36,7 +56,11 @@ var PAWNUTILS = (function () {
   // ----------------
   pu.MakeStore = function(strName="Store", strIcon="")
   {
-    return new PAWN(CONST.PAWN_STORE, strName, strIcon);
+    var cStore = new PAWN(CONST.PAWN_STORE, strName, strIcon);
+    cStore.cBaseStats.SetStat(CONST.STAT_HEALTH, 999, true);
+    cStore.CalculateTotalStats(); // have to give stores health so they don't "die" and drop their inventory
+    cStore.cController = new TRIGGER(STORE.VisitStore);
+    return cStore;
   };
 
   // ----------------

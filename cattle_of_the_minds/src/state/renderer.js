@@ -15,14 +15,6 @@ var RENDERER = (function () {
   renderer.GetGridSize = function() { return GRID_SIZE; };
 
   // ----------------
-  // Init
-  //     Inits the renderer
-  // ----------------
-  renderer.Init = function()
-  {
-  };
-
-  // ----------------
   // ToggleGrid
   //     Toggles the grid to show/hide
   // ----------------

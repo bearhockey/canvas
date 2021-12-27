@@ -12,6 +12,7 @@ var PAWN = (function () {
     this.iQuantity = 0; // assume that any value less than one means its not an item
     this.iBulk     = 0;
     this.iCapacity = 0;
+    this.iLastTime = 0; // timestamp of the last action taken
 
     this.strName = strName;
     this.strIcon = strIcon;
@@ -369,7 +370,12 @@ var PAWN = (function () {
     {
       if (this.cController != null && !this.IsDead())
       {
-        this.cController.Act(this);
+        var iDelta = GetTime() - this.iLastTime;
+        if (iDelta > this.cController.iReactionTime)
+        {
+          this.cController.Act(this);
+          this.iLastTime = GetTime();
+        }
       }
     };
   }; // end of class

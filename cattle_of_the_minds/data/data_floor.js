@@ -248,7 +248,7 @@ var D_FLOOR = (function () {
     cFloor.FillFloorSection(4, 15, 3, 3, cHouseGrass);
     cFloor.PlaceTile(342, cPathTile);
     var cBlacksmith = PAWNUTILS.MakeStore("Blacksmith");
-    cFloor.AddPawnToTile(cBlacksmith, 342);
+    cFloor.AddPawnToTile(cBlacksmith, 342, true);
     cFloor.AddPawnToTile(PAWNUTILS.MakeHouse(), 319);
     cFloor.AddPawnToTile(PAWNUTILS.MakeSign(), 322);
 

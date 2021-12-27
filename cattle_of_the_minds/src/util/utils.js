@@ -92,6 +92,14 @@ var UTILS = (function () {
     return str;
   };
 
+  // ----------------
+  // GetCenterCord
+  //     Returns the proper x/y cordinate based on the screen size and the size of the side to position it centered
+  // ----------------
+  utils.GetCenterCord = function(iLength)
+  {
+    return (GetCanvasWidth()/2)-(iLength/2);
+  };
 
   return utils;
 }());

@@ -187,7 +187,7 @@ var FLOOR = (function () {
     // AddPawnToTile
     //     Adds a pawn to a specified tile idx
     // ----------------
-    this.AddPawnToTile = function(cPawn, idx)
+    this.AddPawnToTile = function(cPawn, idx, bAddNPC=false)
     {
       var iEmptyIdx;
       var cTile;
@@ -204,6 +204,7 @@ var FLOOR = (function () {
         {
           this.arrStairs.push(cPawn);
         }
+        if (bAddNPC) { this.AddNPC(cPawn); }
       }
     };
 

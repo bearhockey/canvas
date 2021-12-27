@@ -9,19 +9,32 @@ var MOUSE = (function () {
   mouse.Move = function(evt)
   {
     mouse.arrPosition = mouse.GetMousePosition(evt);
-    //if (mouse.IsInView())
-    //{
-    //}
+    if (mouse.IsInView())
+    {
+      if (STATE.GetState() == STATE.STATE_DIALOG)
+      {
+        DIALOG.HandleMouseMove(mouse.arrPosition[0], mouse.arrPosition[1]);
+      }
+    }
   };
 
+  // ----------------
+  // LeftClick
+  //     Handles left mouse clicks and screen taps
+  // ----------------
   mouse.LeftClick = function(evt)
   {
     var idx;
     if (mouse.IsInView())
     {
-      if (STATE.GetState() == STATE.STATE_INVENTORY)
+      var iState = STATE.GetState();
+      if (iState == STATE.STATE_INVENTORY)
       {
         INVENTORY.HandleMouseClick(mouse.arrPosition[0], mouse.arrPosition[1]);
+      }
+      else if (iState == STATE.STATE_DIALOG)
+      {
+        DIALOG.HandleMouseClick(mouse.arrPosition[0], mouse.arrPosition[1]);
       }
     } // end main vs side view check
   };

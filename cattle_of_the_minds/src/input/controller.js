@@ -1,7 +1,7 @@
 var CONTROLLER = (function () {
   // consts
-  const MOVE_TIME = 1; // moving takes one second
-  const ATTACK_TIME = 2; // attacking takes a little longer
+  const MOVE_TIME = 4; // moving takes one second
+  const ATTACK_TIME = 4; // attacking takes a little longer
   // main
   var controller = {};
 
