@@ -23,5 +23,32 @@ var DEBUG = (function () {
     MBOX.AddInfo(str)
   };
 
+  // ----------------
+  // DebugHealHero
+  //     Restores the hero health to max
+  // ----------------
+  dbg.DebugHealHero = function()
+  {
+    var cHero = GetHero();
+    var iHealth = cHero.GetStat(CONST.STAT_HEALTH)[1];
+    cHero.SetStat(CONST.STAT_HEALTH, iHealth, true);
+  };
+
+  // ----------------
+  // DebugRevealMap
+  //     Reveals the map
+  // ----------------
+  dbg.DebugRevealMap = function()
+  {
+    var arrTiles = GetFloor().GetAllTiles();
+    var idx;
+    var iLength = arrTiles.length;
+    for (idx = 0; idx < iLength; ++idx)
+    {
+      arrTiles[idx].bIsDiscovered = true;
+    }
+    Update();
+  };
+
   return dbg;
 }());

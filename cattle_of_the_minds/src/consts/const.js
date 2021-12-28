@@ -59,5 +59,13 @@ var CONST = (function () {
   c.STAT_WILLPOWER = 24;
   c.STAT_XP        = 30;
 
+  // tile colors
+  c.TILE_NULL  = "#111111";
+  c.TILE_EMPTY = "#CCCCCC";
+  c.TILE_LIT   = "#EEEEFF";
+  c.TILE_WALL  = "#444444";
+  c.TILE_GRASS = "#008000";
+  c.TILE_PATH  = "#808000";
+
   return c;
 }());

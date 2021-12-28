@@ -4,42 +4,46 @@
 <link rel="stylesheet" href="./css/ui.css">
 </head>
 <body onload="StartGame()">
+<!-- consts must be imported first -->
+<script src="./src/consts/const.js"></script>
+
+<script src="./data/data_armor.js"></script>
+<script src="./data/data_enemy.js"></script>
+<script src="./data/data_floor.js"></script>
+<script src="./data/data_room.js"></script>
+<script src="./data/data_weapon.js"></script>
+<!--                              -->
+<script src="./src/ai/npc.js"></script>
+<script src="./src/ai/trigger.js"></script>
+
+<script src="./src/input/controller.js"></script>
+<script src="./src/input/mouse.js"></script>
+
+<script src="./src/ui/canvas_button.js"></script>
+<script src="./src/ui/infobox.js"></script>
+<script src="./src/ui/messagebox.js"></script>
+
 <script src="./src/util/combat.js"></script>
-<script src="./src/util/const.js"></script>
 <script src="./src/util/debug.js"></script>
 <script src="./src/util/pawnutils.js"></script>
 <script src="./src/util/rect.js"></script>
 <script src="./src/util/strings.js"></script>
 <script src="./src/util/utils.js"></script>
 
-<script src="./src/ui/canvas_button.js"></script>
-<script src="./src/ui/infobox.js"></script>
-<script src="./src/ui/messagebox.js"></script>
-
-<script src="./src/input/controller.js"></script>
-<script src="./src/input/mouse.js"></script>
-<script src="./src/statblock.js"></script>
-
-<script src="./data/data_armor.js"></script>
-<script src="./data/data_enemy.js"></script>
-<script src="./data/data_floor.js"></script>
-<script src="./data/data_weapon.js"></script>
-
-<script src="./src/tile.js"></script>
 <script src="./src/floor.js"></script>
-
-<script src="./src/ai/npc.js"></script>
-<script src="./src/ai/trigger.js"></script>
-<script src="./src/pawn.js"></script>
 <script src="./src/inventory_container.js"></script>
+<script src="./src/pawn.js"></script>
+<script src="./src/statblock.js"></script>
+<script src="./src/tile.js"></script>
 
-<script src="./src/state/state_manager.js"></script>
-<script src="./src/state/store_manager.js"></script>
+<!-- states must be imported last to avoid import errors -->
 <script src="./src/state/character.js"></script>
 <script src="./src/state/dialog.js"></script>
 <script src="./src/state/inventory.js"></script>
 <script src="./src/state/map.js"></script>
 <script src="./src/state/renderer.js"></script>
+<script src="./src/state/state_manager.js"></script>
+<script src="./src/state/store_manager.js"></script>
 
 <script src="./src/main.js"></script>
 
@@ -99,9 +103,12 @@
       <button class="ui" id="button_downleft" onclick="MoveSouthWest()"></button>
       <button class="ui" id="button_down" onclick="MoveSouth()"></button>
       <button class="ui" id="button_downright" onclick="MoveSouthEast()"></button>
-      <br>
+      <hr>
       <button class="ui" onclick="DEBUG.DebugGetIdx()">IDX</button>
       <button class="ui" onclick="DEBUG.DebugAddGold()">$$$</button>
+      <button class="ui" onclick="DEBUG.DebugHealHero()">+</button>
+      <br>
+      <button class="ui" onclick="DEBUG.DebugRevealMap()">MAP</button>
     </div>
   </div>
 </div>

@@ -6,10 +6,7 @@ var FLOOR = (function () {
   const ROOM_GENERATION_RETRIES = 10;
   const ROOM_LIT_CHANCE = 0.3;
 
-  const EMPTY_COLOR = "#CCCCCC";
-  const LIT_COLOR   = "#EEEEFF";
-  const WALL_COLOR = "#444444";
-  var floor = function(iWidth, strFloorColor = EMPTY_COLOR, strWallColor = WALL_COLOR)
+  var floor = function(iWidth, strFloorColor = CONST.TILE_EMPTY, strWallColor = CONST.TILE_WALL)
   {
     // constructor
     this.iWidth = iWidth; // the height and width of the tile array
@@ -22,7 +19,7 @@ var FLOOR = (function () {
     this.arrStairs = [];
     this.arrSpawnMap = [];
     this.arrNPCs = [];
-    this.cNullTile = new TILE(-1, false, false, CONST.SHAPE_SQUARE, "#111111");
+    this.cNullTile = new TILE(-1, false, false, CONST.SHAPE_SQUARE, CONST.TILE_NULL);
 
     this.strFloorColor = strFloorColor;
     this.strWallColor = strWallColor;
@@ -41,6 +38,24 @@ var FLOOR = (function () {
 
     this.GetEntranceIdx = function()    { return this.iEntranceIdx; };
     this.SetEntranceIdx = function(idx) { this.iEntranceIdx = idx; };
+
+    // ----------------
+    // GetIdxFromCords
+    //     Returns the idx from an x/y cordinate
+    // ----------------
+    this.GetIdxFromCords = function(x, y)
+    {
+      return (y * this.iWidth + x);
+    };
+
+    // ----------------
+    // GetCordsFromIdx
+    //     Returns an x/y array from an idx
+    // ----------------
+    this.GetCordsFromIdx = function(idx)
+    {
+      return [idx % this.iWidth, Math.floor(idx / this.iWidth)];
+    };
 
     // ----------------
     // UpdateNPCs

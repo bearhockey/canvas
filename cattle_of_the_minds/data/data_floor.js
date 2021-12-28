@@ -6,12 +6,6 @@ var D_FLOOR = (function () {
   const ROOM_GENERATION_RETRIES = 10;
   const ROOM_LIT_CHANCE = 0.3;
 
-  const EMPTY_COLOR = "#CCCCCC";
-  const LIT_COLOR   = "#EEEEFF";
-  const WALL_COLOR  = "#444444";
-  const GRASS_COLOR = "#008000";
-  const PATH_COLOR  = "#808000";
-
   var df = {};
 
   // ----------------
@@ -27,7 +21,7 @@ var D_FLOOR = (function () {
 
     // make a border around the room
     cFloor.FillFloor();
-    var cRoomTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, LIT_COLOR);
+    var cRoomTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, CONST.TILE_LIT);
     cFloor.FillFloorSection(iBorder, iBorder, iFloorWidth-(iBorder*2), iFloorWidth-(iBorder*2), cRoomTile);
 
     cFloor.AddPawnToEmptyTile(PAWNUTILS.MakeStairs(CONST.DOOR_DOWNSTAIRS, 0));
@@ -70,6 +64,17 @@ var D_FLOOR = (function () {
     var y;
     var nEmptyPercentage = 0;
     var iTries = 0;
+
+    // 2a - pregen rooms
+    var iExitPoint = -1;
+    iExitPoint = D_ROOM.CrossRoom(cFloor,
+                                  Math.floor(Math.random()*(cFloor.iWidth-9))+1,
+                                  Math.floor(Math.random()*(cFloor.iWidth-9))+1);
+    if (iExitPoint >= 0)
+    {
+      arrCenterTiles.push(iExitPoint);
+    }
+    // 2b - random rooms
     while (nEmptyPercentage < EMPTY_PERCENTAGE && iTries < ROOM_GENERATION_RETRIES)
     {
       arrRoom = [];
@@ -106,12 +111,12 @@ var D_FLOOR = (function () {
 
       if (bValidRoom)
       {
-        color = Math.random() < ROOM_LIT_CHANCE ? LIT_COLOR : cFloor.strFloorColor;
+        color = Math.random() < ROOM_LIT_CHANCE ? CONST.TILE_LIT : cFloor.strFloorColor;
         iRoomLength = arrRoom.length;
         for (x = 0; x < iRoomLength; ++x)
         {
           idx = arrRoom[x];
-          cTile = new TILE(idx, true, (color == LIT_COLOR), CONST.SHAPE_SQUARE, color);
+          cTile = new TILE(idx, true, (color == CONST.TILE_LIT), CONST.SHAPE_SQUARE, color);
           cFloor.arrTileMap[idx] = cTile;
           cFloor.arrEmptyTiles.push(cTile);
           // estimate trying to find the middle of trhe room
@@ -215,15 +220,15 @@ var D_FLOOR = (function () {
   {
     var cFloor = new FLOOR(21);
     cFloor.FillFloor();
-    var cGrassTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, GRASS_COLOR);
+    var cGrassTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, CONST.TILE_GRASS);
     cFloor.FillFloorSection(2, 1, 16, 18, cGrassTile);
 
     cFloor.FillFloorSection(8, 2, 3, 2);
-    cFloor.PlaceTile(72, new TILE(-1, true, true, CONST.SHAPE_SQUARE, EMPTY_COLOR));
+    cFloor.PlaceTile(72, new TILE(-1, true, true, CONST.SHAPE_SQUARE, CONST.TILE_EMPTY));
 
-    var cPathTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, PATH_COLOR);
-    var cPathCornerBL = new TILE(-1, true, true, CONST.SHAPE_BOTTOMLEFT_CORNER, PATH_COLOR, GRASS_COLOR);
-    var cPathCornerBR = new TILE(-1, true, true, CONST.SHAPE_BOTTOMRIGHT_CORNER, PATH_COLOR, GRASS_COLOR);
+    var cPathTile = new TILE(-1, true, true, CONST.SHAPE_SQUARE, CONST.TILE_PATH);
+    var cPathCornerBL = new TILE(-1, true, true, CONST.SHAPE_BOTTOMLEFT_CORNER, CONST.TILE_PATH, CONST.TILE_GRASS);
+    var cPathCornerBR = new TILE(-1, true, true, CONST.SHAPE_BOTTOMRIGHT_CORNER, CONST.TILE_PATH, CONST.TILE_GRASS);
     cFloor.FillFloorSection(9, 4, 1, 11, cPathTile);
     cFloor.FillFloorSection(7, 11, 5, 1, cPathTile);
     cFloor.FillFloorSection(8, 15, 3, 3, cPathTile);
@@ -233,7 +238,7 @@ var D_FLOOR = (function () {
     cFloor.PlaceTile(304, cPathCornerBL);
 
     // houses
-    var cHouseGrass = new TILE(-1, false, true, CONST.SHAPE_SQUARE,GRASS_COLOR); // impassible grass
+    var cHouseGrass = new TILE(-1, false, true, CONST.SHAPE_SQUARE, CONST.TILE_GRASS); // impassible grass
 
     cFloor.FillFloorSection(5, 11, 2, 2, cHouseGrass);
     cFloor.PlaceTile(237, cPathTile);

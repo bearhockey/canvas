@@ -1,4 +1,7 @@
 var MINIMAP = (function () {
+  const COLOR_UPSTAIRS = "#66CC66";
+  const COLOR_DOWNSTAIRS = "#CC6666";
+  const COLOR_HERO = "#EEEEEE";
   var mmap = {};
 
   // ----------------
@@ -44,11 +47,20 @@ var MINIMAP = (function () {
           for (iEntityIdx = 0; iEntityIdx < iEntityLength; ++iEntityIdx)
           {
             cEntity = arrEntities[iEntityIdx];
-            if (cEntity != null && cEntity.GetPawnType() == CONST.PAWN_STAIRS && typeof cEntity.GetIcon === 'function')
+            if (cEntity != null)
             {
-              ctx.fillStyle = "#CCCC00";
-              ctx.fillRect(iX, iY, iSize, iSize);
-              break;
+              if (cEntity.GetPawnType() == CONST.PAWN_HERO)
+              {
+                ctx.fillStyle = COLOR_HERO;
+                ctx.fillRect(iX, iY, iSize, iSize);
+                break;
+              }
+              else if (cEntity.GetPawnType() == CONST.PAWN_STAIRS)
+              {
+                  ctx.fillStyle = (cEntity.GetItemType() == CONST.DOOR_UPSTAIRS) ? COLOR_UPSTAIRS : COLOR_DOWNSTAIRS;
+                  ctx.fillRect(iX, iY, iSize, iSize);
+                  break;
+              }
             }
           } // end of entity for loop
         }
