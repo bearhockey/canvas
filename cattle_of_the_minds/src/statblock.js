@@ -4,6 +4,7 @@ var STATBLOCK = (function () {
   {
     this.iLevel = 0;
     this.iLevelCurrent = 0;
+    this.iXP = 0;
 
     this.iHealth = 0;
     this.iHealthCurrent = 0;
@@ -45,6 +46,7 @@ var STATBLOCK = (function () {
         case CONST.STAT_AGILITY   : arrStatPair = [this.iAgilityCurrent,   this.iAgility];   break;
         case CONST.STAT_INTELLECT : arrStatPair = [this.iIntellectCurrent, this.iIntellect]; break;
         case CONST.STAT_WILLPOWER : arrStatPair = [this.iWillpowerCurrent, this.iWillpower]; break;
+        case CONST.STAT_XP        : arrStatPair = [this.iXP, this.iXP]; break; // special case - only one XP value
         default: break;
       } // end of switch
 
@@ -59,6 +61,8 @@ var STATBLOCK = (function () {
     {
       switch (iStatName)
       {
+        case CONST.STAT_XP:
+        { this.iXP = iStatValue; break; }
         case CONST.STAT_LEVEL:
         { this.iLevelCurrent = iStatValue;     if (bSetCap) { this.iLevel = iStatValue; }     break; }
         case CONST.STAT_HEALTH:
@@ -91,6 +95,7 @@ var STATBLOCK = (function () {
     {
       if (cStatBlock != null)
       {
+        this.iXP        += cStatBlock.iXP;
         this.iLevel     += cStatBlock.iLevel;
         this.iHealth    += cStatBlock.iHealth;
         this.iMana      += cStatBlock.iMana;

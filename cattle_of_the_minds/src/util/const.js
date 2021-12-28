@@ -57,6 +57,7 @@ var CONST = (function () {
   c.STAT_AGILITY   = 22;
   c.STAT_INTELLECT = 23;
   c.STAT_WILLPOWER = 24;
+  c.STAT_XP        = 30;
 
   return c;
 }());

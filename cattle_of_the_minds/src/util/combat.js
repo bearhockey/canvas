@@ -38,6 +38,24 @@ var COMBAT = (function () {
   };
 
   // ----------------
+  // AddXPFromEnemy
+  //     Adds the XP value from the enemy to the hero
+  // ----------------
+  combat.AddXPFromEnemy = function(cEnemy)
+  {
+    var cHero = GetHero();
+    var cStatBlock = new STATBLOCK();
+    cStatBlock.SetStat(CONST.STAT_XP, cEnemy.GetStat(CONST.STAT_XP)[0]);
+    cHero.cBaseStats.AddStatBlock(cStatBlock);
+    cHero.CalculateTotalStats();
+    // check if level
+    if (cHero.GetStat(CONST.STAT_XP)[0] > 6)
+    {
+      UTILS.LevelUp();
+    }
+  }
+
+  // ----------------
   // AttackPawn
   //     Pawn 1 (attacker) attacks Pawn 2 (defender)
   // ----------------
@@ -68,6 +86,7 @@ var COMBAT = (function () {
       else
       {
         MBOX.AddInfo(cDefender.strName + " is the dead.");
+        combat.AddXPFromEnemy(cDefender);
       }
     }
     else

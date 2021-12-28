@@ -6,9 +6,10 @@ var CHARACTER = (function () {
   character.m_cStatBlock = null;
   character.m_mapStatPositions =
   {
-    1 : [150, 150],
-    2 : [150, 200],
-    3  : [150, 250]
+    1 : [150, 180],
+    2 : [150, 210],
+    3  : [150, 240],
+    30 : [150, 150]
   };
 
   // ----------------
@@ -42,6 +43,7 @@ var CHARACTER = (function () {
     ctx.fillStyle = "#111122";
 
     character.m_cStatBlock = GetHero().cTotalStats; // put this in update probably
+    character.DrawStat(ctx, CONST.STAT_XP, "XP");
     character.DrawStat(ctx, CONST.STAT_LEVEL, "Level");
     character.DrawStat(ctx, CONST.STAT_HEALTH, "Health");
     character.DrawStat(ctx, CONST.STAT_MANA, "Mana");
