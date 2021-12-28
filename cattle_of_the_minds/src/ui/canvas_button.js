@@ -113,9 +113,11 @@ var BUTTON = (function () {
       ctx.lineTo(this.rect.x+this.rect.width, this.rect.y);
       ctx.stroke();
       ctx.closePath();
+
       ctx.font = BUTTON_FONT;
+      ctx.textAlign = 'center';
       ctx.fillStyle = BUTTON_TEXT_COLOR;
-      ctx.fillText(this.strLabel, this.rect.x + 10, this.rect.y+this.rect.height-10);
+      ctx.fillText(this.strLabel, this.rect.x + this.rect.width/2, this.rect.y+this.rect.height-15);
     };
   }; // end of class
 

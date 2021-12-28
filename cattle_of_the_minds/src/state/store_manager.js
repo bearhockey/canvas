@@ -28,7 +28,7 @@ var STORE = (function () {
   store.VisitStore = function()
   {
     var cButton = new BUTTON(0, 860, 250, 50, "Visit Store", store.OpenStore);
-    DIALOG.OpenDialog("./res/screen/blacksmith.png", 900, 600, "#000000", [cButton]);
+    DIALOG.OpenDialog("./res/screen/blacksmith.png", 900, 600, "#000000", [cButton], "Welcome to the store!");
   };
 
   // ----------------

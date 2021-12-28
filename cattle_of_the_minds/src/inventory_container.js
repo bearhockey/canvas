@@ -8,7 +8,8 @@ var ICONTAINER = (function () {
   const HEADER_OFFSET = -2;
   const HEADER_PADDING = 4;
 
-  const CONTAINER_PADDING = 16;
+  const CONTAINER_PADDING = 16; // padding on the inside of the container
+  const ITEM_SPACING = 20;      // distance between items inside the container
 
   const ITEM_SIZE = 64;
   const ITEM_HIGHLIGHT_COLOR = "#CCCCFF";
@@ -22,8 +23,8 @@ var ICONTAINER = (function () {
     this.width = iWidth;
     this.height = iHeight;
 
-    this.iContentWidth = Math.floor(ITEM_SIZE / (this.width - CONTAINER_PADDING*2));
-    this.iContentHeight = Math.floor(ITEM_SIZE / (this.height - CONTAINER_PADDING*2));
+    this.iContentWidth = Math.floor((ITEM_SIZE+ITEM_SPACING) / (this.width - CONTAINER_PADDING*2));
+    this.iContentHeight = Math.floor((ITEM_SIZE+ITEM_SPACING) / (this.height - CONTAINER_PADDING*2));
     this.iContentPointerX = 0;
     this.iContentPointerY = 0;
 
@@ -91,9 +92,9 @@ var ICONTAINER = (function () {
                            this.yPos + this.iContentPointerY,
                           ITEM_SIZE,
                           ITEM_SIZE);
-      var bNewLine = (this.iContentPointerX+ITEM_SIZE > this.width-CONTAINER_PADDING);
-      this.iContentPointerX = bNewLine ? CONTAINER_PADDING : this.iContentPointerX+ITEM_SIZE;
-      this.iContentPointerY = bNewLine ? this.iContentPointerY+ITEM_SIZE : this.iContentPointerY;
+      var bNewLine = (this.iContentPointerX+ITEM_SIZE+ITEM_SPACING > this.width-CONTAINER_PADDING);
+      this.iContentPointerX = bNewLine ? CONTAINER_PADDING : this.iContentPointerX+ITEM_SIZE+ITEM_SPACING;
+      this.iContentPointerY = bNewLine ? this.iContentPointerY+ITEM_SIZE+ITEM_SPACING : this.iContentPointerY;
 
       return cRect;
     };
@@ -113,6 +114,7 @@ var ICONTAINER = (function () {
       ctx.fillRect(this.xPos, this.yPos, this.width, HEADER_HEIGHT+HEADER_PADDING*2);
       ctx.fillStyle = CONTAINER_COLOR;
       ctx.font = '20px sans';
+      ctx.textAlign = 'left';
       ctx.fillText(this.strName, this.xPos+HEADER_PADDING, this.yPos+HEADER_HEIGHT+HEADER_OFFSET);
       ctx.fillRect(this.xPos, this.yPos+HEADER_HEIGHT, this.width, this.height-HEADER_HEIGHT);
 
@@ -127,7 +129,7 @@ var ICONTAINER = (function () {
         if (cItem != null && typeof cItem.GetIcon === 'function')
         {
           imgEntity = new Image();
-          imgEntity.iX = this.xPos + CONTAINER_PADDING + ITEM_SIZE*idx;
+          imgEntity.iX = this.xPos + CONTAINER_PADDING + (ITEM_SIZE+ITEM_SPACING)*idx;
           imgEntity.iY = this.yPos + CONTAINER_PADDING + 5;
           imgEntity.iQuantity = cItem.iQuantity;
           imgEntity.strLabel = cItem.strName;
@@ -152,7 +154,9 @@ var ICONTAINER = (function () {
             {
               ctx.fillStyle = "#111111";
               ctx.font = "20px sans";
-              ctx.fillText(strText, this.iX, this.iY+ITEM_LABEL_OFFSET);
+              ctx.textAlign = 'center';
+              UTILS.WrapText(ctx, strText, this.iX+ITEM_SIZE/2, this.iY+ITEM_LABEL_OFFSET, ITEM_SIZE, 25);
+              // ctx.fillText(strText, this.iX, this.iY+ITEM_LABEL_OFFSET);
             }
           }, false);
           imgEntity.src = cItem.GetIcon();

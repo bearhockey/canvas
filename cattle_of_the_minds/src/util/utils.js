@@ -101,5 +101,51 @@ var UTILS = (function () {
     return (GetCanvasWidth()/2)-(iLength/2);
   };
 
+  // ----------------
+  // WrapText
+  //     Writes out text and wraps it - https://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
+  // ----------------
+  utils.WrapText = function(ctx, strText, x, y, iMaxWidth, iLineHeight)
+  {
+    var arrWords = strText.split(' ');
+    var strLine = '';
+
+    var strTestLine;
+    var cMetrics;
+    var iTestWidth;
+
+    var idx;
+    var iWordsLength = arrWords.length;
+    for (idx = 0; idx < iWordsLength; ++idx)
+    {
+      strTestLine = strLine + arrWords[idx] + " ";
+      cMetrics = ctx.measureText(strTestLine);
+      iTestWidth =  cMetrics.width;
+      if (iTestWidth > iMaxWidth && idx > 0)
+      {
+        ctx.fillText(strLine, x, y);
+        strLine = arrWords[idx] + ' ';
+        y += iLineHeight;
+      }
+      else
+      {
+        strLine = strTestLine;
+      }
+    } // end for loop
+
+    ctx.fillText(strLine, x, y);
+  };
+
+  // ----------------
+  // GetLocation
+  //     Translates the current floor to a text string
+  // ----------------
+  utils.GetLocation = function()
+  {
+    var iFloorLevel = GetCurrentFloorIdx();
+    var strLabel = (iFloorLevel == 0) ? "Town" : "Dungeon Level " + iFloorLevel.toString();
+    return strLabel;
+  };
+
   return utils;
 }());

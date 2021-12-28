@@ -1,9 +1,10 @@
 var IBOX = (function () {
   // consts
-  const PLAYER_LEVEL = "playerLevel";
+  const PLAYER_LEVEL  = "playerLevel";
   const PLAYER_HEALTH = "playerHealth";
-  const PLAYER_MANA = "playerMana";
-  const TIME_PASSED = "playerTime";
+  const PLAYER_MANA   = "playerMana";
+  const TIME_PASSED   = "playerTime";
+  const LOCATION      = "playerLocation";
   var ibox = {};
 
   // ----------------
@@ -21,8 +22,9 @@ var IBOX = (function () {
       var arrMana = cHero.GetStat(CONST.STAT_MANA);
       document.getElementById(PLAYER_MANA).innerHTML = UTILS.StatPairToText(arrMana);
     }
-    
+
     document.getElementById(TIME_PASSED).innerHTML = new Date(GetTime() * 1000).toISOString().substr(11, 8);
+    document.getElementById(LOCATION).innerHTML = UTILS.GetLocation();
   };
 
   return ibox;

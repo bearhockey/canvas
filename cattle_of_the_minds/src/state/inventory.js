@@ -1,31 +1,46 @@
 var INVENTORY = (function () {
   var inventory = {};
   // consts
-  // const ADD_ICON = new PAWN(CONST.PAWN_ITEM, "Add", "./res/add.gif", CONST.ITEM_ADD);
+  const COLUMN_1 = 120;
+  const COLUMN_2 = 240;
+  const COLUMN_3 = 360;
+  const COLUMN_4 = 480; // large side-panels
+
+  const ROW_1 = 50;
+  const ROW_2 = 200;
+  const ROW_3 = 350;
+  const ROW_4 = 500;
+  const ROW_5 = 650;
+  const ROW_6 = 800;
+
+  const EQUIPMENT_WIDTH = 110;
+  const EQUIPMENT_HEIGHT = 140;
+  const SIDE_PANEL_WIDTH = 460;
+
   // member vars
   inventory.cStore = null;
   inventory.cSelectedItem = null;
   inventory.arrContainers = [];
   //
-  inventory.cHelmet   = new ICONTAINER(360, 160,  100, 120, "Helmet", CONST.ITEM_HELMET, 1);
+  inventory.cHelmet   = new ICONTAINER(COLUMN_3, ROW_1,  EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Helmet", CONST.ITEM_HELMET, 1);
 
-  inventory.cCloak    = new ICONTAINER(240, 290, 100, 120, "Cloak",  CONST.ITEM_CLOAK, 1);
-  inventory.cArmor    = new ICONTAINER(360, 290, 100, 120, "Armor",  CONST.ITEM_ARMOR, 1);
+  inventory.cCloak    = new ICONTAINER(COLUMN_2, ROW_2, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Cloak",  CONST.ITEM_CLOAK, 1);
+  inventory.cArmor    = new ICONTAINER(COLUMN_3, ROW_2, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Armor",  CONST.ITEM_ARMOR, 1);
 
-  inventory.cShield   = new ICONTAINER(120, 420, 100, 120, "Shield",    CONST.ITEM_SHIELD, 1);
-  inventory.cWeapon   = new ICONTAINER(240, 420, 100, 120, "Weapon",    CONST.ITEM_WEAPON, 1);
-  inventory.cFreeHand = new ICONTAINER(360, 420, 100, 120, "Free Hand", CONST.ITEM_ANY,    1);
+  inventory.cShield   = new ICONTAINER(COLUMN_1, ROW_3, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Shield",    CONST.ITEM_SHIELD, 1);
+  inventory.cWeapon   = new ICONTAINER(COLUMN_2, ROW_3, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Weapon",    CONST.ITEM_WEAPON, 1);
+  inventory.cFreeHand = new ICONTAINER(COLUMN_3, ROW_3, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Free Hand", CONST.ITEM_ANY,    1);
 
-  inventory.cBelt     = new ICONTAINER(240, 550, 100, 120, "Belt",  CONST.ITEM_BELT,  1);
-  inventory.cBoots    = new ICONTAINER(360, 550, 100, 120, "Boots", CONST.ITEM_BOOTS, 1);
+  inventory.cBelt     = new ICONTAINER(COLUMN_2, ROW_4, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Belt",  CONST.ITEM_BELT,  1);
+  inventory.cBoots    = new ICONTAINER(COLUMN_3, ROW_4, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Boots", CONST.ITEM_BOOTS, 1);
 
-  inventory.cAccessory1 = new ICONTAINER(120, 680, 100, 120, "Acc. 1", CONST.ITEM_ACCESSORY, 1);
-  inventory.cAccessory2 = new ICONTAINER(240, 680, 100, 120, "Acc. 2", CONST.ITEM_ACCESSORY, 1);
-  inventory.cAccessory3 = new ICONTAINER(360, 680, 100, 120, "Acc. 3", CONST.ITEM_ACCESSORY, 1);
+  inventory.cAccessory1 = new ICONTAINER(COLUMN_1, ROW_5, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Acc. 1", CONST.ITEM_ACCESSORY, 1);
+  inventory.cAccessory2 = new ICONTAINER(COLUMN_2, ROW_5, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Acc. 2", CONST.ITEM_ACCESSORY, 1);
+  inventory.cAccessory3 = new ICONTAINER(COLUMN_3, ROW_5, EQUIPMENT_WIDTH, EQUIPMENT_HEIGHT, "Acc. 3", CONST.ITEM_ACCESSORY, 1);
   //
-  inventory.cMain   = new ICONTAINER(480, 160,  460, 320, "Ground");
-  inventory.cPack   = new ICONTAINER(480, 490, 460, 320, "Pack");
-  inventory.cPurse  = new ICONTAINER(480, 830, 460, 120, "Purse", CONST.ITEM_MONEY, 4);
+  inventory.cMain   = new ICONTAINER(COLUMN_4, ROW_1, SIDE_PANEL_WIDTH, EQUIPMENT_HEIGHT*2, "Ground");
+  inventory.cPack   = new ICONTAINER(COLUMN_4, ROW_3, SIDE_PANEL_WIDTH, EQUIPMENT_HEIGHT*3, "Pack");
+  inventory.cPurse  = new ICONTAINER(COLUMN_4, ROW_6, SIDE_PANEL_WIDTH, EQUIPMENT_HEIGHT, "Purse", CONST.ITEM_MONEY, 4);
   //
   // ----------------
   // Init
@@ -298,7 +313,12 @@ var INVENTORY = (function () {
         }
         else if (cHero.IsItemEquipped(cItem))
         {
-          if (iItemType == CONST.ITEM_WEAPON) { inventory.cWeapon.AddItem(cItem); } // TODO - do all the items here, or maybe make a dict
+          switch (iItemType) // TODO - do all the items here, or maybe make a dict
+          {
+            case CONST.ITEM_WEAPON: { inventory.cWeapon.AddItem(cItem); break; }
+            case CONST.ITEM_ARMOR:  { inventory.cArmor.AddItem(cItem); break; }
+            default: { inventory.cPack.AddItem(cItem); break; } // failsafe
+          } // end of switch
         }
         else if (iItemType != CONST.ITEM_NONE)
         {
