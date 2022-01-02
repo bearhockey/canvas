@@ -26,6 +26,24 @@ var STATE = (function () {
   };
 
   // ----------------
+  // Update
+  //     Updates the appropriate state based on what the current state is
+  // ----------------
+  state.Update = function()
+  {
+    switch (state.m_iCurrentState)
+    {
+      case state.STATE_STAGE:     { RENDERER.Draw(); break; }
+      case state.STATE_INVENTORY: { INVENTORY.Update(); INVENTORY.Draw(); break; }
+      case state.STATE_CHARACTER: { CHARACTER.Update(); CHARACTER.Draw(); break; }
+      case state.STATE_MAP:       { MINIMAP.Draw();                       break; }
+      case STATE.STATE_DIALOG:
+      case STATE.STATE_DEATH:     { DIALOG.Draw();                        break; }
+      default: break;
+    } // end of switch
+  };
+
+  // ----------------
   // UpdateMenu
   //     Updates the UI buttons
   // ----------------

@@ -43,15 +43,16 @@ var COMBAT = (function () {
   // ----------------
   combat.AddXPFromEnemy = function(cEnemy)
   {
-    var cHero = GetHero();
+    var cHero = HERO.Get();
     var cStatBlock = new STATBLOCK();
     cStatBlock.SetStat(CONST.STAT_XP, cEnemy.GetStat(CONST.STAT_XP)[0]);
     cHero.cBaseStats.AddStatBlock(cStatBlock);
     cHero.CalculateTotalStats();
     // check if level
-    if (cHero.GetStat(CONST.STAT_XP)[0] > 6)
+    var iLevel = cHero.GetStat(CONST.STAT_LEVEL)[0];
+    if (cHero.GetStat(CONST.STAT_XP)[0] > iLevel*10)
     {
-      UTILS.LevelUp();
+      HERO.LevelUp();
     }
   }
 
@@ -74,10 +75,11 @@ var COMBAT = (function () {
                                        cDefender.GetStat(CONST.STAT_BRAWN)[0]);
       var iEnemyHealth = cDefender.GetStat(CONST.STAT_HEALTH)[0] - iDamage;
       cDefender.SetStat(CONST.STAT_HEALTH, iEnemyHealth, false);
+      var cHero = HERO.Get();
       if (iEnemyHealth > 0)
       {
         MBOX.AddInfo(strAttacker + " dealt " + iDamage.toString() + " damage to " + strDefender + "!");
-        if (cDefender != GetHero())
+        if (cDefender != cHero)
         {
           var arrNewHealth = cDefender.GetStat(CONST.STAT_HEALTH);
           MBOX.AddInfo(UTILS.GetHealthLevel(arrNewHealth[0], arrNewHealth[1]));
@@ -86,7 +88,10 @@ var COMBAT = (function () {
       else
       {
         MBOX.AddInfo(cDefender.strName + " is the dead.");
-        combat.AddXPFromEnemy(cDefender);
+        if (cAttacker == cHero)
+        {
+          combat.AddXPFromEnemy(cDefender);
+        }
       }
     }
     else

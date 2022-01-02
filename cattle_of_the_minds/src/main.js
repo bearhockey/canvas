@@ -2,38 +2,16 @@
 const CANVAS_WIDTH = 960;
 const CANVAS_HEIGHT = 960;
 const MAP_WIDTH = 15; // in tiles
-const PLAYER_SIGHT_RANGE = 3;
-// globals - don't use if you can
-var cFirstFloor;
-var iFloorWidth = 50;
-var iPlaytime = 0; // playtime in seconds
-
-var cStartButton;
-var cLoadButton;
-
-var m_cHero;
-var m_cCurrentFloor;
-var m_arrFloors = [];
 
 function LoadMap()
 {
-  cFirstFloor = D_FLOOR.TownOne();
-  m_arrFloors.push(cFirstFloor);
-  m_cCurrentFloor = cFirstFloor;
+  DUNGEON.m_arrFloors.push(D_FLOOR.TownOne());
+  HERO.QuickHero();
 
-  m_cHero = PAWNUTILS.MakeHero();
+  var cFloor = DUNGEON.GetFloor();
+  var cStartTile = (cFloor.GetEntranceIdx() >= 0) ? cFloor.GetTile(cFloor.GetEntranceIdx()) : cFloor.GetEmptyTile();
 
-  var cStartTile;
-  if (m_cCurrentFloor.GetEntranceIdx() >= 0)
-  {
-    cStartTile = m_cCurrentFloor.GetTile(m_cCurrentFloor.GetEntranceIdx());
-  }
-  else
-  {
-    cStartTile = m_cCurrentFloor.GetEmptyTile();
-  }
-
-  cStartTile.PlaceEntity(m_cHero);
+  cStartTile.PlaceEntity(HERO.Get());
   STATE.SetState(STATE.STATE_STAGE);
 }
 
@@ -75,36 +53,27 @@ function GetCanvasWidth() { return CANVAS_WIDTH; };
 
 // ----------------
 // Update
-//     Updates the game loop
+//     Updates the main game loop
 // ----------------
 function Update(iTimeIncrease=0)
 {
-  IncrementTime(iTimeIncrease);
-  // update NPCs
-  if (m_cCurrentFloor != null) { m_cCurrentFloor.UpdateNPCs(); }
+  CLOCK.IncrementTime(iTimeIncrease);
+  DUNGEON.UpdateNPCs();
   IBOX.UpdateInfo();
 
-  if (m_cHero != null && m_cHero.IsDead() && STATE.GetState() != STATE.STATE_DIALOG)
+  var cHero = HERO.Get();
+  if (cHero != null)
   {
-    DIALOG.OpenDialog("./res/screen/death_screen.png", 800, 600, "#FFFFFF");
-  }
-
-  myGameArea.clear();
-  HandleStateUpdate();
-};
-
-// ----------------
-// HandleStateUpdate
-//     Updates the state-specific triggers
-// ----------------
-function HandleStateUpdate()
-{
-  switch (STATE.GetState())
-  {
-    case STATE.STATE_STAGE:
+    if (cHero.IsDead() && STATE.GetState() != STATE.STATE_DIALOG)
     {
-      var iCamPosition = m_cHero.GetTile().GetIdx();
-      var arrVisionRange = m_cCurrentFloor.GetVisualTiles(iCamPosition, PLAYER_SIGHT_RANGE);
+      DIALOG.OpenDialog("./res/screen/death_screen.png", 800, 600, "#FFFFFF");
+    }
+    else
+    {
+      // update the vision range for the hero
+      var iCamPosition = cHero.GetTile().GetIdx();
+      var cFloor = DUNGEON.GetFloor();
+      var arrVisionRange = cFloor.GetVisualTiles(iCamPosition, HERO.GetSightRange());
       var idx;
       var iTiles = arrVisionRange.length;
       var cTile;
@@ -112,51 +81,15 @@ function HandleStateUpdate()
       {
         cTile = arrVisionRange[idx];
         if (cTile != null) { cTile.bIsDiscovered = true; }
-      }
-      DrawStage(iCamPosition, arrVisionRange);
-      break;
+      } // end for loop
+      var arrTiles = cFloor.GetTileArea(iCamPosition, MAP_WIDTH);
+      RENDERER.SetVisibleTiles(arrTiles, arrVisionRange);
     }
-    case STATE.STATE_INVENTORY:
-    {
-      INVENTORY.Update();  // myGameArea.clear();
-      INVENTORY.Draw(GetCanvas());
-      break;
-    }
-    case STATE.STATE_CHARACTER:
-    {
-      CHARACTER.Update();
-      CHARACTER.Draw(GetCanvas());
-      break;
-    }
-    case STATE.STATE_MAP:
-    {
-      MINIMAP.Draw(GetCanvas(), m_cCurrentFloor);
-      break;
-    }
-    case STATE.STATE_DIALOG:
-    {
-      DIALOG.Draw(GetCanvas());
-      break;
-    }
-    case STATE.STATE_DEATH:
-    {
-      DrawDeath();
-      break;
-    }
-    default: break;
-  } // end of switch
-}
+  }
 
-// ----------------
-// DrawStage
-//     Draws the stage state
-// ----------------
-function DrawStage(iFocusIdx, arrVisionRange)
-{
-  var arrTiles = m_cCurrentFloor.GetTileArea(iFocusIdx, MAP_WIDTH);
-  RENDERER.SetVisibleTiles(arrTiles, arrVisionRange);
-  RENDERER.Draw(GetCanvas(), MAP_WIDTH);
-}
+  myGameArea.clear();
+  STATE.Update();
+};
 
 // ----------------
 // StartGame
@@ -164,8 +97,8 @@ function DrawStage(iFocusIdx, arrVisionRange)
 // ----------------
 function StartGame()
 {
-  cStartButton = new BUTTON(0, 860, 200, 50, "Start", LoadMap);
-  // cLoadButton = new BUTTON(0, 860, 200, 50, "Load");
+  var cStartButton = new BUTTON(0, 860, 200, 50, "Start", LoadMap);
+  // var cLoadButton = new BUTTON(0, 860, 200, 50, "Load");
   // Init components
   INVENTORY.Init();
 
@@ -174,62 +107,4 @@ function StartGame()
   DIALOG.OpenDialog("./res/screen/title.png", 410, 330, "#000000", [cStartButton]);
 }
 
-// DEBUG STUFF ---- maybe move these to a better class
-function GetFloor(idx=-1)
-{
-  var cFloor = (idx < 0) ? m_cCurrentFloor : null;
-  if (idx >= 0 && idx < m_arrFloors.length)
-  {
-    cFloor = m_arrFloors[idx];
-  }
-
-  return cFloor;
-};
-
-function GetCurrentFloorIdx() { return m_arrFloors.indexOf(m_cCurrentFloor); };
-function GoToFloor(idx, iDoorType, iDoor=-1)
-{
-  var cFloor = GetFloor(idx);
-  if (cFloor == null)
-  {
-    cFloor = D_FLOOR.RandomFloor(iFloorWidth, m_cCurrentFloor.CountStairs(iDoorType));
-    m_arrFloors.push(cFloor);
-  }
-
-  if (cFloor != null)
-  {
-    var cEntranceTile;
-    if (iDoor >= 0)
-    {
-      var iDestinationStairsType = (iDoorType == CONST.DOOR_UPSTAIRS) ? CONST.DOOR_DOWNSTAIRS : CONST.DOOR_UPSTAIRS;
-      var cStairs = cFloor.GetStairs(iDestinationStairsType, iDoor);
-      cEntranceTile = (cStairs != null) ? cStairs.GetTile() : cFloor.GetEmptyTile();
-    }
-    else
-    {
-      cEntranceTile = cFloor.GetEmptyTile();
-    }
-
-    // spawn enemies -- TODO: make a timer to spawn them staggered
-    var arrSpawnMap = [...cFloor.GetSpawnMap()]; // returns a shallow copy for altering the data
-    var idx;
-    var iSpawns = cFloor.GetNPCLimit() - cFloor.GetNPCs().length;
-    var iEnemyID;
-    var cEnemy;
-    for (idx = 0; idx < iSpawns; ++idx)
-    {
-      iEnemyID = arrSpawnMap[Math.floor(Math.random() * arrSpawnMap.length)];
-      cEnemy = D_ENEMY.MakeEnemy(iEnemyID);
-      cFloor.GetEmptyTile().PlaceEntity(cEnemy);
-      cFloor.AddNPC(cEnemy);
-    } // end for loop
-
-
-    cEntranceTile.PlaceEntity(m_cHero);
-    m_cCurrentFloor = cFloor;
-  }
-};
-
-function GetHero() { return m_cHero; };
-function GetTime() { return iPlaytime; };
-function IncrementTime(iValue=1) { iPlaytime+=iValue; };
+// end of main

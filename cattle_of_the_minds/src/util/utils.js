@@ -142,29 +142,9 @@ var UTILS = (function () {
   // ----------------
   utils.GetLocation = function()
   {
-    var iFloorLevel = GetCurrentFloorIdx();
+    var iFloorLevel = DUNGEON.GetCurrentFloorIdx();
     var strLabel = (iFloorLevel == 0) ? "Town" : "Dungeon Level " + iFloorLevel.toString();
     return strLabel;
-  };
-
-  // ----------------
-  // LevelUp
-  //     Levels up the hero
-  // ----------------
-  utils.LevelUp = function()
-  {
-    var cHero = GetHero();
-    var iBrawn = cHero.GetStat(CONST.STAT_BRAWN)[1];
-    var iIntellect = cHero.GetStat(CONST.STAT_INTELLECT)[1];
-    var iHealthIncrease = Math.floor(iBrawn / 10) * 2;
-    var iManaIncrease = Math.floor(iIntellect / 10);
-    var cStatBlock = new STATBLOCK();
-    cStatBlock.SetStat(CONST.STAT_LEVEL, 1, true);
-    cStatBlock.SetStat(CONST.STAT_HEALTH, iHealthIncrease, true);
-    cStatBlock.SetStat(CONST.STAT_MANA, iManaIncrease, true);
-    cHero.cBaseStats.AddStatBlock(cStatBlock);
-    cHero.CalculateTotalStats();
-    MBOX.AddInfo("Welcome to level " + cHero.GetStat(CONST.STAT_LEVEL)[0]);
   };
 
   return utils;

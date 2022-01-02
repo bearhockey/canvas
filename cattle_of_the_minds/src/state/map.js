@@ -6,10 +6,12 @@ var MINIMAP = (function () {
 
   // ----------------
   // Draw
-  //     Draws the main window
+  //     Draws the main window - a map of the current floor
   // ----------------
-  mmap.Draw = function(ctx, cFloor)
+  mmap.Draw = function()
   {
+    var ctx = GetCanvas();
+    var cFloor = DUNGEON.GetFloor();
     if (cFloor == null) { return; }
 
     var arrFloorTiles = cFloor.GetAllTiles();

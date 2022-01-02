@@ -11,8 +11,8 @@ var CONTROLLER = (function () {
   // ----------------
   controller.MoveHero = function(iDirection)
   {
-    var cHero = GetHero();
-    var cFloor = GetFloor();
+    var cHero = HERO.Get();
+    var cFloor = DUNGEON.GetFloor();
     if (!cHero.IsDead())
     {
       var bMoved = cHero.Move(iDirection, cFloor);
@@ -42,7 +42,7 @@ var CONTROLLER = (function () {
   // ----------------
   controller.HeroPickup = function()
   {
-    var cHero = GetHero();
+    var cHero = HERO.Get();
     var cCurrentTile = cHero.GetTile();
     var arrItems = cCurrentTile.GetEntities();
     var iLength = arrItems.length;
@@ -84,14 +84,14 @@ var CONTROLLER = (function () {
   // ----------------
   controller.HeroAction = function()
   {
-    var cHero = GetHero();
+    var cHero = HERO.Get();
     var cCurrentTile = cHero.GetTile();
     var arrItems = cCurrentTile.GetEntities();
     var iLength = arrItems.length;
     var idx;
     var cItem;
 
-    var cCurrentFloor = GetFloor();
+    var cCurrentFloor = DUNGEON.GetFloor();
     var iStairsType;
     var iFloorIdx;
     var cNewFloor;
@@ -103,12 +103,12 @@ var CONTROLLER = (function () {
       {
         if (cItem.GetPawnType() == CONST.PAWN_STAIRS)
         {
-          iFloorIdx = GetCurrentFloorIdx();
+          iFloorIdx = DUNGEON.GetCurrentFloorIdx();
           iStairsType = cItem.GetItemType();
           iFloorIdx += (iStairsType == CONST.DOOR_UPSTAIRS) ? -1 : 1;
           if (iFloorIdx >= 0)
           {
-            GoToFloor(iFloorIdx, iStairsType, cItem.GetValue());
+            DUNGEON.GoToFloor(iFloorIdx, iStairsType, cItem.GetValue());
           } // iFloorIdx check
         } // GetPawnType() check
       } // cItem check

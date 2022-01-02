@@ -431,13 +431,16 @@ var FLOOR = (function () {
     // GetAdjacentTiles
     //     Returns the tiles adjacent to the tile passed in
     // ----------------
-    this.GetAdjacentTiles = function(idx, bIncludeDiagonals=false)
+    this.GetAdjacentTiles = function(idx)
     {
       var arrTiles = [];
-      arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, CONST.NORTH)) );
-      arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, CONST.EAST)) );
-      arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, CONST.SOUTH)) );
-      arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, CONST.WEST)) );
+      var iDirection;
+      var iLength = CONST.DIRECTIONS.length;
+      for (iDirection = 0; iDirection < iLength; ++iDirection)
+      {
+        arrTiles.push( this.GetTile(this.GetDirectionIdx(idx, iDirection)) );
+      }
+
       return arrTiles;
     };
 

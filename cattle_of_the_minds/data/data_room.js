@@ -3,6 +3,31 @@ var D_ROOM = (function () {
 
   var dr = {};
 
+  // ----------------
+  // RandomPregenRoomRoom
+  //     Builds one of the random pregen rooms
+  // ----------------
+  dr.RandomPregenRoom = function(cFloor, x, y, bLit=false)
+  {
+    var iResult = UTILS.Roll1d6();
+    var iExit = -1;
+    switch (iResult)
+    {
+      case 1:
+      {
+        iExit = dr.CrossRoom(cFloor, x, y, bLit);
+        break;
+      }
+      default: break;
+    } // end of switch
+
+    return iExit;
+  };
+
+  // ----------------
+  // CrossRoom
+  //     Builds a room in the shape of a 9x9 cross
+  // ----------------
   dr.CrossRoom = function(cFloor, x, y, bLit=false)
   {
     if (cFloor == null) { return -1; }

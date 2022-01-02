@@ -100,7 +100,7 @@ var INVENTORY = (function () {
   inventory.HandleMouseClick = function(x, y)
   {
     var cItem = inventory.CheckRects(x, y);
-    var cHero = GetHero();
+    var cHero = HERO.Get();
     var cTile;
     var bNewItem = false;
     var iTimeInterval = 0;
@@ -263,7 +263,7 @@ var INVENTORY = (function () {
   // ----------------
   inventory.Update = function()
   {
-    var cHero = GetHero();
+    var cHero = HERO.Get();
     var idx;
     var cItem;
     var iItemType;
@@ -355,8 +355,9 @@ var INVENTORY = (function () {
   // Draw
   //     Draws the inventory screen
   // ----------------
-  inventory.Draw = function(ctx)
+  inventory.Draw = function()
   {
+    var ctx = GetCanvas();
     var idx;
     var cContainer;
     var iLength = inventory.arrContainers.length;

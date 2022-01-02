@@ -13,7 +13,7 @@ var TRIGGER = (function () {
     // ----------------
     this.Act = function(cPawn)
     {
-      var cHero = GetHero();
+      var cHero = HERO.Get();
       var iHeroPosition = cHero.GetTile().GetIdx();
       var iPosition = cPawn.GetTile().GetIdx();
       if (iHeroPosition == iPosition)

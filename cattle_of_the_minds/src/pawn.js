@@ -370,11 +370,11 @@ var PAWN = (function () {
     {
       if (this.cController != null && !this.IsDead())
       {
-        var iDelta = GetTime() - this.iLastTime;
+        var iDelta = CLOCK.GetTime() - this.iLastTime;
         if (iDelta > this.cController.iReactionTime)
         {
           this.cController.Act(this);
-          this.iLastTime = GetTime();
+          this.iLastTime = CLOCK.GetTime();
         }
       }
     };

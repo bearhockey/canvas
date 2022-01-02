@@ -2,15 +2,15 @@ var CONST = (function () {
   var c = {};
 
   // directions
-  c.NORTHWEST  = 1;
-  c.NORTH      = 2;
-  c.NORTHWEST  = 3;
-  c.EAST       = 4;
-  c.SOUTHEAST  = 5;
-  c.SOUTH      = 6;
-  c.SOUTHWEST  = 7;
-  c.WEST       = 8;
-  c.DIRECTIONS = [1, 2, 3, 4 , 5, 6, 7, 8];
+  c.NORTHWEST  = 0;
+  c.NORTH      = 1;
+  c.NORTHWEST  = 2;
+  c.EAST       = 3;
+  c.SOUTHEAST  = 4;
+  c.SOUTH      = 5;
+  c.SOUTHWEST  = 6;
+  c.WEST       = 7;
+  c.DIRECTIONS = [0, 1, 2, 3, 4, 5, 6, 7];
 
   // tile shapes
   c.SHAPE_SQUARE = 0;

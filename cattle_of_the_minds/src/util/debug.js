@@ -7,7 +7,7 @@ var DEBUG = (function () {
   // ----------------
   dbg.DebugAddGold = function()
   {
-    GetHero().AddToInventory(PAWNUTILS.MakeGoldPile(100));
+    HERO.Get().AddToInventory(PAWNUTILS.MakeGoldPile(100));
   };
 
   // ----------------
@@ -16,8 +16,8 @@ var DEBUG = (function () {
   // ----------------
   dbg.DebugGetIdx = function()
   {
-    var idx = GetHero().GetTile().GetIdx();
-    var iWidth = GetFloor().GetFloorWidth();
+    var idx = HERO.Get().GetTile().GetIdx();
+    var iWidth = DUNGEON.GetFloor().GetFloorWidth();
     var str = "IDX: " + idx.toString() + " X: " + (idx % iWidth).toString() + " Y: " + Math.floor(idx / iWidth).toString();
     console.log(str);
     MBOX.AddInfo(str)
@@ -29,7 +29,7 @@ var DEBUG = (function () {
   // ----------------
   dbg.DebugHealHero = function()
   {
-    var cHero = GetHero();
+    var cHero = HERO.Get();
     var iHealth = cHero.GetStat(CONST.STAT_HEALTH)[1];
     cHero.SetStat(CONST.STAT_HEALTH, iHealth, true);
   };
@@ -40,7 +40,7 @@ var DEBUG = (function () {
   // ----------------
   dbg.DebugRevealMap = function()
   {
-    var arrTiles = GetFloor().GetAllTiles();
+    var arrTiles = DUNGEON.GetFloor().GetAllTiles();
     var idx;
     var iLength = arrTiles.length;
     for (idx = 0; idx < iLength; ++idx)

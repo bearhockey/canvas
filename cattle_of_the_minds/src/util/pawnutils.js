@@ -91,5 +91,15 @@ var PAWNUTILS = (function () {
     return new PAWN(CONST.PAWN_DECOR, strName, TERRAIN_ICON_DIR+strHouseIcon);
   };
 
+  // ----------------
+  // MakeDoor
+  //     Returns a door
+  // ----------------
+  pu.MakeDoor = function(strName="Door", bOpen=false)
+  {
+    var strDoorIcon = (bOpen) ? "open_door.gif" : "closed_door.gif";
+    return new PAWN(CONST.PAWN_DECOR, strName, TERRAIN_ICON_DIR+strDoorIcon);
+  };
+
   return pu;
 }());

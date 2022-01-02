@@ -13,7 +13,7 @@ var IBOX = (function () {
   // ----------------
   ibox.UpdateInfo = function()
   {
-    var cHero = GetHero();
+    var cHero = HERO.Get();
     if (cHero != null)
     {
       document.getElementById(PLAYER_LEVEL).innerHTML = cHero.GetStat(CONST.STAT_LEVEL)[0].toString();
@@ -23,7 +23,7 @@ var IBOX = (function () {
       document.getElementById(PLAYER_MANA).innerHTML = UTILS.StatPairToText(arrMana);
     }
 
-    document.getElementById(TIME_PASSED).innerHTML = new Date(GetTime() * 1000).toISOString().substr(11, 8);
+    document.getElementById(TIME_PASSED).innerHTML = new Date(CLOCK.GetTime() * 1000).toISOString().substr(11, 8);
     document.getElementById(LOCATION).innerHTML = UTILS.GetLocation();
   };
 

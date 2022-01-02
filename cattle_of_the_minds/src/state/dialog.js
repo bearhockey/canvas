@@ -124,8 +124,9 @@ var DIALOG = (function () {
   // Draw
   //     Draws the main window
   // ----------------
-  dg.Draw = function(ctx)
+  dg.Draw = function()
   {
+    var ctx = GetCanvas();
     var iCanvasWidth = GetCanvasWidth();
     ctx.fillStyle = dg.strBackgroundColor;
     ctx.fillRect(0, 0, iCanvasWidth, iCanvasWidth);

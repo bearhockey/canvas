@@ -34,15 +34,16 @@ var CHARACTER = (function () {
   // Draw
   //     Draws the character screen
   // ----------------
-  character.Draw = function(ctx)
+  character.Draw = function()
   {
+    var ctx = GetCanvas();
     ctx.fillStyle = "#EEEEEE";
     ctx.fillRect(100, 100, 760, 760);
 
     ctx.font = STAT_FONT;
     ctx.fillStyle = "#111122";
 
-    character.m_cStatBlock = GetHero().cTotalStats; // put this in update probably
+    character.m_cStatBlock = HERO.Get().cTotalStats; // put this in update probably
     character.DrawStat(ctx, CONST.STAT_XP, "XP");
     character.DrawStat(ctx, CONST.STAT_LEVEL, "Level");
     character.DrawStat(ctx, CONST.STAT_HEALTH, "Health");

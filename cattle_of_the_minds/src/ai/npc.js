@@ -14,7 +14,7 @@ var NPC = (function () {
     {
       if (Math.random() > 0.5) // TODO make this better
       {
-        var cFloor = GetFloor(); // assume we are always on the current floor
+        var cFloor = DUNGEON.GetFloor(); // assume we are always on the current floor
         var iDirection = UTILS.GetRandomDirection();
         cPawn.Move(iDirection, cFloor);
       }
@@ -26,7 +26,7 @@ var NPC = (function () {
     // ----------------
     this.Chase = function(cPawn)
     {
-      var cFloor = GetFloor();
+      var cFloor = DUNGEON.GetFloor();
       var cThisTile = cPawn.GetTile();
       var cTargetTile = this.cChaseTarget.GetTile();
       var iFloorWidth = cFloor.GetFloorWidth();
@@ -83,9 +83,10 @@ var NPC = (function () {
     // ----------------
     this.Act = function(cPawn)
     {
-      var cHero = GetHero();
+      var cHero = HERO.Get();
+      var cFloor = DUNGEON.GetFloor();
       var iPosition = cPawn.GetTile().GetIdx();
-      var arrVisionRange = GetFloor().GetVisualTiles(iPosition, this.iSightRange);
+      var arrVisionRange = cFloor.GetVisualTiles(iPosition, this.iSightRange);
       var iRangeLength = arrVisionRange.length;
       var idx;
       var cTile;
@@ -109,7 +110,7 @@ var NPC = (function () {
 
       if (this.cChaseTarget != null)
       {
-        if ( cPawn.IsTileAdjacent(this.cChaseTarget.GetTile(), GetFloor()) )
+        if ( cPawn.IsTileAdjacent(this.cChaseTarget.GetTile(), cFloor) )
         {
           this.MeleeAttack(cPawn, this.cChaseTarget);
         }

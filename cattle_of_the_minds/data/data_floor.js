@@ -35,6 +35,7 @@ var D_FLOOR = (function () {
   df.RandomFloor = function(iWidth, iStairEntrances=1)
   {
     var cFloor = new FLOOR(iWidth);
+    var cWallTile = new TILE(-1, false, false, CONST.SHAPE_SQUARE, CONST.TILE_WALL);
     cFloor.SetSpawnMap([D_ENEMY.ID_GOBLIN, D_ENEMY.ID_GOBLIN, D_ENEMY.ID_GOBLIN,
                         D_ENEMY.ID_HOBGOBLIN, D_ENEMY.ID_HOBGOBLIN, D_ENEMY.ID_BEAR]);
     cFloor.SetNPCLimit(8);
@@ -67,9 +68,13 @@ var D_FLOOR = (function () {
 
     // 2a - pregen rooms
     var iExitPoint = -1;
-    iExitPoint = D_ROOM.CrossRoom(cFloor,
-                                  Math.floor(Math.random()*(cFloor.iWidth-9))+1,
-                                  Math.floor(Math.random()*(cFloor.iWidth-9))+1);
+    // iExitPoint = D_ROOM.CrossRoom(cFloor,
+    //                               Math.floor(Math.random()*(cFloor.iWidth-9))+1,
+    //                              Math.floor(Math.random()*(cFloor.iWidth-9))+1);
+    iExitPoint = D_ROOM.RandomPregenRoom(cFloor,
+                                         Math.floor(Math.random()*(cFloor.iWidth-9))+1,
+                                         Math.floor(Math.random()*(cFloor.iWidth-9))+1,
+                                         (Math.random() > 0.5));
     if (iExitPoint >= 0)
     {
       arrCenterTiles.push(iExitPoint);
@@ -165,10 +170,8 @@ var D_FLOOR = (function () {
     var cTopRightCorner    = new TILE(-1, false, false, CONST.SHAPE_TOPRIGHT_CORNER, cFloor.strWallColor, cFloor.strFloorColor);
     var cBottomRightCorner = new TILE(-1, false, false, CONST.SHAPE_BOTTOMRIGHT_CORNER, cFloor.strWallColor, cFloor.strFloorColor);
     var cBottomLeftCorner  = new TILE(-1, false, false, CONST.SHAPE_BOTTOMLEFT_CORNER, cFloor.strWallColor, cFloor.strFloorColor);
-    var bIsNorthEmpty;
-    var bIsEastEmpty;
-    var bIsSouthEmpty;
-    var bIsWestEmpty;
+    var arrEmptyDir = []; // empty direction
+    var iDirection;
     var arrAllTiles = cFloor.GetAllTiles();
     var arrNeighbors;
     var iWalls;
@@ -178,17 +181,57 @@ var D_FLOOR = (function () {
     {
       cCurrentTile = cFloor.GetTile(idx);
       arrNeighbors = cFloor.GetAdjacentTiles(idx);
-      iWalls = UTILS.CountWalls(arrNeighbors, cFloor);
-      if (cCurrentTile != null && !cCurrentTile.IsPassable() && iWalls == 2)
+      // start the big checklist of how to fix walls and floors
+      if (cCurrentTile != null)
       {
-        bIsNorthEmpty = (arrNeighbors[0] != null) ? arrNeighbors[0].IsPassable() : false;
-        bIsEastEmpty  = (arrNeighbors[1] != null) ? arrNeighbors[1].IsPassable() : false;
-        bIsSouthEmpty = (arrNeighbors[2] != null) ? arrNeighbors[2].IsPassable() : false;
-        bIsWestEmpty  = (arrNeighbors[3] != null) ? arrNeighbors[3].IsPassable() : false;
-        if      (bIsNorthEmpty && bIsEastEmpty)  { cFloor.PlaceTile(idx, cBottomLeftCorner); }
-        else if (bIsEastEmpty  && bIsSouthEmpty) { cFloor.PlaceTile(idx, cTopLeftCorner); }
-        else if (bIsSouthEmpty && bIsWestEmpty)  { cFloor.PlaceTile(idx, cTopRightCorner); }
-        else if (bIsWestEmpty  && bIsNorthEmpty) { cFloor.PlaceTile(idx, cBottomRightCorner); }
+        iWalls = UTILS.CountWalls(arrNeighbors, cFloor);
+        for (iDirection = 0; iDirection < arrNeighbors.length; ++iDirection)
+        {
+          arrEmptyDir[iDirection] = (arrNeighbors[iDirection] != null) ?
+                                    (arrNeighbors[iDirection].IsPassable() && !arrNeighbors[iDirection].HasEntity()) :
+                                    false;
+        } // end for loop`
+
+        if (!cCurrentTile.IsPassable())
+        {
+          if (iWalls >= 2)
+          {
+            if      (arrEmptyDir[CONST.NORTH] && arrEmptyDir[CONST.EAST])  { cFloor.PlaceTile(idx, cBottomLeftCorner); }
+            else if (arrEmptyDir[CONST.EAST]  && arrEmptyDir[CONST.SOUTH]) { cFloor.PlaceTile(idx, cTopLeftCorner); }
+            else if (arrEmptyDir[CONST.SOUTH] && arrEmptyDir[CONST.WEST])  { cFloor.PlaceTile(idx, cTopRightCorner); }
+            else if (arrEmptyDir[CONST.WEST]  && arrEmptyDir[CONST.NORTH]) { cFloor.PlaceTile(idx, cBottomRightCorner); }
+          }
+          else if (iWalls == 0)
+          {
+            cFloor.PlaceTile(idx, cEmptyTile);
+          }
+        }
+        else if (cCurrentTile.IsPassable())
+        {
+          if (iWalls <=4 && iWalls >= 2)
+          {
+            if (arrEmptyDir[CONST.NORTH] && arrEmptyDir[CONST.SOUTH] && !arrEmptyDir[CONST.EAST] && !arrEmptyDir[CONST.WEST])
+            {
+              if ( (arrEmptyDir[CONST.NORTHEAST] && arrEmptyDir[CONST.NORTHWEST]) ||
+                   (arrEmptyDir[CONST.SOUTHEAST] && arrEmptyDir[CONST.SOUTHWEST]) )
+              {
+                cFloor.AddPawnToTile(PAWNUTILS.MakeDoor(), idx);
+                cFloor.PlaceTile(idx-1, cWallTile);
+                cFloor.PlaceTile(idx+1, cWallTile);
+              }
+            }
+            else if (arrEmptyDir[CONST.EAST] && arrEmptyDir[CONST.WEST] && !arrEmptyDir[CONST.NORTH] && !arrEmptyDir[CONST.SOUTH])
+            {
+              if ( (arrEmptyDir[CONST.NORTHEAST] && arrEmptyDir[CONST.SOUTHEAST]) ||
+                   (arrEmptyDir[CONST.NORTHWEST] && arrEmptyDir[CONST.SOUTHWEST]) )
+              {
+                cFloor.AddPawnToTile(PAWNUTILS.MakeDoor(), idx);
+                cFloor.PlaceTile(idx-iWidth, cWallTile);
+                cFloor.PlaceTile(idx+iWidth, cWallTile);
+              }
+            }
+          }
+        }
       }
     } // end for loop
 

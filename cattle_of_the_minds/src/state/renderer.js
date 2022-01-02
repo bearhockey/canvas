@@ -44,8 +44,9 @@ var RENDERER = (function () {
   // Draw
   //     Draws the main window
   // ----------------
-  renderer.Draw = function(ctx, iSizeOverride=0)
+  renderer.Draw = function(iSizeOverride=0)
   {
+    var ctx = GetCanvas();
     var arrTiles = renderer.arrDrawnTiles;
     var arrVisibleTiles = renderer.arrVisibleTiles;
 
