@@ -29,9 +29,7 @@ var DEBUG = (function () {
   // ----------------
   dbg.DebugHealHero = function()
   {
-    var cHero = HERO.Get();
-    var iHealth = cHero.GetStat(CONST.STAT_HEALTH)[1];
-    cHero.SetStat(CONST.STAT_HEALTH, iHealth, true);
+    HERO.HealHero();
   };
 
   // ----------------

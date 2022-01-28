@@ -91,21 +91,7 @@ var DIALOG = (function () {
   // ----------------
   dg.HandleMouseClick = function(x, y)
   {
-    if (dg.arrButtons != null && dg.arrButtons.length > 0)
-    {
-      var idx;
-      var iLength = dg.arrButtons.length;
-      var cButton;
-      for (idx = 0; idx < iLength; ++idx)
-      {
-        cButton = dg.arrButtons[idx];
-        if (cButton != null)
-        {
-          cButton.Use();
-          break;
-        }
-      } // end of for loop
-    }
+    MOUSE.CheckButtons(dg.arrButtons, x, y);
   };
 
   // ----------------

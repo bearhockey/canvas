@@ -15,8 +15,8 @@ var PAWNUTILS = (function () {
     cHero.cBaseStats.SetStat(CONST.STAT_LEVEL, 1, true);
     cHero.cBaseStats.SetStat(CONST.STAT_HEALTH, 20, true);
     cHero.cBaseStats.SetStat(CONST.STAT_MANA, 10, true);
-    cHero.cBaseStats.SetStat(CONST.STAT_BRAWN, 10, true);
-    cHero.cBaseStats.SetStat(CONST.STAT_AGILITY, 30, true);
+    cHero.cBaseStats.SetStat(CONST.STAT_STRENGTH, 10, true);
+    cHero.cBaseStats.SetStat(CONST.STAT_DEXTERITY, 30, true);
     // give the player some gold and a sword
     cHero.AddToInventory(D_WEAPON.Sword(), true);
     cHero.AddToInventory(PAWNUTILS.MakeGoldPile(90));

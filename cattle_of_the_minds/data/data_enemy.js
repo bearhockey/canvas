@@ -9,7 +9,7 @@ var D_ENEMY = (function () {
     id      : de.ID_GOBLIN,
     strName : "Goblin",
     strIcon : "goblin.gif",
-    arrStats: [ [CONST.STAT_XP, 2], [CONST.STAT_HEALTH, 4], [CONST.STAT_BRAWN, 20], [CONST.STAT_AGILITY, 10] ]
+    arrStats: [ [CONST.STAT_XP, 2], [CONST.STAT_HEALTH, 4], [CONST.STAT_STRENGTH, 20], [CONST.STAT_DEXTERITY, 10] ]
   };
 
   de.ID_HOBGOBLIN    = 2;
@@ -18,7 +18,7 @@ var D_ENEMY = (function () {
     id      : de.ID_HOBGOBLIN,
     strName : "Hobgoblin",
     strIcon : "hobgoblin.gif",
-    arrStats: [ [CONST.STAT_XP, 4], [CONST.STAT_HEALTH, 8], [CONST.STAT_BRAWN, 30], [CONST.STAT_AGILITY, 20] ]
+    arrStats: [ [CONST.STAT_XP, 4], [CONST.STAT_HEALTH, 8], [CONST.STAT_STRENGTH, 30], [CONST.STAT_DEXTERITY, 20] ]
   };
 
   de.ID_BEAR    = 3;
@@ -27,7 +27,7 @@ var D_ENEMY = (function () {
     id      : de.ID_BEAR,
     strName : "Bear",
     strIcon : "bear.gif",
-    arrStats: [ [CONST.STAT_XP, 6], [CONST.STAT_HEALTH, 12], [CONST.STAT_BRAWN, 50], [CONST.STAT_AGILITY, 30] ]
+    arrStats: [ [CONST.STAT_XP, 6], [CONST.STAT_HEALTH, 12], [CONST.STAT_STRENGTH, 50], [CONST.STAT_DEXTERITY, 30] ]
   };
 
   de.ID_RAT    = 4;
@@ -36,7 +36,7 @@ var D_ENEMY = (function () {
     id      : de.ID_RAT,
     strName : "Rat",
     strIcon : "rat.gif",
-    arrStats: [ [CONST.STAT_XP, 1], [CONST.STAT_HEALTH, 2], [CONST.STAT_BRAWN, 10], [CONST.STAT_AGILITY, 30] ]
+    arrStats: [ [CONST.STAT_XP, 1], [CONST.STAT_HEALTH, 2], [CONST.STAT_STRENGTH, 10], [CONST.STAT_DEXTERITY, 30] ]
   };
 
   de.ID_SKELETON    = 5;
@@ -45,7 +45,7 @@ var D_ENEMY = (function () {
     id      : de.ID_SKELETON,
     strName : "Skeleton",
     strIcon : "skeleton.gif",
-    arrStats: [ [CONST.STAT_XP, 4], [CONST.STAT_HEALTH, 11], [CONST.STAT_BRAWN, 20], [CONST.STAT_AGILITY, 20] ]
+    arrStats: [ [CONST.STAT_XP, 4], [CONST.STAT_HEALTH, 11], [CONST.STAT_STRENGTH, 20], [CONST.STAT_DEXTERITY, 20] ]
   };
 
   de.ID_GHOST    = 6;
@@ -54,7 +54,7 @@ var D_ENEMY = (function () {
     id      : de.ID_GHOST,
     strName : "Ghost",
     strIcon : "ghost.gif",
-    arrStats: [ [CONST.STAT_XP, 5], [CONST.STAT_HEALTH, 14], [CONST.STAT_BRAWN, 10], [CONST.STAT_AGILITY, 30] ]
+    arrStats: [ [CONST.STAT_XP, 5], [CONST.STAT_HEALTH, 14], [CONST.STAT_STRENGTH, 10], [CONST.STAT_DEXTERITY, 30] ]
   };
 
   de.m_arrEnemyBank =

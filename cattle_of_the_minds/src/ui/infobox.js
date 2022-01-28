@@ -16,11 +16,13 @@ var IBOX = (function () {
     var cHero = HERO.Get();
     if (cHero != null)
     {
-      document.getElementById(PLAYER_LEVEL).innerHTML = cHero.GetStat(CONST.STAT_LEVEL)[0].toString();
-      var arrHealth = cHero.GetStat(CONST.STAT_HEALTH);
-      document.getElementById(PLAYER_HEALTH).innerHTML = UTILS.StatPairToText(arrHealth);
-      var arrMana = cHero.GetStat(CONST.STAT_MANA);
-      document.getElementById(PLAYER_MANA).innerHTML = UTILS.StatPairToText(arrMana);
+      document.getElementById(PLAYER_LEVEL).innerHTML = cHero.GetStat(CONST.STAT_LEVEL).toString();
+      var iCurrentHealth = cHero.GetStat(CONST.STAT_HEALTH);
+      var iTotalHealth = cHero.GetStat(CONST.STAT_HEALTH, true);
+      document.getElementById(PLAYER_HEALTH).innerHTML = UTILS.StatPairToText(iCurrentHealth, iTotalHealth);
+      var iCurrentMana = cHero.GetStat(CONST.STAT_MANA);
+      var iTotalMana = cHero.GetStat(CONST.STAT_MANA, true);
+      document.getElementById(PLAYER_MANA).innerHTML = UTILS.StatPairToText(iCurrentMana, iTotalMana);
     }
 
     document.getElementById(TIME_PASSED).innerHTML = new Date(CLOCK.GetTime() * 1000).toISOString().substr(11, 8);

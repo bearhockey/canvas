@@ -21,6 +21,7 @@ var STATE = (function () {
   state.SetState = function(iState, bUpdateScreen = true)
   {
     state.m_iCurrentState = iState;
+    if (iState != state.STATE_CHARACTER) { CHARACTER.Exit(); }
     state.UpdateMenu();
     if (bUpdateScreen) { Update(); }
   };

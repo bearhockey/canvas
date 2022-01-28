@@ -71,9 +71,9 @@ var UTILS = (function () {
   // StatPairToText
   //     Feeds in an array of a stat (current, total) and outputs in the standard format X [y]
   // ----------------
-  utils.StatPairToText = function(arrStat)
+  utils.StatPairToText = function(iCurrentValue, iTotalValue)
   {
-    return arrStat[0].toString() + " [" + arrStat[1].toString() + "]";
+    return iCurrentValue.toString() + " [" + iTotalValue.toString() + "]";
   };
 
   // ----------------
@@ -145,6 +145,32 @@ var UTILS = (function () {
     var iFloorLevel = DUNGEON.GetCurrentFloorIdx();
     var strLabel = (iFloorLevel == 0) ? "Town" : "Dungeon Level " + iFloorLevel.toString();
     return strLabel;
+  };
+
+  // ----------------
+  // DrawBevel
+  //     Draws a bevelled rectangle given a rectangle object and a color object
+  //     objColor expects .color .highlight and .shadow
+  // ----------------
+  utils.DrawBevel = function(ctx, rRect, objColor, iLineWidth=4)
+  {
+    ctx.fillStyle = objColor.color;
+    ctx.fillRect(rRect.x, rRect.y, rRect.width, rRect.height);
+    ctx.beginPath();
+    ctx.lineWidth = iLineWidth;
+    ctx.strokeStyle = objColor.highlight;
+    ctx.moveTo(rRect.x, rRect.y + rRect.height);
+    ctx.lineTo(rRect.x, rRect.y);
+    ctx.lineTo(rRect.x + rRect.width, rRect.y);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+    ctx.strokeStyle = objColor.shadow;
+    ctx.moveTo(rRect.x, rRect.y + rRect.height);
+    ctx.lineTo(rRect.x + rRect.width, rRect.y + rRect.height);
+    ctx.lineTo(rRect.x + rRect.width, rRect.y);
+    ctx.stroke();
+    ctx.closePath();
   };
 
   return utils;

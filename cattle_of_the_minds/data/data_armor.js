@@ -7,7 +7,7 @@ var D_ARMOR = (function () {
   {
     var cLeather = new PAWN(CONST.PAWN_ITEM, strName, ARMOR_ICON_DIR+"leather_armor.gif", CONST.ITEM_ARMOR, 100);
     cLeather.cBaseStats.SetStat(CONST.STAT_ARMOR, 4, true);
-    cLeather.cBaseStats.SetStat(CONST.STAT_AGILITY, -2, true);
+    cLeather.cBaseStats.SetStat(CONST.STAT_DEXTERITY, -2, true);
 
     return cLeather;
   };

@@ -21,10 +21,10 @@ var COMBAT = (function () {
   // CheckHit
   //     Checks if an attack hits
   // ----------------
-  combat.CheckHit = function(iAttackerAgility, iAttackerAccuracy, iDefenderAgility)
+  combat.CheckHit = function(iAttackerDex, iAttackerAccuracy, iDefenderDex)
   {
-    var iAttackerCheck = combat.RollStat(iAttackerAgility);
-    var iDefenderCheck = combat.RollStat(iDefenderAgility);
+    var iAttackerCheck = combat.RollStat(iAttackerDex);
+    var iDefenderCheck = combat.RollStat(iDefenderDex);
     return (iAttackerCheck + iAttackerAccuracy >= iDefenderCheck);
   };
 
@@ -64,15 +64,15 @@ var COMBAT = (function () {
   {
     if (cDefender.IsDead()) { return; } // don't beat a dead horse
 
-    var bHit = combat.CheckHit(cAttacker.GetStat(CONST.STAT_AGILITY)[0],
+    var bHit = combat.CheckHit(cAttacker.GetStat(CONST.STAT_DEXTERITY)[0],
                                cAttacker.GetStat(CONST.STAT_ACCURACY)[0],
-                               cDefender.GetStat(CONST.STAT_AGILITY)[0]);
+                               cDefender.GetStat(CONST.STAT_DEXTERITY)[0]);
     var strAttacker = (bIsHeroAttacker) ? "You" : cAttacker.strName;
     var strDefender = (bIsHeroAttacker) ? cDefender.strName : "you";
     if (bHit)
     {
       var iDamage = combat.CheckDamage(cAttacker.GetStat(CONST.STAT_ATTACK)[0],
-                                       cDefender.GetStat(CONST.STAT_BRAWN)[0]);
+                                       cDefender.GetStat(CONST.STAT_STRENGTH)[0]);
       var iEnemyHealth = cDefender.GetStat(CONST.STAT_HEALTH)[0] - iDamage;
       cDefender.SetStat(CONST.STAT_HEALTH, iEnemyHealth, false);
       var cHero = HERO.Get();

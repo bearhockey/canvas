@@ -1,0 +1,69 @@
+body
+{
+  background-color: #000000;
+}
+canvas
+{
+  border:1px solid #CCCCCC;
+  background-color: #EEEEEE;
+  padding: 0px;
+}
+
+div.divMain
+{
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  max-width: 500px;
+}
+
+div.divCanvas
+{
+  display: inline-block;
+  text-align: center;
+}
+
+div.divTools
+{
+  background-color: #333333;
+  margin: 2px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 50px;
+  padding: 2px;
+  text-align: center;
+}
+
+p.prompt
+{
+  color: #DDDDDD;
+  font-size: 28px;
+  margin: 2px;
+}
+
+input.inputPrompt
+{
+  font-size: 32px;
+  margin-top: 2px;
+}
+
+/* UI buttons */
+button.tool
+{
+  border-radius: 6px;
+  font-size: 32px;
+  font-weight: 550;
+  margin: 4px 2px;
+  min-height: 50px;
+  min-width: 50px;
+}
+
+p.brush_size
+{
+  background-color: #EEEEEE;
+  display: inline-block;
+  font-size: 32px;
+  height: 50px;
+  margin: 2px;
+  width: 50px;
+}

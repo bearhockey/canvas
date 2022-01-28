@@ -1,0 +1,39 @@
+<html>
+<head>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body onload="SERVER.Connect(StartGame)">
+<script src="./src/server.js"></script>
+<script src="./src/state.js"></script>
+<script src="./src/tool.js"></script>
+<script src="./src/prompt.js"></script>
+<script src="./src/mouse.js"></script>
+<script src="./src/main.js"></script>
+
+<script type="text/javascript">
+
+</script>
+
+<div id="divMain" class="divMain">
+  <div id="divPrompt" class="divTools">
+    <p id="textPrompt" class="prompt"></p>
+  </div>
+  <div id="divCanvas" class="divCanvas"></div>
+  <div class="divTools" id="divDrawingTools">
+    <button id="clearImage" class="tool" onclick="ClearScreen()">Clear</button>
+    <button id="minusWidth" class="tool" onclick="TOOL.IncreaseLineWidth(-1);"> - </button>
+    <p class="brush_size" id="brush_size_indicator">8</p>
+    <button id="plusWidth" class="tool" onclick="TOOL.IncreaseLineWidth(1);"> + </button>
+  </div>
+  <div class="divTools" id="divTextInput">
+    <input id="text_input" name="text_input" class="inputPrompt" type="text"></input>
+  </div>
+  <div class="divTools" id="divActions">
+    <button id="startButton" class="tool" onclick="StartRound()">Start</button>
+    <button id="submitButton" class="tool" onclick="SubmitData()">Submit</button>
+  </div>
+</div>
+<img id="preview" name="preview" src="" />
+
+</body>
+</html>

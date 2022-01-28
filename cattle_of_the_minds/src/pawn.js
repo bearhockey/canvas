@@ -21,6 +21,7 @@ var PAWN = (function () {
     this.cParentContainer = null;
 
     this.cBaseStats = new STATBLOCK();
+    this.cBuffStats = new STATBLOCK();
     this.cTotalStats = new STATBLOCK();
     this.arrInventory = [];
     this.arrEquipped = [];
@@ -29,7 +30,9 @@ var PAWN = (function () {
 
     // ---- Getters and setters ----
     this.GetName      = function() { return this.strName; };
+    this.SetName      = function(strName) { this.strName = strName; };
     this.GetIcon      = function() { return this.strIcon; };
+    this.SetIcon      = function(strIcon) { this.strIcon = strIcon; };
     this.GetInventory = function() { return this.arrInventory; };
     this.GetEquipment = function() { return this.arrEquipped; };
     this.GetPawnType  = function() { return this.iPawnType; };
@@ -65,18 +68,24 @@ var PAWN = (function () {
     // ----------------
     this.GetStat = function(iStatName, bUseBase=false)
     {
-      var arrStat = (bUseBase) ? this.cBaseStats.GetStat(iStatName) : this.cTotalStats.GetStat(iStatName);
-      // console.log("GetStat -> ", iStatName, arrStat);
-      return arrStat;
+      return (bUseBase) ? this.cBaseStats.GetStat(iStatName) : this.cTotalStats.GetStat(iStatName);
     };
 
     // ----------------
     // SetStat
     //     Sets the stat for the pawn - always the base
     // ----------------
-    this.SetStat = function(iStatName, iStatValue, bUseCurrent=true)
+    this.SetStat = function(iStatName, iStatValue, bSetBuff=false)
     {
-      this.cBaseStats.SetStat(iStatName, iStatValue, bUseCurrent);
+      if (bSetBuff)
+      {
+        this.cBuffStats.SetStat(iStatName, iStatValue);
+      }
+      else
+      {
+        this.cBaseStats.SetStat(iStatName, iStatValue);
+      }
+
       this.CalculateTotalStats();
     };
 
@@ -88,6 +97,7 @@ var PAWN = (function () {
     {
       this.cTotalStats = new STATBLOCK();
       this.cTotalStats.AddStatBlock(this.cBaseStats);
+      this.cTotalStats.AddStatBlock(this.cBuffStats);
       var cItem;
       var idx;
       var iEquippedItems = this.arrEquipped.length;

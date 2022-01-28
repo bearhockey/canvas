@@ -12,7 +12,7 @@ function LoadMap()
   var cStartTile = (cFloor.GetEntranceIdx() >= 0) ? cFloor.GetTile(cFloor.GetEntranceIdx()) : cFloor.GetEmptyTile();
 
   cStartTile.PlaceEntity(HERO.Get());
-  STATE.SetState(STATE.STATE_STAGE);
+  STATE.SetState(STATE.STATE_CHARACTER);
 }
 
 var myGameArea =
@@ -100,6 +100,7 @@ function StartGame()
   var cStartButton = new BUTTON(0, 860, 200, 50, "Start", LoadMap);
   // var cLoadButton = new BUTTON(0, 860, 200, 50, "Load");
   // Init components
+  CHARACTER.Init();
   INVENTORY.Init();
 
   // start game

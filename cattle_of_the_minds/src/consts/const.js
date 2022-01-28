@@ -47,17 +47,18 @@ var CONST = (function () {
   c.DOOR_DOWNSTAIRS = 2;
 
   // stats
-  c.STAT_LEVEL     = 1;
-  c.STAT_HEALTH    = 2;
-  c.STAT_MANA      = 3;
-  c.STAT_ATTACK    = 11;
-  c.STAT_ACCURACY  = 12;
-  c.STAT_ARMOR     = 13;
-  c.STAT_BRAWN     = 21;
-  c.STAT_AGILITY   = 22;
-  c.STAT_INTELLECT = 23;
-  c.STAT_WILLPOWER = 24;
-  c.STAT_XP        = 30;
+  c.STAT_LEVEL        = 1;
+  c.STAT_HEALTH       = 2;
+  c.STAT_MANA         = 3;
+  c.STAT_ATTACK       = 11;
+  c.STAT_ACCURACY     = 12;
+  c.STAT_ARMOR        = 13;
+  c.STAT_STRENGTH     = 21;
+  c.STAT_DEXTERITY    = 22;
+  c.STAT_INTELLECT    = 23;
+  c.STAT_CONSTITUTION = 24;
+  c.STAT_XP           = 30;
+  c.STAT_POINTS       = 31;
 
   // tile colors
   c.TILE_NULL  = "#111111";
