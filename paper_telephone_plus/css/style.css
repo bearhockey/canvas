@@ -58,6 +58,11 @@ button.tool
   min-width: 50px;
 }
 
+input.tool
+{
+  margin: 4px 2px;
+}
+
 p.brush_size
 {
   background-color: #EEEEEE;

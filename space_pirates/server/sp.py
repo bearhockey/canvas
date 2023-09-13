@@ -5,9 +5,7 @@ import json
 import logging
 import websockets
 
-from chain import Chain
 from player import Player
-from round import Round
 from state import StateManager
 from state import StateConst as STATE
 
@@ -15,7 +13,7 @@ logging.basicConfig()
 
 # consts - move to a better file
 m_arrPlayers = []
-m_cRound = Round()
+m_stateMan = StateManager()
 
 def new_player(user_id):
     return json.dumps({"login": True, "user_id": user_id})
@@ -48,14 +46,6 @@ async def consumer(message, websocket):
     data = json.loads(message)
     if "login" in data:
         await register(websocket)
-        for player in m_arrPlayers:
-            await player.GetWebSocket().send(json.dumps({ 'player_count':len(m_arrPlayers) }) )
-    elif "start_round" in data:
-        m_cRound.StartRound(m_arrPlayers)
-        objResponse = {'state':m_cRound.GetState() }
-        objResponse['objPrompt'] = { 'type':'text', 'data':"Draw something!" }
-        for player in m_arrPlayers:
-            await player.GetWebSocket().send(json.dumps(objResponse))
     else: # do not make any other requests with a login request
         objResponse = {}
         if "private_key" in data:
@@ -64,24 +54,16 @@ async def consumer(message, websocket):
             objResponse["iKey"] = user_key
 
         if cPlayer != None:
-            cPlayer.ParseSocket(data, objResponse)
+            cPlayer.ParseSocket(data, objResponse, m_stateMan)
 
         await websocket.send(json.dumps(objResponse))
 
-        iState = m_cRound.IsRoundOver()
-        # send out big blast
-        if iState >= 0:
-            for player in m_arrPlayers:
-                objResponse = { 'new_turn':True, 'iKey':player.GetIdx(), 'state':iState }
-                objResponse['objPrompt'] = player.GetCurrentChain().GetLastObject()
-                await player.GetWebSocket().send(json.dumps(objResponse))
-
 async def house(websocket, path):
-    # await register(websocket)
     await consumer_handler(websocket, path)
 
-
+main_loop = asyncio.new_event_loop()
+asyncio.set_event_loop(main_loop)
 start_server = websockets.serve(house, "127.0.0.1", 5678)
-
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+main_loop.run_until_complete(start_server)
+print("Server started...")
+main_loop.run_forever()

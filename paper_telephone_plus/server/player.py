@@ -39,3 +39,17 @@ class Player:
     def AddCaptionToChain(self, strText):
         if self.m_cOwnedChain is not None:
             self.m_cOwnedChain.AddCaption(strText)
+
+    def ParseSocket(self, data, objResponse):
+        if data is None:
+            return objResponse
+
+        if "srcImage" in data:
+            self.AddImageToChain(data['srcImage'])
+        elif "srcText" in data:
+            self.AddCaptionToChain(data['srcText'])
+        if "submit" in data:
+            self.SetWaiting(True)
+            objResponse['submit'] = True
+
+        return objResponse

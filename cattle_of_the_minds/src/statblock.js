@@ -70,6 +70,30 @@ var STATBLOCK = (function () {
     };
 
     // ----------------
+    // AddStat
+    //     Adds a value to the specified stat
+    // ----------------
+    this.AddStat = function(iStatName, iValue)
+    {
+      switch (iStatName)
+      {
+        case CONST.STAT_XP:           { this.iXP           += iValue; break; }
+        case CONST.STAT_POINTS:       { this.iPoints       += iValue; break; }
+        case CONST.STAT_LEVEL:        { this.iLevel        += iValue; break; }
+        case CONST.STAT_HEALTH:       { this.iHealth       += iValue; break; }
+        case CONST.STAT_MANA:         { this.iMana         += iValue; break; }
+        case CONST.STAT_ATTACK:       { this.iAttack       += iValue; break; }
+        case CONST.STAT_ACCURACY:     { this.iAccuracy     += iValue; break; }
+        case CONST.STAT_ARMOR:        { this.iArmor        += iValue; break; }
+        case CONST.STAT_STRENGTH:     { this.iStrength     += iValue; break; }
+        case CONST.STAT_DEXTERITY:    { this.iDexterity    += iValue; break; }
+        case CONST.STAT_INTELLECT:    { this.iIntellect    += iValue; break; }
+        case CONST.STAT_CONSTITUTION: { this.iConstitution += iValue; break; }
+        default: break;
+      } // end of switch
+    };
+
+    // ----------------
     // AddStatBlock
     //     Adds the stat block to the current stat block
     // ----------------

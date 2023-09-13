@@ -22,7 +22,7 @@ var SERVER = (function () {
     };
     m_wsConnection.onerror = function()
     {
-      PROMPT.LoadPrompt("ERROR: Server not started!");
+      DIALOG.TextBox("ERROR: Server not started!");
     };
 
     m_wsConnection.onmessage = function(event)
@@ -51,42 +51,27 @@ var SERVER = (function () {
       return;
     }
 
-    if (data.hasOwnProperty('player_count'))
-    {
-      PROMPT.LoadPrompt("Connected Players: " + data['player_count']);
-    }
-
     if (data.hasOwnProperty('message'))
     {
       console.log("Got a message: " + data['message']);
     }
 
-    if (data.hasOwnProperty('new_turn'))
+    // commenting this out since the server should not be setting states
+    //if (data.hasOwnProperty('state'))
+    //{
+    //  STATE.ChangeState(data['state']);
+    //}
+
+    if (data.hasOwnProperty('dialog'))
     {
-      STATE.SetWaitState(false);
-    }
-    else if (data.hasOwnProperty('submit')) // these are mutually exclusive
-    {
-      STATE.SetWaitState(true);
-      DrawText("Waiting for others...");
+      DIALOG.ReceiveDialogData(data['dialog']);
+      return; // has dialog data so nothing else to do
     }
 
-    if (data.hasOwnProperty('state'))
+    if (data.hasOwnProperty('status'))
     {
-      STATE.ChangeState(data['state']);
-    }
-
-    if (data.hasOwnProperty('objPrompt'))
-    {
-      var objPrompt = data['objPrompt'];
-      if (objPrompt['type'] == "image")
-      {
-        LoadImage(objPrompt['data']);
-      }
-      else if (objPrompt['type'] == "text")
-      {
-        PROMPT.LoadPrompt(objPrompt['data']);
-      }
+      STATUS.ReceiveStatusData(data['status']);
+      return; // has status data so nothing else to do
     }
   };
 

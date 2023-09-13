@@ -4,6 +4,7 @@ var STATE = (function () {
   const STATE_DRAW = 1;
   const STATE_TEXT = 2;
 
+  const START_BUTTON = "startButton";
   const SUBMIT_BUTTON = "submitButton";
 
   // member vars
@@ -14,6 +15,7 @@ var STATE = (function () {
   var state = {};
 
   // expose states
+  state.STATE_NONE = STATE_NONE;
   state.STATE_DRAW = STATE_DRAW;
   state.STATE_TEXT = STATE_TEXT;
 
@@ -38,6 +40,11 @@ var STATE = (function () {
       PROMPT.HideInput();
     }
 
+    var butStart = document.getElementById(START_BUTTON);
+    butStart.disabled = (m_iCurrentState != STATE_NONE);
+    var butSubmit  = document.getElementById(SUBMIT_BUTTON);
+    butSubmit.disabled = (m_bWaitingForServer || m_iCurrentState == STATE_NONE);
+
     ClearScreen();
   };
 
@@ -46,7 +53,7 @@ var STATE = (function () {
   {
     m_bWaitingForServer = bWaiting;
     var butSubmit  = document.getElementById(SUBMIT_BUTTON);
-    butSubmit.disabled = m_bWaitingForServer;
+    butSubmit.disabled = (m_bWaitingForServer || m_iCurrentState == STATE_NONE);
   };
 
   // ----------------

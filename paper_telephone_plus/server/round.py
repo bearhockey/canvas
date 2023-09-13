@@ -11,6 +11,9 @@ class Round:
     def GetState(self):
         return self.m_stateManager.GetState()
 
+    def GetPlayers(self):
+        return self.m_arrPlayers
+
     def ResetPlayerStatus(self):
         for player in self.m_arrPlayers:
             player.SetWaiting(False)

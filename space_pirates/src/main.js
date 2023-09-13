@@ -1,15 +1,29 @@
 // consts
-const CANVAS_WIDTH = 400;
-const CANVAS_HEIGHT = 600;
+const CANVAS_WIDTH = 480;
+const CANVAS_HEIGHT = 800;
 // globals - don't use if you can
+
+function InitCanvas()
+{
+  myGameArea.start();
+  myGameArea.clear();
+  SERVER.Connect(StartGame);
+}
 
 function StartGame()
 {
   // start game
-  myGameArea.start();
-  myGameArea.clear();
   STATE.ChangeState(STATE.STATE_NONE);
-  DrawText("Press Start to load game");
+  DIALOG.Button("Click to start the game", DemoStart);
+}
+
+// --------
+// DemoStart
+//     Starts the demo of the game - for debugging
+// --------
+function DemoStart()
+{
+  STATE.ChangeState(STATE.STATE_DIALOG, [0]);
 }
 
 var myGameArea =
@@ -21,10 +35,10 @@ var myGameArea =
     this.canvas.height = CANVAS_HEIGHT;
     this.context = this.canvas.getContext("2d");
     document.getElementById('divCanvas').appendChild(this.canvas);
-    this.canvas.addEventListener('mousemove', MOUSE.Move);
-    this.canvas.addEventListener('mousedown', MOUSE.MouseDown);
-    this.canvas.addEventListener('mouseup', MOUSE.MouseUp);
-    // this.canvas.addEventListener('click', MOUSE.LeftClick);
+    // this.canvas.addEventListener('mousemove', MOUSE.Move);
+    // this.canvas.addEventListener('mousedown', MOUSE.MouseDown);
+    // this.canvas.addEventListener('mouseup', MOUSE.MouseUp);
+    this.canvas.addEventListener('click', MOUSE.LeftClick);
     // this.canvas.addEventListener('contextmenu', MOUSE.RightClick);
   },
   clear : function()
@@ -34,42 +48,18 @@ var myGameArea =
 };
 
 function GetCanvas() { return myGameArea.context; };
-
-function StartRound()
-{
-  SERVER.ServerSend({ "start_round":true });
-};
-
-function DrawText(strText)
-{
-  var ctx = GetCanvas();
-  ctx.fillStyle = "#33333388";
-  ctx.fillRect(0, CANVAS_HEIGHT/3, CANVAS_WIDTH, CANVAS_HEIGHT/3);
-  ctx.font = "48px serif";
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fillText(strText, 20, CANVAS_HEIGHT/2);
-};
+function GetCanvasSize() { return [myGameArea.canvas.width, myGameArea.canvas.height]; };
 
 function Update()
 {
+  // DIALOG.GetDialog(0, DIALOG.Draw);
 };
 
 function ClearScreen()
 {
+  MOUSE.ClearHitBoxes();
   myGameArea.clear();
 };
-
-function LoadImage(srcImage)
-{
-  var img = new Image();
-  img.onload = DrawImage; // Draw when image has loaded
-  img.src = srcImage;
-};
-
-function DrawImage()
-{
-  GetCanvas().drawImage(this, 0, 0);
-}
 
 function SubmitData()
 {

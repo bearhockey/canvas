@@ -1,0 +1,31 @@
+<dialogs>
+    <dialog>
+        <id>0</id>
+        <text>Hello world!</text>
+        <portrait>rando_avatar</portrait>
+        <choice>
+            <next>1</next>
+            <text>Next</text>
+        </choice>
+        <choice>
+            <next>2</next>
+            <text>Other</text>
+        </choice>
+    </dialog>
+    <dialog>
+        <id>1</id>
+        <text>This is some more text</text>
+    </dialog>
+    <dialog>
+        <id>2</id>
+        <text>This is a chained choice, which also has a looping choice and a lot of text.</text>
+        <choice>
+            <next>0</next>
+            <text>Loop</text>
+        </choice>
+        <choice>
+            <next>1</next>
+            <text>End</text>
+        </choice>
+    </dialog>
+</dialogs>

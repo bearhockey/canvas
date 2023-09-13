@@ -23,7 +23,7 @@ var CHARACTER = (function () {
   character.m_cRect = null;
   character.m_cEditRect = null;
   character.m_bEditMode = false;
-  character.m_cBaseStats = null;
+  character.m_cStatsCopy = null;
   character.m_cTotalStats = null;
   character.m_iBaseStr = 0;
   character.m_iBaseDex = 0;
@@ -91,12 +91,8 @@ var CHARACTER = (function () {
   // ----------------
   character.ChangeStat = function(iStat, iValue)
   {
-    var cChange = new STATBLOCK();
-
-    cChange.SetStat(iStat, iValue, true);
-    cChange.SetStat(CONST.STAT_POINTS, -iValue, true);
-    character.m_cBaseStats.AddStatBlock(cChange, true);
-
+    character.m_cStatsCopy.AddStat(iStat, iValue);
+    character.m_cStatsCopy.AddStat(CONST.STAT_POINTS, -1);
     Update();
   };
 
@@ -155,7 +151,7 @@ var CHARACTER = (function () {
     var bConfirm = window.confirm("Confirm stat changes?");
     if (bConfirm)
     {
-      HERO.Get().cTotalStats = character.m_cBaseStats;
+      HERO.Get().cBaseStats = character.m_cStatsCopy;
       character.m_bEditMode = false;
     }
 
@@ -172,36 +168,28 @@ var CHARACTER = (function () {
   };
 
   // ----------------
+  // EnterScreen
+  //     Enters the screen
+  // ----------------
+  character.EnterScreen = function(bEditMode = false)
+  {
+    // character.m_bEditMode = bEditMode;
+    character.m_cStatsCopy = new STATBLOCK();
+    character.m_cStatsCopy.AddStatBlock(HERO.Get().cBaseStats);
+    character.m_iBaseStr = character.m_cStatsCopy.GetStat(CONST.STAT_STRENGTH);
+    character.m_iBaseDex = character.m_cStatsCopy.GetStat(CONST.STAT_DEXTERITY);
+    character.m_iBaseInt = character.m_cStatsCopy.GetStat(CONST.STAT_INTELLECT);
+    character.m_iBaseCon = character.m_cStatsCopy.GetStat(CONST.STAT_CONSTITUTION);
+    character.m_bEditMode = (character.m_cStatsCopy.GetStat(CONST.STAT_POINTS) > 0);
+  };
+
+  // ----------------
   // Update
   //     Updates the character for drawing later
   // ----------------
   character.Update = function()
   {
-    var iPoints;
-    if (!character.m_bEditMode)
-    {
-      var cHero = HERO.Get();
-      iPoints = cHero.cTotalStats.GetStat(CONST.STAT_POINTS)[0];
-      if (iPoints > 0)
-      { // enter edit mode
-        character.m_bEditMode = true;
-        character.m_cBaseStats = new STATBLOCK();
-        character.m_cBaseStats.AddStatBlock(cHero.cBaseStats);
-        character.m_iBaseStr = character.m_cBaseStats.GetStat(CONST.STAT_STRENGTH);
-        character.m_iBaseDex = character.m_cBaseStats.GetStat(CONST.STAT_DEXTERITY);
-        character.m_iBaseInt = character.m_cBaseStats.GetStat(CONST.STAT_INTELLECT);
-        character.m_iBaseCon = character.m_cBaseStats.GetStat(CONST.STAT_CONSTITUTION);
-      }
-      else
-      {
-        character.m_cBaseStats = cHero.cBaseStats;
-        character.m_cTotalStats = cHero.cTotalStats;
-      }
-    }
-    else
-    {
-      iPoints = character.m_cBaseStats.GetStat(CONST.STAT_POINTS);
-    }
+    var iPoints = character.m_cStatsCopy.GetStat(CONST.STAT_POINTS);
 
     // disable any stat buttons if not enough points
     var idx;
@@ -227,7 +215,7 @@ var CHARACTER = (function () {
         {
           if (cButton.GetFunction() == character.MinusStr)
           {
-            if (character.m_cBaseStats.GetStat(CONST.STAT_STRENGTH) > character.m_iBaseStr)
+            if (character.m_cStatsCopy.GetStat(CONST.STAT_STRENGTH) > character.m_iBaseStr)
             {
               cButton.Default();
             }
@@ -238,7 +226,7 @@ var CHARACTER = (function () {
           } // Strength Check
           else if (cButton.GetFunction() == character.MinusDex)
           {
-            if (character.m_cBaseStats.GetStat(CONST.STAT_DEXTERITY) > character.m_iBaseDex)
+            if (character.m_cStatsCopy.GetStat(CONST.STAT_DEXTERITY) > character.m_iBaseDex)
             {
               cButton.Default();
             }
@@ -249,7 +237,7 @@ var CHARACTER = (function () {
           } // Dexterity Check
           else if (cButton.GetFunction() == character.MinusInt)
           {
-            if (character.m_cBaseStats.GetStat(CONST.STAT_INTELLECT) > character.m_iBaseInt)
+            if (character.m_cStatsCopy.GetStat(CONST.STAT_INTELLECT) > character.m_iBaseInt)
             {
               cButton.Default();
             }
@@ -260,7 +248,7 @@ var CHARACTER = (function () {
           } // Intellect Check
           else if (cButton.GetFunction() == character.MinusCon)
           {
-            if (character.m_cBaseStats.GetStat(CONST.STAT_CONSTITUTION) > character.m_iBaseCon)
+            if (character.m_cStatsCopy.GetStat(CONST.STAT_CONSTITUTION) > character.m_iBaseCon)
             {
               cButton.Default();
             }
@@ -312,7 +300,7 @@ var CHARACTER = (function () {
 
     if (character.m_bEditMode)
     {
-      var iPoints = character.m_cBaseStats.GetStat(CONST.STAT_POINTS);
+      var iPoints = character.m_cStatsCopy.GetStat(CONST.STAT_POINTS);
       UTILS.DrawBevel(ctx, character.m_cEditRect, SCREEN_COLOR, BEVEL_THICKNESS);
       ctx.beginPath();
       ctx.strokeStye = FONT_COLOR;
@@ -336,13 +324,6 @@ var CHARACTER = (function () {
         character.m_arrButtons[idx].Draw(ctx);
       } // end for loop
     }
-
-
-    // character.DrawNumber(ctx, CONST.STAT_XP, "XP");
-    // character.DrawNumber(ctx, CONST.STAT_LEVEL, "Level");
-    // character.DrawNumber(ctx, CONST.STAT_HEALTH, "Health");
-    // character.DrawNumber(ctx, CONST.STAT_MANA, "Mana");
-
   };
 
   // ----------------
@@ -353,7 +334,7 @@ var CHARACTER = (function () {
   {
     var iX = character.m_mapStatPositions[iStat][0];
     var iY = character.m_mapStatPositions[iStat][1];
-    var iValue = character.m_cBaseStats.GetStat(iStat);
+    var iValue = character.m_cStatsCopy.GetStat(iStat);
     ctx.fillText(strName, iX, iY);
     ctx.fillText(iValue.toString(), iX + STAT_SPACE, iY);
   };
@@ -365,10 +346,10 @@ var CHARACTER = (function () {
   character.DrawStat = function(ctx, iStat, strLabel, x)
   {
     var strStatColor = NEUTRAL_COLOR;
-    var iBaseValue = character.m_cBaseStats.GetStat(iStat);
-    var iTotalValue = character.m_cTotalStats.GetStat(iStat);
-    if      (iTotalValue > iBaseValue) { strStatColor = POSITIVE_COLOR; }
-    else if (iTotalValue < iBaseValue) { strStatColor = NEGATIVE_COLOR; }
+    var iBaseValue = character.m_cStatsCopy.GetStat(iStat);
+    // var iTotalValue = character.m_cTotalStats.GetStat(iStat);
+    // if      (iTotalValue > iBaseValue) { strStatColor = POSITIVE_COLOR; }
+    // else if (iTotalValue < iBaseValue) { strStatColor = NEGATIVE_COLOR; }
 
     ctx.beginPath();
     ctx.arc(x, STAT_ROW_POS, 64, 0, 2 * Math.PI);
@@ -382,7 +363,8 @@ var CHARACTER = (function () {
     var strStatColor = FONT_COLOR;
     ctx.fillStyle = strStatColor;
     ctx.font = STAT_VALUE_FONT;
-    ctx.fillText(iTotalValue.toString(), x, STAT_ROW_POS+10);
+    ctx.fillText(iBaseValue.toString(), x, STAT_ROW_POS+10);
+    // ctx.fillText(iTotalValue.toString(), x, STAT_ROW_POS+10);
     ctx.font = STAT_LABEL_FONT;
     ctx.fillText(strLabel, x, STAT_ROW_POS+55);
   };

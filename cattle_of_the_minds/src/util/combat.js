@@ -45,12 +45,12 @@ var COMBAT = (function () {
   {
     var cHero = HERO.Get();
     var cStatBlock = new STATBLOCK();
-    cStatBlock.SetStat(CONST.STAT_XP, cEnemy.GetStat(CONST.STAT_XP)[0]);
+    cStatBlock.SetStat(CONST.STAT_XP, cEnemy.GetStat(CONST.STAT_XP));
     cHero.cBaseStats.AddStatBlock(cStatBlock);
     cHero.CalculateTotalStats();
     // check if level
-    var iLevel = cHero.GetStat(CONST.STAT_LEVEL)[0];
-    if (cHero.GetStat(CONST.STAT_XP)[0] > iLevel*10)
+    var iLevel = cHero.GetStat(CONST.STAT_LEVEL);
+    if (cHero.GetStat(CONST.STAT_XP) > iLevel*10)
     {
       HERO.LevelUp();
     }
@@ -64,25 +64,25 @@ var COMBAT = (function () {
   {
     if (cDefender.IsDead()) { return; } // don't beat a dead horse
 
-    var bHit = combat.CheckHit(cAttacker.GetStat(CONST.STAT_DEXTERITY)[0],
-                               cAttacker.GetStat(CONST.STAT_ACCURACY)[0],
-                               cDefender.GetStat(CONST.STAT_DEXTERITY)[0]);
+    var bHit = combat.CheckHit(cAttacker.GetStat(CONST.STAT_DEXTERITY),
+                               cAttacker.GetStat(CONST.STAT_ACCURACY),
+                               cDefender.GetStat(CONST.STAT_DEXTERITY));
     var strAttacker = (bIsHeroAttacker) ? "You" : cAttacker.strName;
     var strDefender = (bIsHeroAttacker) ? cDefender.strName : "you";
     if (bHit)
     {
-      var iDamage = combat.CheckDamage(cAttacker.GetStat(CONST.STAT_ATTACK)[0],
-                                       cDefender.GetStat(CONST.STAT_STRENGTH)[0]);
-      var iEnemyHealth = cDefender.GetStat(CONST.STAT_HEALTH)[0] - iDamage;
-      cDefender.SetStat(CONST.STAT_HEALTH, iEnemyHealth, false);
+      var iDamage = combat.CheckDamage(cAttacker.GetStat(CONST.STAT_ATTACK),
+                                       cDefender.GetStat(CONST.STAT_STRENGTH));
+      var iEnemyHealth = cDefender.GetStat(CONST.STAT_HEALTH) - iDamage;
+      cDefender.SetStat(CONST.STAT_HEALTH, iEnemyHealth, true);
       var cHero = HERO.Get();
       if (iEnemyHealth > 0)
       {
         MBOX.AddInfo(strAttacker + " dealt " + iDamage.toString() + " damage to " + strDefender + "!");
         if (cDefender != cHero)
         {
-          var arrNewHealth = cDefender.GetStat(CONST.STAT_HEALTH);
-          MBOX.AddInfo(UTILS.GetHealthLevel(arrNewHealth[0], arrNewHealth[1]));
+          // var arrNewHealth = cDefender.GetStat(CONST.STAT_HEALTH);
+          // MBOX.AddInfo(UTILS.GetHealthLevel(arrNewHealth[0], arrNewHealth[1]));
         }
       }
       else
