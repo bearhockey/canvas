@@ -25,7 +25,7 @@ class MouseManager
   {
     if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
     {
-      m_OM.ClickOnObject();
+      m_OM.ClickOnObject(this.arrPosition);
     }
   }
   

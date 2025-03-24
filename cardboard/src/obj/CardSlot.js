@@ -2,9 +2,9 @@ class CardSlot extends Card
 {
     constructor(x=0, y=0, bCanAdd=false)
     {
-        super(x,y);
+        super(x, y, CONST.CARD_SLOT_IMG, CONST.CARD_SLOT_ADD_IMG);
+        this.bCanGrab = false;
         this.bCanAdd = bCanAdd;
-        this.fnSymbol = (bCanAdd == true) ? this.DrawSymbol : null;
     }
 
     // --------------------------------

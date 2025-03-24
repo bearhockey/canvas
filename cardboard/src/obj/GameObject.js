@@ -8,17 +8,20 @@ class GameObject
         this.x = x;
         this.y = y;
         this.bHighlight = false;
+        this.bCanGrab = false;
 
-        this.imgSrc = imgSrc;
-        this.imgHighlight = imgHighlight;
         this.width = width;
         this.height = height;
 
-        this.fnSymbol = null
-
         this.hitBox = { left:this.x, top:this.y, right:this.x+this.width, bottom:this.y+this.height };
 
+        this.imgBase;
+        this.imgHighlight;
+        this.bImageLoaded = false;
+        this.bHighlightLoaded = false;
+
         m_OM.AddObject(this);
+        this.InitImg(imgSrc, imgHighlight);
     }
 
     // --------------------------------
@@ -27,7 +30,32 @@ class GameObject
     IsHighlighted()           { return this.bHighlight; }
     SetHighlight(bHighlight)  { this.bHighlight = bHighlight;}
     GetBounds()               { return this.hitBox; }
+    CanGrab()                 { return this.bCanGrab; }
 
+    // --------------------------------
+    // --------------------------------
+    InitImg(imgSrc, imgHighlight = null)
+    {
+        if (imgSrc != null)
+        {
+            this.imgBase = new Image();
+            this.imgBase.object = this;
+            this.imgBase.addEventListener('load', function() { this.object.bImageLoaded = true; }, false);
+            this.imgBase.src = imgSrc;
+        }
+
+        if (imgHighlight != null)
+        {
+            this.imgHighlight = new Image();
+            this.imgHighlight.object = this;
+            this.imgHighlight.addEventListener('load', function() { this.object.bHighlightLoaded = true; }, false);
+            this.imgHighlight.src = imgHighlight;
+        }
+    }
+
+    // --------------------------------
+    // Move
+    // --------------------------------
     Move(x, y)
     {
         this.x = x;
@@ -41,18 +69,14 @@ class GameObject
     // --------------------------------
     Draw(ctx)
     {
-        var imgBase = new Image();
-        imgBase.ctx = ctx;
-        imgBase.iX = this.x;
-        imgBase.iY = this.y;
-        imgBase.iWidth = this.width;
-        imgBase.iHeight = this.height;
-        imgBase.fnSymbol = this.fnSymbol;
-        imgBase.addEventListener('load', function() 
+        if (this.bImageLoaded == true)
         {
-             ctx.drawImage(this, this.iX, this.iY);
-             if (this.fnSymbol != null) { this.fnSymbol(); }
-        }, false);
-        imgBase.src = (this.bHighlight) ? this.imgHighlight : this.imgSrc;
+            ctx.drawImage(this.imgBase, this.x, this.y);
+        }
+
+        if (this.bHighlight == true && this.bHighlightLoaded == true)
+        {
+            ctx.drawImage(this.imgHighlight, this.x, this.y);
+        }
     }
 } // end of class

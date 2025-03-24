@@ -8,6 +8,9 @@ var cCard = new Card(50, 80);
 var cSlot1 = new CardSlot(250, 80, true);
 var cSlot2 = new CardSlot(450, 80);
 
+var cBottomPanel = new Panel(0, CONST.CANVAS_HEIGHT - 200, CONST.CANVAS_WIDTH, 200);
+var cBottomClose = new Button(12, CONST.CANVAS_HEIGHT - 190, 80, 30, cBottomPanel.Close);
+
 var myGameArea =
 {
   canvas : document.createElement("canvas"),
@@ -31,9 +34,12 @@ function GetCanvas() { return myGameArea.context; };
 
 function Init()
 {
+  cBottomPanel.AddChildToPanel(cBottomClose);
+  m_OM.AddPanel(cBottomPanel);
   m_OM.AddObjectToStage(cCard);
   m_OM.AddObjectToStage(cSlot1);
   m_OM.AddObjectToStage(cSlot2);
+  Update();
 };
 
 function Update(iTimeStamp)
@@ -45,7 +51,10 @@ function DrawScreen()
 {
   myGameArea.clear();
   var ctx = GetCanvas();
+
+  // cBottomPanel.Draw(ctx);
   m_OM.Draw(ctx);
+
 };
 
 // --------------------------------
@@ -53,8 +62,8 @@ function DrawScreen()
 // --------------------------------
 function StartGame()
 {
+  console.log("StartGame()");
   // start game
   myGameArea.start();
   Init();
-  Update();
 }

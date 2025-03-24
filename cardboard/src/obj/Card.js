@@ -3,21 +3,9 @@
 // ----------------------------------------------------------------
 class Card extends GameObject
 {
-    constructor(x=0, y=0, strColor=CONST.CARD_DEFAULT_COLOR)
+    constructor(x=0, y=0, strCardImage=CONST.CARD_BACK_IMG, strCardHighlight=CONST.CARD_HIGHLIGHT_IMG)
     {
-        super(x, y, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, CONST.CARD_BACK_IMG, CONST.CARD_HIGHLIGHT_IMG);
-        this.fnSymbol = this.DrawSymbol;
-    }
-
-    // --------------------------------
-    // DrawSymbol
-    // --------------------------------
-    DrawSymbol()
-    {
-        var ctx = this.ctx;
-        if (ctx != null)
-        {
-            GEO.DrawCircle(ctx, this.iX+this.iWidth/2, this.iY+this.iHeight/3, 30, "#0000FF");
-        }
+        super(x, y, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, strCardImage, strCardHighlight);
+        this.bCanGrab = true;
     }
 } // end of class
