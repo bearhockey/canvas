@@ -12,9 +12,16 @@ class MouseManager
   {
     var rect = myGameArea.canvas.getBoundingClientRect();
     this.arrPosition = [ evt.clientX - rect.left, evt.clientY - rect.top ];
-    if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
+    if (g_OM.GetGrabbedObject() == null)
     {
-      m_OM.MouseMove(this.arrPosition);
+      if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
+      {
+        g_OM.MouseMove(this.arrPosition);
+      }
+    }
+    else if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
+    {
+      g_OM.MouseMove(this.arrPosition);
     }
   };
 
@@ -23,9 +30,13 @@ class MouseManager
   // --------------------------------
   LeftClick(evt)
   {
-    if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
+    if (GEO.IsInRect(this.arrPosition, cRightPanel.GetBounds()))
     {
-      m_OM.ClickOnObject(this.arrPosition);
+      cRightPanel.OnClick(this.arrPosition);
+    }
+    else if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
+    {
+      g_OM.ClickOnObject(this.arrPosition);
     }
   }
   

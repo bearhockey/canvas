@@ -8,14 +8,19 @@ class CardSlot extends Card
     }
 
     // --------------------------------
-    // DrawSymbol
+    // Draw
     // --------------------------------
-    DrawSymbol()
+    Draw(ctx)
     {
-        var ctx = this.ctx;
-        if (ctx != null)
+        if (this.m_arrSlots.length > 0)
         {
-            GEO.DrawCross(ctx, this.iX+this.iWidth/2, this.iY+this.iHeight/2, 20, "#BCBCBC");
+            var objCard = this.m_arrSlots[0];
+            if (objCard != null) { objCard.Draw(ctx); }
+        }
+        else
+        {
+            super.Draw(ctx);
         }
     }
+    
 } // end of class

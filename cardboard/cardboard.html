@@ -3,19 +3,25 @@
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body onload="StartGame()">
+  <!-- import consts first-->
   <script src="./src/const.js"></script>
+  <!-- import static utils next-->
   <script src="./src/utils/geometry.js"></script>
-  <script src="./src/obj/ObjectManager.js"></script>
+  <script src="./src/utils/ObjectUtils.js"></script>
+  <!-- import managers next-->
+  <script src="./src/manager/ObjectManager.js"></script>
   <script src="./src/io/Mouse.js"></script>
-
+  <!-- GameObject is the base of all objects - import it before all others -->
   <script src="./src/obj/GameObject.js"></script>
 
   <script src="./src/ui/Panel.js"></script>
+  <script src="./src/ui/RightPanel.js"></script>
+  
   <script src="./src/ui/Button.js"></script>
   <script src="./src/obj/Card.js"></script>
   <script src="./src/obj/CardSlot.js"></script>
-
-<script src="./src/main.js"></script>
+  <!-- main.js goes last -->
+  <script src="./src/main.js"></script>
 
 <script type="text/javascript"></script>
 

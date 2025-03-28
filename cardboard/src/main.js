@@ -1,15 +1,14 @@
 // managers
-var m_OM = new ObjectManager();
+var g_OM = new ObjectManager();
 var m_Mouse = new MouseManager();
 // temp globals - put these in better places when you can
-var cHeldCard;
 
-var cCard = new Card(50, 80);
-var cSlot1 = new CardSlot(250, 80, true);
-var cSlot2 = new CardSlot(450, 80);
+var cCard = new Card(50, 80, "./img/card_square.png");
+var cCard2 = new Card(200, 80, "./img/card_circle.png");
+var cCard3 = new Card(350, 80, "./img/card_triangle.png");
 
-var cBottomPanel = new Panel(0, CONST.CANVAS_HEIGHT - 200, CONST.CANVAS_WIDTH, 200);
-var cBottomClose = new Button(12, CONST.CANVAS_HEIGHT - 190, 80, 30, cBottomPanel.Close);
+var cRightPanel = new RightPanel();
+var cRightClose = new Button(cRightPanel.GetPosition()[0], 4, 80, 30, "SHOW", cRightPanel, CONST.BUTTON_ACTION_OPEN_CLOSE);
 
 var myGameArea =
 {
@@ -21,6 +20,8 @@ var myGameArea =
     this.context = this.canvas.getContext("2d");
     document.getElementById('divCanvas').appendChild(this.canvas);
     this.canvas.addEventListener('mousemove', m_Mouse.Move);
+    // this.canvas.addEventListener('dbclick', m_Mouse.DoubleClick);
+    // this.canvas.addEventListener('mousedown', m_Mouse.MouseDown);
     this.canvas.addEventListener('click', m_Mouse.LeftClick);
     this.canvas.addEventListener('contextmenu', m_Mouse.RightClick);
   },
@@ -34,11 +35,11 @@ function GetCanvas() { return myGameArea.context; };
 
 function Init()
 {
-  cBottomPanel.AddChildToPanel(cBottomClose);
-  m_OM.AddPanel(cBottomPanel);
-  m_OM.AddObjectToStage(cCard);
-  m_OM.AddObjectToStage(cSlot1);
-  m_OM.AddObjectToStage(cSlot2);
+  g_OM.AddPanel(cRightPanel);
+  g_OM.AddObjectToStage(cCard);
+  g_OM.AddObjectToStage(cCard2);
+  g_OM.AddObjectToStage(cCard3);
+
   Update();
 };
 
@@ -51,10 +52,7 @@ function DrawScreen()
 {
   myGameArea.clear();
   var ctx = GetCanvas();
-
-  // cBottomPanel.Draw(ctx);
-  m_OM.Draw(ctx);
-
+  g_OM.Draw(ctx);
 };
 
 // --------------------------------

@@ -20,7 +20,9 @@ class GameObject
         this.bImageLoaded = false;
         this.bHighlightLoaded = false;
 
-        m_OM.AddObject(this);
+        g_OM.AddObject(this);
+        this.idx = g_OM.GetAllObjects().length;
+        this.m_strName = "Object " + this.idx.toString();
         this.InitImg(imgSrc, imgHighlight);
     }
 
@@ -29,10 +31,13 @@ class GameObject
     // --------------------------------
     IsHighlighted()           { return this.bHighlight; }
     SetHighlight(bHighlight)  { this.bHighlight = bHighlight;}
+    GetPosition()             { return [this.x, this.y]; }
     GetBounds()               { return this.hitBox; }
     CanGrab()                 { return this.bCanGrab; }
+    GrabObject()              { console.log("GrabObject(0)"); return (this.bCanGrab ? this : null); }
 
     // --------------------------------
+    // InitImg
     // --------------------------------
     InitImg(imgSrc, imgHighlight = null)
     {
@@ -77,6 +82,18 @@ class GameObject
         if (this.bHighlight == true && this.bHighlightLoaded == true)
         {
             ctx.drawImage(this.imgHighlight, this.x, this.y);
+        }
+    }
+
+    // --------------------------------
+    // DrawCopy
+    //     Draws the object manually - usually as a copy
+    // --------------------------------
+    DrawCopy(ctx, x, y, width, height)
+    {
+        if (this.bImageLoaded == true)
+        {
+            ctx.drawImage(this.imgBase, x, y, width, height);
         }
     }
 } // end of class
