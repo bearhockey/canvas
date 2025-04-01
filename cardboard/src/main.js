@@ -1,14 +1,23 @@
 // managers
+var g_IR = new ImageRenderer();
 var g_OM = new ObjectManager();
+var g_DM = new DialogManager();
 var m_Mouse = new MouseManager();
+var g_Colony = new Colony();
 // temp globals - put these in better places when you can
 
-var cCard = new Card(50, 80, "./img/card_square.png");
-var cCard2 = new Card(200, 80, "./img/card_circle.png");
-var cCard3 = new Card(350, 80, "./img/card_triangle.png");
+var cCard = new Card(50, 123, 0, "./img/card_square.png");
+var cCard2 = new Card(200, 123, 0, "./img/card_circle.png");
+var cCard3 = new Card(350, 123, 1, "./img/card_triangle.png");
 
 var cRightPanel = new RightPanel();
-var cRightClose = new Button(cRightPanel.GetPosition()[0], 4, 80, 30, "SHOW", cRightPanel, CONST.BUTTON_ACTION_OPEN_CLOSE);
+var cTopPanel = new TopPanel(CONST.CANVAS_WIDTH - cRightPanel.GetWidth(), CONST.TOP_PANEL_HEIGHT);
+
+var cNextTurnButton;
+var cTestButton;
+var cInventoryButton;
+
+var cInventory = new Dialog();
 
 var myGameArea =
 {
@@ -31,10 +40,34 @@ var myGameArea =
   }
 };
 
+// --------------------------------
+// SetImage
+//     Global callback to the ImageRenderer to set an image as loaded
+// --------------------------------
+function SetImage() { g_IR.SetImageLoaded(this.id); }
+
 function GetCanvas() { return myGameArea.context; };
 
 function Init()
 {
+  var ctx = GetCanvas();
+  g_IR.LoadImages();
+
+  // have to init buttons here because ctx needs to be defined
+  cNextTurnButton = new TextButton(ctx, 0, 0, "Next Turn", g_Colony, Colony.BUTTON_NEXT_TURN);
+  cTestButton = new TextButton(ctx, 0, 0, "TEST");
+  cInventoryButton = new TextButton(ctx, 0, 0, "Inventory", g_DM, CONST.BUTTON_ACTION_OPEN_CLOSE);
+
+  cTopPanel.AddButtonToPanel(cNextTurnButton);
+  cTopPanel.AddButtonToPanel(cTestButton);
+  cTopPanel.AddButtonToPanel(cInventoryButton);
+
+  // add a dialog for now
+  cInventory.AddChildToPanel(new CloseButton(Dialog.CLOSE_BUTTON_X, Dialog.CLOSE_BUTTON_Y, g_DM));
+  g_DM.SetCurrentDialog(cInventory);
+  
+  // TODO: make a function/class to load a single copy of all images instead of multiple copies
+  g_OM.AddPanel(cTopPanel);
   g_OM.AddPanel(cRightPanel);
   g_OM.AddObjectToStage(cCard);
   g_OM.AddObjectToStage(cCard2);
@@ -43,16 +76,29 @@ function Init()
   Update();
 };
 
+// --------------------------------
+// Update
+//     Global update function for the game
+// --------------------------------
 function Update(iTimeStamp)
 {
   DrawScreen();
 };
 
+// --------------------------------
+// DrawScreen
+//     Global function to draw the screen
+// --------------------------------
 function DrawScreen()
 {
   myGameArea.clear();
   var ctx = GetCanvas();
   g_OM.Draw(ctx);
+
+  if (g_DM.IsDialogShowing())
+  {
+    g_DM.Draw(ctx);
+  }
 };
 
 // --------------------------------
@@ -60,7 +106,6 @@ function DrawScreen()
 // --------------------------------
 function StartGame()
 {
-  console.log("StartGame()");
   // start game
   myGameArea.start();
   Init();

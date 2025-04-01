@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------
 class GameObject
 {
-    constructor(x=0, y=0, width=1, height=1, imgSrc=null, imgHighlight=null)
+    constructor(x=0, y=0, width=1, height=1, imgSrc=null, imgHighlight=null, bAddToStage = true)
     {
         this.x = x;
         this.y = y;
@@ -12,51 +12,33 @@ class GameObject
 
         this.width = width;
         this.height = height;
+        this.half_width = (this.width != 0) ? this.width/2 : 0;
 
         this.hitBox = { left:this.x, top:this.y, right:this.x+this.width, bottom:this.y+this.height };
 
-        this.imgBase;
-        this.imgHighlight;
-        this.bImageLoaded = false;
-        this.bHighlightLoaded = false;
+        this.iBaseImage = (imgSrc != null) ? g_IR.LoadImage(imgSrc) : null;
+        this.iHighlightImage = (imgHighlight != null) ? g_IR.LoadImage(imgHighlight) : null;
 
-        g_OM.AddObject(this);
-        this.idx = g_OM.GetAllObjects().length;
-        this.m_strName = "Object " + this.idx.toString();
-        this.InitImg(imgSrc, imgHighlight);
+        if (bAddToStage == true)
+        {
+            g_OM.AddObject(this);
+        }
+
+        this.m_strName = "Objecct " + this.idx.toString();
     }
 
     // --------------------------------
     // Getters and setters
     // --------------------------------
+    GetWidth()                { return this.width; }
+    GetHeight()               { return this.height; }
     IsHighlighted()           { return this.bHighlight; }
     SetHighlight(bHighlight)  { this.bHighlight = bHighlight;}
     GetPosition()             { return [this.x, this.y]; }
     GetBounds()               { return this.hitBox; }
     CanGrab()                 { return this.bCanGrab; }
-    GrabObject()              { console.log("GrabObject(0)"); return (this.bCanGrab ? this : null); }
-
-    // --------------------------------
-    // InitImg
-    // --------------------------------
-    InitImg(imgSrc, imgHighlight = null)
-    {
-        if (imgSrc != null)
-        {
-            this.imgBase = new Image();
-            this.imgBase.object = this;
-            this.imgBase.addEventListener('load', function() { this.object.bImageLoaded = true; }, false);
-            this.imgBase.src = imgSrc;
-        }
-
-        if (imgHighlight != null)
-        {
-            this.imgHighlight = new Image();
-            this.imgHighlight.object = this;
-            this.imgHighlight.addEventListener('load', function() { this.object.bHighlightLoaded = true; }, false);
-            this.imgHighlight.src = imgHighlight;
-        }
-    }
+    GrabObject()              { return (this.bCanGrab ? this : null); }
+    GetName()                 { return this.m_strName; }
 
     // --------------------------------
     // Move
@@ -74,14 +56,10 @@ class GameObject
     // --------------------------------
     Draw(ctx)
     {
-        if (this.bImageLoaded == true)
+        g_IR.DrawImage(ctx, this.iBaseImage, this.x, this.y);
+        if (this.bHighlight == true)
         {
-            ctx.drawImage(this.imgBase, this.x, this.y);
-        }
-
-        if (this.bHighlight == true && this.bHighlightLoaded == true)
-        {
-            ctx.drawImage(this.imgHighlight, this.x, this.y);
+            g_IR.DrawImage(ctx, this.iHighlightImage, this.x, this.y);
         }
     }
 
@@ -91,9 +69,6 @@ class GameObject
     // --------------------------------
     DrawCopy(ctx, x, y, width, height)
     {
-        if (this.bImageLoaded == true)
-        {
-            ctx.drawImage(this.imgBase, x, y, width, height);
-        }
+        g_IR.DrawImage(ctx, this.iBaseImage, x, y, width, height);
     }
 } // end of class

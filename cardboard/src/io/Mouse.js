@@ -12,9 +12,21 @@ class MouseManager
   {
     var rect = myGameArea.canvas.getBoundingClientRect();
     this.arrPosition = [ evt.clientX - rect.left, evt.clientY - rect.top ];
-    if (g_OM.GetGrabbedObject() == null)
+    if (g_DM.IsDialogShowing())
     {
-      if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
+      var cDialog = g_DM.GetCurrentDialog();
+      if (GEO.IsInRect(this.arrPosition, cDialog.GetBounds()))
+      {
+        cDialog.CheckForHighlights(this.arrPosition);
+      }
+    }
+    else if (g_OM.GetGrabbedObject() == null)
+    {
+      if (GEO.IsInRect(this.arrPosition, cTopPanel.GetBounds()))
+      {
+        cTopPanel.CheckForHighlights(this.arrPosition);
+      }
+      else if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
       {
         g_OM.MouseMove(this.arrPosition);
       }
@@ -30,7 +42,19 @@ class MouseManager
   // --------------------------------
   LeftClick(evt)
   {
-    if (GEO.IsInRect(this.arrPosition, cRightPanel.GetBounds()))
+    if (g_DM.IsDialogShowing())
+      {
+        var cDialog = g_DM.GetCurrentDialog();
+        if (GEO.IsInRect(this.arrPosition, cDialog.GetBounds()))
+        {
+          cDialog.OnClick(this.arrPosition);
+        }
+      }
+    else if (GEO.IsInRect(this.arrPosition, cTopPanel.GetBounds()))
+    {
+      cTopPanel.OnClick(this.arrPosition);
+    }
+    else if (GEO.IsInRect(this.arrPosition, cRightPanel.GetBounds()))
     {
       cRightPanel.OnClick(this.arrPosition);
     }

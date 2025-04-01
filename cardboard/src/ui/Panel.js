@@ -6,30 +6,10 @@ class Panel extends GameObject
         this.m_bShow = true;
         this.m_arrChildren = [];
         this.m_cHighlightedObject = null;
-
-        this.m_objOpenCloseButton;
-        this.m_arrOpenButtonPosition;
-        this.m_arrClosedButtonPosition;
     }
 
-    // --------------------------------
-    // AddCloseButton
-    // --------------------------------
-    AddCloseButton(obj, arrClosedPosition = null)
-    {
-        this.AddChildToPanel(obj);
-        this.m_objOpenCloseButton = obj;
-        this.m_arrOpenButtonPosition = obj.GetPosition();
-        this.m_arrClosedButtonPosition = (arrClosedPosition != null) ? arrClosedPosition : this.m_arrOpenButtonPosition;
-    }
-
-    // --------------------------------
-    // AddChildToPanel
-    // --------------------------------
-    AddChildToPanel(obj)
-    {
-        this.m_arrChildren.push(obj);
-    }
+    IsVisible() { return this.m_bShow; }
+    AddChildToPanel(obj) { this.m_arrChildren.push(obj); }
 
     // --------------------------------
     // OnButtonClick
@@ -50,6 +30,9 @@ class Panel extends GameObject
         Update();
     }
 
+    // --------------------------------
+    // CheckForHighlights
+    // --------------------------------
     CheckForHighlights(arrPosition)
     {
         var objNewHighlight = ObjectUtils.CheckForHighlights(this.m_arrChildren, arrPosition);
@@ -65,16 +48,9 @@ class Panel extends GameObject
     // --------------------------------
     OnClick()
     {
-        if (g_OM.GetGrabbedObject() != null)
+        if (this.m_cHighlightedObject != null && this.m_cHighlightedObject.OnClick != null)
         {
-            // try to place an object
-        }
-        else if (this.m_cHighlightedObject != null)
-        {
-            if (this.m_cHighlightedObject.OnClick != null)
-            {
-                this.m_cHighlightedObject.OnClick();
-            }
+            this.m_cHighlightedObject.OnClick();
         }
     }
 
@@ -108,8 +84,8 @@ class Panel extends GameObject
                     {
                         obj.Draw(ctx);
                     }
-                }
+                } // end for loop
             }
         }
     }
-}
+} // end of class

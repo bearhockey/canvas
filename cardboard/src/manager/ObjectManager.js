@@ -16,6 +16,8 @@ class ObjectManager
     GetAllObjects()        { return this.m_arrObjects; }
     GetHighlightedObject() { return this.m_cHighlightedObject; }
     GetGrabbedObject()     { return this.m_cGrabbedObject; }
+    IsDialogShowing()      { return this.m_bDialogShowing; }
+    ShowDialog(bShow)      { this.m_bDialogShowing = bShow; }
 
     // --------------------------------
     // AddObject
@@ -24,8 +26,8 @@ class ObjectManager
     AddObject(obj)
     {
         var idx = this.m_arrObjects.length;
+        obj.idx = idx;
         this.m_arrObjects.push(obj);
-        return idx;
     }
 
     // --------------------------------
@@ -110,13 +112,11 @@ class ObjectManager
                 {
                     this.m_cGrabbedObject = null;
                 }
-                console.log("COO: success : ", bSuccess, this.m_cGrabbedObject);
             }
 
             if (bSuccess == false && this.m_cGrabbedObject == null)
             {
                 this.m_cGrabbedObject = this.m_cHighlightedObject.GrabObject();
-                console.log("Crabbing? ", bSuccess, this.m_cGrabbedObject);
                 if (this.m_cGrabbedObject != null)
                 {
                     this.m_iGrabbedX = arrMousePosition[0] - this.m_cHighlightedObject.x;
