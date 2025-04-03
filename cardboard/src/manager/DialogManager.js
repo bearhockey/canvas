@@ -3,15 +3,32 @@ class DialogManager
     constructor()
     {
         this.m_cDialog = null;
+        this.m_arrDialogs = [];
         this.m_bDialogShowing = false;
     }
 
     // Getters and Setters
     // --------------------------------
     GetCurrentDialog()          { return this.m_cDialog; }
-    SetCurrentDialog(cDialog)   { this.m_cDialog = cDialog; }
     IsDialogShowing()           { return (this.m_bDialogShowing && this.m_cDialog != null); }
     ShowDialog(bShow)           { this.m_bDialogShowing = bShow; }
+
+    // --------------------------------
+    // AddDailog
+    // --------------------------------
+    AddDialog(cDialog)
+    {
+        this.m_arrDialogs.push(cDialog);
+        return this.m_arrDialogs.length - 1;
+    }
+
+    SetDialog(idx = 0)
+    {
+        if (idx < this.m_arrDialogs.length)
+        {
+            this.m_cDialog = this.m_arrDialogs[idx];
+        }
+    }
 
     // --------------------------------
     // OnButtonClick

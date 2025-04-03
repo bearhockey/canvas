@@ -9,6 +9,8 @@ class GameObject
         this.y = y;
         this.bHighlight = false;
         this.bCanGrab = false;
+        this.m_bIsVisible = true;
+        this.m_bCanPreview = false;
 
         this.width = width;
         this.height = height;
@@ -37,6 +39,9 @@ class GameObject
     GetPosition()             { return [this.x, this.y]; }
     GetBounds()               { return this.hitBox; }
     CanGrab()                 { return this.bCanGrab; }
+    IsVisible()               { return this.m_bIsVisible; }
+    SetVisible(bVisible)      { this.m_bIsVisible = bVisible; }
+    CanPreview()              { return this.m_bCanPreview; }
     GrabObject()              { return (this.bCanGrab ? this : null); }
     GetName()                 { return this.m_strName; }
 
@@ -56,10 +61,13 @@ class GameObject
     // --------------------------------
     Draw(ctx)
     {
-        g_IR.DrawImage(ctx, this.iBaseImage, this.x, this.y);
-        if (this.bHighlight == true)
+        if (this.m_bIsVisible == true)
         {
-            g_IR.DrawImage(ctx, this.iHighlightImage, this.x, this.y);
+            g_IR.DrawImage(ctx, this.iBaseImage, this.x, this.y);
+            if (this.bHighlight == true)
+            {
+                g_IR.DrawImage(ctx, this.iHighlightImage, this.x, this.y);
+            }
         }
     }
 

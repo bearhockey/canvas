@@ -5,6 +5,8 @@ class MouseManager
     this.arrPosition = [];
   }
 
+  GetPosition() { return this.arrPosition; }
+
   // --------------------------------
   // Move
   // --------------------------------

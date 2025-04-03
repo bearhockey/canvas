@@ -4,6 +4,7 @@ var g_OM = new ObjectManager();
 var g_DM = new DialogManager();
 var m_Mouse = new MouseManager();
 var g_Colony = new Colony();
+var g_Inventory = new Inventory();
 // temp globals - put these in better places when you can
 
 var cCard = new Card(50, 123, 0, "./img/card_square.png");
@@ -62,16 +63,19 @@ function Init()
   cTopPanel.AddButtonToPanel(cTestButton);
   cTopPanel.AddButtonToPanel(cInventoryButton);
 
+  g_Inventory.AddToInventory(cCard);
+  g_Inventory.AddToInventory(cCard2);
+  g_Inventory.AddToInventory(cCard3);
+
   // add a dialog for now
-  cInventory.AddChildToPanel(new CloseButton(Dialog.CLOSE_BUTTON_X, Dialog.CLOSE_BUTTON_Y, g_DM));
-  g_DM.SetCurrentDialog(cInventory);
+  var cInventoryGrid = new Grid(g_Inventory.GetInventory(), CONST.DIALOG_X + 64, CONST.DIALOG_Y + 32, 5, 3, 16);
+  cInventory.AddChildToPanel(cInventoryGrid);
+  cInventoryGrid.PositionItems();
+  var iInventory = g_DM.AddDialog(cInventory);
+  g_DM.SetDialog(iInventory);
   
-  // TODO: make a function/class to load a single copy of all images instead of multiple copies
   g_OM.AddPanel(cTopPanel);
   g_OM.AddPanel(cRightPanel);
-  g_OM.AddObjectToStage(cCard);
-  g_OM.AddObjectToStage(cCard2);
-  g_OM.AddObjectToStage(cCard3);
 
   Update();
 };

@@ -8,8 +8,10 @@ class Panel extends GameObject
         this.m_cHighlightedObject = null;
     }
 
-    IsVisible() { return this.m_bShow; }
-    AddChildToPanel(obj) { this.m_arrChildren.push(obj); }
+    IsVisible()                     { return this.m_bShow; }
+    AddChildToPanel(obj)            { this.m_arrChildren.push(obj); }
+    AddChildrenToPanel(arrObjects)  { this.m_arrChildren = this.m_arrChildren.concat(arrObjects); }
+    GetChildren()                   { return this.m_arrChildren; }
 
     // --------------------------------
     // OnButtonClick
@@ -25,8 +27,6 @@ class Panel extends GameObject
     OnClose()
     {
         this.m_bShow = !this.m_bShow;
-        var arrPosition = (this.m_bShow == true) ? this.m_arrOpenButtonPosition : this.m_arrClosedButtonPosition;
-        this.m_objOpenCloseButton.Move(arrPosition[0], arrPosition[1]);
         Update();
     }
 
@@ -36,9 +36,29 @@ class Panel extends GameObject
     CheckForHighlights(arrPosition)
     {
         var objNewHighlight = ObjectUtils.CheckForHighlights(this.m_arrChildren, arrPosition);
+        if (objNewHighlight == null) // if not found check children of children
+        {
+            var idx;
+            var iLength = this.m_arrChildren.length;
+            var objChild;
+            for (idx = 0; idx < iLength; ++idx)
+            {
+                objChild = this.m_arrChildren[idx];
+                if (objChild != null && objChild.GetChildren != null)
+                {
+                    objNewHighlight = ObjectUtils.CheckForHighlights(objChild.GetChildren(), arrPosition);
+                    if (objNewHighlight != null) { break; }
+                }
+            } // end children for loop
+        }
         if (objNewHighlight != this.m_cHighlightedObject)
         {
             this.m_cHighlightedObject = objNewHighlight;
+            if (this.m_cHighlightedObject != null)
+            {
+                cRightPanel.SetSelectedCard(this.m_cHighlightedObject);
+            }
+
             Update();
         }
     }
@@ -50,7 +70,16 @@ class Panel extends GameObject
     {
         if (this.m_cHighlightedObject != null && this.m_cHighlightedObject.OnClick != null)
         {
-            this.m_cHighlightedObject.OnClick();
+            var bSuccess = this.m_cHighlightedObject.OnClick();
+            if (bSuccess == false) // for some reason this means its a card so go ahead and do card stuff
+            {
+                var idx = this.m_arrChildren.indexOf(this.m_cHighlightedObject);
+                if (idx >= 0) { this.m_arrChildren.splice(idx, 1); }
+                g_Inventory.TakeFromInventory(this.m_cHighlightedObject);
+                g_OM.GrabObject(this.m_cHighlightedObject);
+                this.m_cHighlightedObject = null;
+                g_DM.ShowDialog(false);
+            }
         }
     }
 

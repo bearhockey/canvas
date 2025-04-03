@@ -20,6 +20,26 @@ class ObjectManager
     ShowDialog(bShow)      { this.m_bDialogShowing = bShow; }
 
     // --------------------------------
+    // GrabObject
+    // --------------------------------
+    GrabObject(obj, arrMousePosition = null)
+    {
+        this.AddObjectToStage(obj);
+        this.m_cGrabbedObject = obj;
+        if (this.m_cGrabbedObject != null)
+        {
+            if (arrMousePosition == null || arrMousePosition.length < 1) { arrMousePosition = m_Mouse.GetPosition(); }
+            if (arrMousePosition == null || arrMousePosition.length < 1) { arrMousePosition = [this.m_cGrabbedObject.x, this.m_cGrabbedObject.y]; }
+
+
+            this.m_iGrabbedX = arrMousePosition[0] - obj.x;
+            this.m_iGrabbedY = arrMousePosition[1] - obj.y;
+            if (this.m_cGrabbedObject.SetHighlight != null) { this.m_cGrabbedObject.SetHighlight(false); }
+            this.m_cHighlightedObject = null;
+        }
+    }
+
+    // --------------------------------
     // AddObject
     //     Called when any GameObject is created to log its idx
     // --------------------------------
@@ -41,11 +61,11 @@ class ObjectManager
 
     // --------------------------------
     // AddObjectToStage
-    //     Adds an object to the stage
+    //     Adds an object to the stage (only if it doesn't already exist though)
     // --------------------------------
     AddObjectToStage(obj)
     {
-        this.m_arrStageObjects.push(obj);
+        if (this.m_arrStageObjects.indexOf(obj) < 0) { console.log("Push object to stage: ", obj); this.m_arrStageObjects.push(obj); }
     }
 
     // --------------------------------
@@ -116,19 +136,13 @@ class ObjectManager
 
             if (bSuccess == false && this.m_cGrabbedObject == null)
             {
-                this.m_cGrabbedObject = this.m_cHighlightedObject.GrabObject();
-                if (this.m_cGrabbedObject != null)
-                {
-                    this.m_iGrabbedX = arrMousePosition[0] - this.m_cHighlightedObject.x;
-                    this.m_iGrabbedY = arrMousePosition[1] - this.m_cHighlightedObject.y;
-                    if (this.m_cGrabbedObject.SetHighlight != null) { this.m_cGrabbedObject.SetHighlight(false); }
-                    this.m_cHighlightedObject = null;
-                }
+                this.GrabObject(this.m_cHighlightedObject.GrabObject(), arrMousePosition);
             }
         }
         else if (this.m_cGrabbedObject != null)
         {
             this.m_cGrabbedObject = null; // drop grabbed card
+            console.log("Stage objects? ", this.m_arrStageObjects);
         }
 
         Update();

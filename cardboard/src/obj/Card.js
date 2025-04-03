@@ -10,6 +10,7 @@ class Card extends GameObject
     {
         super(x, y, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, strCardImage, strCardHighlight);
         this.bCanGrab = true;
+        this.m_bCanPreview = true;
         this.m_iSlotCapacity = CONST.CARD_MAX_SLOTS;
         this.m_iPipXOffset = this.half_width - ((CONST.PIP_SIZE * this.m_iSlotCapacity) + (CONST.PIP_SPACING * (this.m_iSlotCapacity-1)))/2;
         this.m_iPipYOffset = this.height + CONST.PIP_SPACING;
@@ -40,6 +41,7 @@ class Card extends GameObject
     // --------------------------------
     OnClick()
     {
+        console.log("Card::OnClick");
         var objHeldCard = g_OM.GetGrabbedObject();
         if (objHeldCard != null)
         {
@@ -90,7 +92,7 @@ class Card extends GameObject
     Draw(ctx)
     {
         super.Draw(ctx);
-        if (this.bHighlight)
+        if (this.bHighlight == true && this.m_bIsVisible == true)
         {
             var pip_x = this.x + this.m_iPipXOffset;
             var pip_y = this.y + this.m_iPipYOffset;

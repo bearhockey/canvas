@@ -13,7 +13,16 @@ class RightPanel extends Panel
         this.m_iSlotsPreviewY = this.y + RightPanel.SLOTS_PREVIEW_Y;
     }
 
-    SetSelectedCard(objCard) { this.m_objSelectedCard = objCard; }
+    // --------------------------------
+    // SetSelectedCard
+    // --------------------------------
+    SetSelectedCard(objCard)
+    {
+        if (objCard != null && objCard.CanPreview())
+        {
+            this.m_objSelectedCard = objCard;
+        }
+    }
 
     // --------------------------------
     // Draw
