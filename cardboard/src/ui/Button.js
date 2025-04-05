@@ -1,5 +1,6 @@
 class Button extends GameObject
 {
+    static OPEN_CLOSE = -1;
     constructor(x, y, width, height, strLabel = "", objTarget = null, iButtonAction = 0)
     {
         super(x, y, width, height);

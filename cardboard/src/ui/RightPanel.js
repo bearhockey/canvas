@@ -3,6 +3,7 @@ class RightPanel extends Panel
     static TITLE_Y = 40;
     static CARD_PREVIEW_Y = 60;
     static SLOTS_PREVIEW_Y = 280;
+    static PROGRESSION_Y = 450;
     constructor()
     {
         super(CONST.CANVAS_WIDTH - CONST.RIGHT_PANEL_WIDTH, 0, CONST.RIGHT_PANEL_WIDTH, CONST.CANVAS_HEIGHT);
@@ -11,6 +12,7 @@ class RightPanel extends Panel
         this.m_iPreviewY = this.y + RightPanel.CARD_PREVIEW_Y;
         this.m_iTextY    = this.y + RightPanel.TITLE_Y;
         this.m_iSlotsPreviewY = this.y + RightPanel.SLOTS_PREVIEW_Y;
+        this.m_iProgressionY = this.y + RightPanel.PROGRESSION_Y;
     }
 
     // --------------------------------
@@ -67,6 +69,23 @@ class RightPanel extends Panel
 
                 iSlotX += CONST.CARD_WIDTH + 10;
             } // end for loop
+
+            if (this.m_objSelectedCard.m_objProgressionPoints != null)
+            {
+                var objCardData;
+                var objProgressionData = this.m_objSelectedCard.m_objProgressionPoints;
+                var strProgression;
+                for (var [id, obj] of Object.entries(objProgressionData))
+                {
+                    if (obj != null && obj.iNeeded > 0)
+                    {
+                        objCardData = CARD_DEF.ID[id];
+                        strProgression = "Turns to create " + objCardData.strName + " : " + (obj.iNeeded - obj.iPoints).toString();
+                        iTextWidth = ctx.measureText(strProgression).width;
+                        ctx.fillText(strProgression, this.x + this.half_width - (iTextWidth/2), this.m_iProgressionY);
+                    }
+                }
+            }
         }
     }
 }

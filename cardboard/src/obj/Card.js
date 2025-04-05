@@ -3,45 +3,48 @@
 // ----------------------------------------------------------------
 class Card extends GameObject
 {
-    static TYPE_BLANK = 0;
-    static TYPE_COLONIST = 1;
-
-    constructor(x=0, y=0, iType=Card.TYPE_BLANK, strCardImage=CONST.CARD_BACK_IMG, strCardHighlight=CONST.CARD_HIGHLIGHT_IMG)
+    constructor(iType=Card.TYPE_BLANK)
     {
-        super(x, y, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, strCardImage, strCardHighlight);
+        var objCardData = CARD_DEF.ID[iType];
+        super(0, 0, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, objCardData.strImage, CONST.CARD_HIGHLIGHT_IMG);
+        this.m_iType = iType;
         this.bCanGrab = true;
         this.m_bCanPreview = true;
-        this.m_iSlotCapacity = CONST.CARD_MAX_SLOTS;
+        this.m_iSlotCapacity = (objCardData != null && objCardData.iSlots != null) ? objCardData.iSlots : CONST.CARD_MAX_SLOTS;
         this.m_iPipXOffset = this.half_width - ((CONST.PIP_SIZE * this.m_iSlotCapacity) + (CONST.PIP_SPACING * (this.m_iSlotCapacity-1)))/2;
         this.m_iPipYOffset = this.height + CONST.PIP_SPACING;
         this.m_arrSlots = [];
-
-        this.m_strName = this.SetNameByType(iType);
-    }
-
-    SetNameByType(iType)
-    {
-        var strName = "Card " + this.idx.toString();
-        switch (iType)
-        {
-            case Card.TYPE_COLONIST: { strName = "Colonist"; break; }
-            default: break;
-        } // end of switch
-
-        return strName;
+        this.m_strName = objCardData.strName;
+        this.m_objProgressionPoints = {};
     }
 
     // Getters and setters
     // --------------------------------
+    GetType()           { return this.m_iType; }
     GetSlotCapacity()   { return this.m_iSlotCapacity; }
     GetSlots()          { return this.m_arrSlots; }
+
+    // --------------------------------
+    // GetProgression
+    // --------------------------------
+    GetProgression(id)
+    {
+        return (this.m_objProgressionPoints[id] != null) ? this.m_objProgressionPoints[id].iPoints : 0;
+    }
+
+    // --------------------------------
+    // SetProgressionPoints
+    // --------------------------------
+    SetProgressionPoints(id, iPoints, iNeeded)
+    {
+        this.m_objProgressionPoints[id] = { iPoints:iPoints, iNeeded:iNeeded };
+    }
 
     // --------------------------------
     // OnClick
     // --------------------------------
     OnClick()
     {
-        console.log("Card::OnClick");
         var objHeldCard = g_OM.GetGrabbedObject();
         if (objHeldCard != null)
         {
@@ -79,6 +82,7 @@ class Card extends GameObject
         {
             this.m_arrSlots.push(objCard);
             objCard.Move(this.x, this.y);
+            g_OM.CalculateChildren();
             g_OM.PopObjectFromStage(objCard);
             return true;
         }

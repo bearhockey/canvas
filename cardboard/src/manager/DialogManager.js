@@ -18,8 +18,10 @@ class DialogManager
     // --------------------------------
     AddDialog(cDialog)
     {
+        var iDialogID = this.m_arrDialogs.length;
         this.m_arrDialogs.push(cDialog);
-        return this.m_arrDialogs.length - 1;
+        cDialog.SetDialogID(iDialogID);
+        return iDialogID;
     }
 
     SetDialog(idx = 0)
@@ -33,9 +35,22 @@ class DialogManager
     // --------------------------------
     // OnButtonClick
     // --------------------------------
-    OnButtonClick(iButtonID)
+    OnButtonClick(iDialogID)
     {
-        if (iButtonID == CONST.BUTTON_ACTION_OPEN_CLOSE) { this.OnOpenClose(); }
+        if (iDialogID == Button.OPEN_CLOSE) // actually passing in button ID and not dialog ID
+        {
+            this.OnOpenClose();
+        }
+        else if (this.m_bDialogShowing == true && this.m_cDialog != null && this.m_cDialog.GetDialogID() == iDialogID)
+        {
+            this.OnOpenClose(); // already a dialog open so close it
+        }
+        else
+        {
+            this.SetDialog(iDialogID);
+            this.m_bDialogShowing = true;
+            Update();
+        }
     }
 
     // --------------------------------

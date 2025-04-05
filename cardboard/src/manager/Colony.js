@@ -15,7 +15,11 @@ class Colony
     // AdvanceTurn
     //     Advances the number of turns - defaults to just one turn
     // --------------------------------
-    AdvanceTurn(iTurns = 1) {  this.m_iCurrentTurn += iTurns; }
+    AdvanceTurn(iTurns = 1)
+    {
+        g_OM.CalculateChildren(true);
+        this.m_iCurrentTurn += iTurns;
+    }
 
     // --------------------------------
     // OnButtonClick
