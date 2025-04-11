@@ -2,10 +2,10 @@ class MouseManager
 {
   constructor()
   {
-    this.arrPosition = [];
+    this.m_arrPosition = [];
   }
 
-  GetPosition() { return this.arrPosition; }
+  GetPosition() { return this.m_arrPosition; }
 
   // --------------------------------
   // Move
@@ -13,29 +13,25 @@ class MouseManager
   Move(evt)
   {
     var rect = myGameArea.canvas.getBoundingClientRect();
-    this.arrPosition = [ evt.clientX - rect.left, evt.clientY - rect.top ];
+    this.m_arrPosition = [ evt.clientX - rect.left, evt.clientY - rect.top ];
     if (g_DM.IsDialogShowing())
     {
       var cDialog = g_DM.GetCurrentDialog();
-      if (GEO.IsInRect(this.arrPosition, cDialog.GetBounds()))
+      if (GEO.IsInRect(this.m_arrPosition, cDialog.GetBounds()))
       {
-        cDialog.CheckForHighlights(this.arrPosition);
+        cDialog.CheckForHighlights(this.m_arrPosition);
       }
     }
     else if (g_OM.GetGrabbedObject() == null)
     {
-      if (GEO.IsInRect(this.arrPosition, cTopPanel.GetBounds()))
+      if (g_PM.CheckMouse(this.m_arrPosition) == false && GEO.IsInRect(this.m_arrPosition, CONST.CANVAS_VIEW_AREA))
       {
-        cTopPanel.CheckForHighlights(this.arrPosition);
-      }
-      else if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
-      {
-        g_OM.MouseMove(this.arrPosition);
+        g_OM.MouseMove(this.m_arrPosition);
       }
     }
-    else if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
+    else if (GEO.IsInRect(this.m_arrPosition, CONST.CANVAS_VIEW_AREA))
     {
-      g_OM.MouseMove(this.arrPosition);
+      g_OM.MouseMove(this.m_arrPosition);
     }
   };
 
@@ -47,22 +43,14 @@ class MouseManager
     if (g_DM.IsDialogShowing())
       {
         var cDialog = g_DM.GetCurrentDialog();
-        if (GEO.IsInRect(this.arrPosition, cDialog.GetBounds()))
+        if (GEO.IsInRect(this.m_arrPosition, cDialog.GetBounds()))
         {
-          cDialog.OnClick(this.arrPosition);
+          cDialog.OnClick(this.m_arrPosition);
         }
       }
-    else if (GEO.IsInRect(this.arrPosition, cTopPanel.GetBounds()))
+    else if (g_PM.CheckMouse(this.m_arrPosition, true) == false && GEO.IsInRect(this.m_arrPosition, CONST.CANVAS_VIEW_AREA))
     {
-      cTopPanel.OnClick(this.arrPosition);
-    }
-    else if (GEO.IsInRect(this.arrPosition, cRightPanel.GetBounds()))
-    {
-      cRightPanel.OnClick(this.arrPosition);
-    }
-    else if (GEO.IsInRect(this.arrPosition, CONST.CANVAS_VIEW_AREA))
-    {
-      g_OM.ClickOnObject(this.arrPosition);
+      g_OM.ClickOnObject(this.m_arrPosition);
     }
   }
   

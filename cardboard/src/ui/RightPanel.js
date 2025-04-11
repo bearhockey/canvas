@@ -32,12 +32,13 @@ class RightPanel extends Panel
     Draw(ctx)
     {
         super.Draw(ctx);
+
         if (this.m_objSelectedCard != null)
         {
             this.m_objSelectedCard.DrawCopy(ctx, this.m_iPreviewX, this.m_iPreviewY, CONST.CARD_WIDTH_LARGE, CONST.CARD_HEIGHT_LARGE);
 
             var strName = this.m_objSelectedCard.GetName();
-            ctx.fillStyle = "#000000";
+            ctx.fillStyle = CONST.COLOR_BLACK;
             ctx.font = '26px serif';
             var iTextWidth = ctx.measureText(strName).width;
             ctx.fillText(strName, this.x + this.half_width - (iTextWidth/2), this.m_iTextY);

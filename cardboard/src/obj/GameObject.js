@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------
 class GameObject
 {
+    static DISABLED_ALPHA = 0.4;
     constructor(x=0, y=0, width=1, height=1, imgSrc=null, imgHighlight=null, bAddToStage = true)
     {
         this.x = x;
@@ -10,6 +11,7 @@ class GameObject
         this.bHighlight = false;
         this.bCanGrab = false;
         this.m_bIsVisible = true;
+        this.m_bIsEnabled = true;
         this.m_bCanPreview = false;
 
         this.width = width;
@@ -41,6 +43,8 @@ class GameObject
     CanGrab()                 { return this.bCanGrab; }
     IsVisible()               { return this.m_bIsVisible; }
     SetVisible(bVisible)      { this.m_bIsVisible = bVisible; }
+    IsEnabled()               { return this.m_bIsEnabled; }
+    SetEnabled(bEnabled)      { this.m_bIsEnabled = bEnabled;}
     CanPreview()              { return this.m_bCanPreview; }
     GrabObject()              { return (this.bCanGrab ? this : null); }
     GetName()                 { return this.m_strName; }
@@ -63,11 +67,19 @@ class GameObject
     {
         if (this.m_bIsVisible == true)
         {
+            if (this.m_bIsEnabled == false)
+            {
+                ctx.globalAlpha = GameObject.DISABLED_ALPHA;
+            }
+
             g_IR.DrawImage(ctx, this.iBaseImage, this.x, this.y);
-            if (this.bHighlight == true)
+
+            if (this.bHighlight == true && this.m_bIsEnabled == true)
             {
                 g_IR.DrawImage(ctx, this.iHighlightImage, this.x, this.y);
             }
+
+            ctx.globalAlpha = 1.0;
         }
     }
 

@@ -12,6 +12,7 @@ class Panel extends GameObject
     AddChildToPanel(obj)            { this.m_arrChildren.push(obj); }
     AddChildrenToPanel(arrObjects)  { this.m_arrChildren = this.m_arrChildren.concat(arrObjects); }
     GetChildren()                   { return this.m_arrChildren; }
+    ResetHighlight()                { this.m_cHighlightedObject = null; Update(); }
 
     // --------------------------------
     // OnButtonClick
@@ -77,9 +78,10 @@ class Panel extends GameObject
                 if (idx >= 0) { this.m_arrChildren.splice(idx, 1); }
                 g_Inventory.TakeFromInventory(this.m_cHighlightedObject);
                 g_OM.GrabObject(this.m_cHighlightedObject);
-                this.m_cHighlightedObject = null;
                 g_DM.ShowDialog(false);
             }
+
+            this.m_cHighlightedObject = null;
         }
     }
 

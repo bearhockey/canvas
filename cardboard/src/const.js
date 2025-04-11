@@ -17,8 +17,9 @@ var CONST = (function () {
       c.DIALOG_WIDTH = 1000;
       c.DIALOG_HEIGHT = 556;
       // color consts
-      c.COLOR_GREY = "#8B8B8B";
-      c.COLOR_WHITE = "#EEEEEE";
+      c.COLOR_BLACK     = "#101010";
+      c.COLOR_GREY      = "#8B8B8B";
+      c.COLOR_WHITE     = "#EEEEEE";
       c.COLOR_HIGHLIGHT = "#FFFFFF66";
       // card consts
       c.CARD_WIDTH = 75;

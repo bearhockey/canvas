@@ -6,10 +6,12 @@ class Colony
         this.m_iCurrentTurn = 0;
 
         this.m_iFoodStores = 0;
+        this.m_iCurrency = 0;
     }
 
     // getters and setters
     GetTurn() { return this.m_iCurrentTurn; }
+    GetCurrency() { return this.m_iCurrency; }
 
     // --------------------------------
     // AdvanceTurn

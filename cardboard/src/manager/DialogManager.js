@@ -24,6 +24,9 @@ class DialogManager
         return iDialogID;
     }
 
+    // --------------------------------
+    // SetDialog
+    // --------------------------------
     SetDialog(idx = 0)
     {
         if (idx < this.m_arrDialogs.length)

@@ -3,8 +3,8 @@ class ObjectManager
     constructor()
     {
         this.m_arrObjects = [];
-        this.m_arrPanels = [];
         this.m_arrStageObjects = [];
+        this.m_arrCardButtons = [];
         this.m_cHighlightedObject = null;
         this.m_cGrabbedObject = null;
         this.m_iGrabbedX;
@@ -26,11 +26,11 @@ class ObjectManager
     {
         this.AddObjectToStage(obj);
         this.m_cGrabbedObject = obj;
+        this.EnableCardButtons();
         if (this.m_cGrabbedObject != null)
         {
             if (arrMousePosition == null || arrMousePosition.length < 1) { arrMousePosition = m_Mouse.GetPosition(); }
             if (arrMousePosition == null || arrMousePosition.length < 1) { arrMousePosition = [this.m_cGrabbedObject.x, this.m_cGrabbedObject.y]; }
-
 
             this.m_iGrabbedX = arrMousePosition[0] - obj.x;
             this.m_iGrabbedY = arrMousePosition[1] - obj.y;
@@ -51,21 +51,21 @@ class ObjectManager
     }
 
     // --------------------------------
-    // AddPanel
-    //     Adds a panel
-    // --------------------------------
-    AddPanel(obj)
-    {
-        this.m_arrPanels.push(obj);
-    }
-
-    // --------------------------------
     // AddObjectToStage
     //     Adds an object to the stage (only if it doesn't already exist though)
     // --------------------------------
     AddObjectToStage(obj)
     {
         if (this.m_arrStageObjects.indexOf(obj) < 0) { this.m_arrStageObjects.push(obj); }
+    }
+
+    // --------------------------------
+    // AddCardButton
+    // --------------------------------
+    AddCardButton(cButton)
+    {
+        this.m_arrCardButtons.push(cButton);
+        this.AddObjectToStage(cButton);
     }
 
     // --------------------------------
@@ -78,6 +78,22 @@ class ObjectManager
         if (idx >= 0)
         {
             this.m_arrStageObjects.splice(idx, 1);
+        }
+    }
+
+    // --------------------------------
+    // EnableCardButtons
+    // --------------------------------
+    EnableCardButtons()
+    {
+        console.log("EnableCardButtons()");
+        var cButton;
+        var idx;
+        var iButtons = this.m_arrCardButtons.length;
+        for (idx = 0; idx < iButtons; ++idx)
+        {
+            cButton = this.m_arrCardButtons[idx];
+            if (cButton != null && cButton.SetEnabled != null) { cButton.SetEnabled(this.m_cGrabbedObject != null); }
         }
     }
 
@@ -256,6 +272,7 @@ class ObjectManager
         else if (this.m_cGrabbedObject != null)
         {
             this.m_cGrabbedObject = null; // drop grabbed card
+            this.EnableCardButtons();
         }
 
         Update();
@@ -279,18 +296,14 @@ class ObjectManager
                 obj.Draw(ctx);
             }
         } // end for loop
+    }
 
-        var iPanels = (this.m_arrPanels != null) ? this.m_arrPanels.length : 0;
-        for (idx = 0; idx < iPanels; ++idx)
-        {
-            obj = this.m_arrPanels[idx];
-            if (obj != null)
-            {
-                obj.Draw(ctx);
-            }
-        }
-
-        // make sure grabbed card is always on top
+    // --------------------------------
+    // DrawGrabbedObject
+    //     Draws the currently grabbed object - makes sure it is always on top
+    // --------------------------------
+    DrawGrabbedObject(ctx)
+    {
         if (this.m_cGrabbedObject != null)
         {
             ctx.globalAlpha = 0.8;

@@ -12,5 +12,4 @@ class Dialog extends Panel
 
     GetDialogID()   { return this.m_iDialogID; }
     SetDialogID(id) { this.m_iDialogID; }
-
 }

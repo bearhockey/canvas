@@ -37,5 +37,9 @@ class TopPanel extends Panel
         ctx.fillStyle = "#000000";
         ctx.font = '26px serif';
         ctx.fillText("TURN : " + g_Colony.GetTurn().toString(), this.m_iLeftPadding, this.m_iTextPadding);
+
+        var strCurrency = "C : " + g_Colony.GetCurrency().toString();
+        var iTextWidth = ctx.measureText(strCurrency).width;
+        ctx.fillText(strCurrency, this.width - iTextWidth - TopPanel.H_PADDING, this.m_iTextPadding);
     }
 }
