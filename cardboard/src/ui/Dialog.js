@@ -1,13 +1,14 @@
 class Dialog extends Panel
 {
-    static CLOSE_BUTTON_X = CONST.DIALOG_X + 4;
-    static CLOSE_BUTTON_Y = CONST.DIALOG_Y + 4;
-    constructor()
+    static CLOSE_BUTTON_PADDING = 4;
+    constructor(width=CONST.DIALOG_WIDTH, height=CONST.DIALOG_HEIGHT)
     {
-        super(CONST.DIALOG_X, CONST.DIALOG_Y, CONST.DIALOG_WIDTH, CONST.DIALOG_HEIGHT);
+        var x = CONST.CANVAS_PLAY_WIDTH/2 - width/2;
+        var y = CONST.CANVAS_PLAY_HEIGHT/2 - height/2 + CONST.TOP_PANEL_HEIGHT;
+        super(x, y, width, height);
         this.m_iDialogID = 0;
 
-        this.AddChildToPanel(new CloseButton(Dialog.CLOSE_BUTTON_X, Dialog.CLOSE_BUTTON_Y, g_DM));
+        this.AddChildToPanel(new CloseButton(this.x + Dialog.CLOSE_BUTTON_PADDING, this.y + Dialog.CLOSE_BUTTON_PADDING, g_DM));
     }
 
     GetDialogID()   { return this.m_iDialogID; }

@@ -1,4 +1,5 @@
 // managers
+var CARD        = new CardData();
 var g_IR        = new ImageRenderer();
 var g_OM        = new ObjectManager();
 var g_PM        = new PanelManager();
@@ -6,19 +7,28 @@ var g_DM        = new DialogManager();
 var m_Mouse     = new MouseManager();
 var g_Colony    = new Colony();
 var g_Inventory = new Inventory();
+var g_Store     = new Store();
+
 // temp globals - put these in better places when you can
 var cRightPanel = new RightPanel();
 var cTopPanel   = new TopPanel(CONST.CANVAS_WIDTH - cRightPanel.GetWidth(), CONST.TOP_PANEL_HEIGHT);
+var iBackgroundID;
 
 var cNextTurnButton;
 var cInventoryButton;
-var cSellButton = new Button(cRightPanel.x - cRightPanel.width/3, cRightPanel.y + cRightPanel.height - 100, 128, 64, "SELL");
+var cStoreButton;
+var cSellButton = new Button(cRightPanel.x - cRightPanel.width/3, cRightPanel.y + cRightPanel.height - 100, 128, 64, "SELL", g_Colony, Colony.BUTTON_SELL_CARD);
 
 var cInventory = new Dialog();
 var cInventoryGrid = new Grid(g_Inventory.GetInventory(),
-                              CONST.DIALOG_X + Inventory.GRID_HORIZONTAL_PADDING,
-                              CONST.DIALOG_Y + Inventory.GRID_VERTICAL_PADDING,
+                              cInventory.GetPosition()[0] + Inventory.GRID_HORIZONTAL_PADDING,
+                              cInventory.GetPosition()[1] + Inventory.GRID_VERTICAL_PADDING,
                               Inventory.GRID_COLUMNS, Inventory.GRID_ROWS, Inventory.GRID_SPACING);
+var cStore = new Dialog(CONST.DIALOG_WIDTH, Store.WINDOW_HEIGHT);
+var cStoreGrid = new Grid(g_Store.GetInventory(),
+                          cStore.GetPosition()[0] + Store.GRID_HORIZONTAL_PADDING,
+                          cStore.GetPosition()[1] + Store.GRID_VERTICAL_PADDING,
+                          Store.GRID_COLUMNS, Store.GRID_ROWS, Store.GRID_SPACING);
 
 var myGameArea =
 {
@@ -37,6 +47,15 @@ var myGameArea =
 };
 
 // --------------------------------
+// DebugAddItems
+// --------------------------------
+function DebugAddItems()
+{
+    // g_Inventory.AddItem(new Card(CARD_DEF.CID.COLONIST));
+    // g_Inventory.AddItem(new Card(CARD_DEF.CID.WORKSHOP));
+};
+
+// --------------------------------
 // SetImage
 //     Global callback to the ImageRenderer to set an image as loaded
 // --------------------------------
@@ -47,12 +66,18 @@ function GetCanvas() { return myGameArea.context; };
 function Init()
 {
     var ctx = GetCanvas();
+    iBackgroundID = g_IR.LoadImage(CONST.PLAY_AREA_BACKGROUND);
     g_IR.LoadImages();
 
     // build dialogs
     cInventory.AddChildToPanel(cInventoryGrid);
     var iInventory = g_DM.AddDialog(cInventory);
     cInventoryButton = new TextButton(ctx, 0, 0, "Inventory", g_DM, iInventory);
+
+    cStore.AddChildToPanel(cStoreGrid);
+    var iStore = g_DM.AddDialog(cStore);
+    cStoreButton = new TextButton(ctx, 0, 0, "Store", g_DM, iStore);
+
     cSellButton.SetEnabled(false);
     g_OM.AddCardButton(cSellButton);
 
@@ -61,11 +86,15 @@ function Init()
 
     cTopPanel.AddButtonToPanel(cNextTurnButton);
     cTopPanel.AddButtonToPanel(cInventoryButton);
+    cTopPanel.AddButtonToPanel(cStoreButton);
 
-    g_Inventory.AddPack(PACK_DEF.STARTER_PACK);
+    g_Store.AddItem(new CardPack(PACK_DEF.TYPE.STARTER_PACK));
+    g_Store.AddItem(new CardPack(PACK_DEF.TYPE.BUILDER_PACK));
 
     g_PM.AddPanel(cTopPanel);
     g_PM.AddPanel(cRightPanel);
+
+    DebugAddItems(); // used to start with specific items for testing
 
     Update();
 };
@@ -77,6 +106,7 @@ function Init()
 function Update(iTimeStamp)
 {
     cInventoryGrid.PositionItems(); // probably need to move this to a better place
+    cStoreGrid.PositionItems();
     DrawScreen();
 };
 
@@ -88,6 +118,7 @@ function DrawScreen()
 {
     myGameArea.clear();
     var ctx = GetCanvas();
+    g_IR.DrawImage(ctx, iBackgroundID, -32, -32);
     g_OM.Draw(ctx);
     g_PM.Draw(ctx);
 

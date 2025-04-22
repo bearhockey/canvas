@@ -1,9 +1,12 @@
 class RightPanel extends Panel
 {
-    static TITLE_Y = 40;
-    static CARD_PREVIEW_Y = 60;
-    static SLOTS_PREVIEW_Y = 280;
-    static PROGRESSION_Y = 450;
+    static TITLE_Y          = 40;
+    static CARD_PREVIEW_Y   = 60;
+    static SLOTS_PREVIEW_Y  = 280;
+    static USES_Y           = 450;
+    static PROGRESSION_Y    = 500;
+    static PREVIEW_CHILD_WIDTH = 60;
+    static PREVIEW_CHILD_HEIGHT = 80;
     constructor()
     {
         super(CONST.CANVAS_WIDTH - CONST.RIGHT_PANEL_WIDTH, 0, CONST.RIGHT_PANEL_WIDTH, CONST.CANVAS_HEIGHT);
@@ -12,7 +15,8 @@ class RightPanel extends Panel
         this.m_iPreviewY = this.y + RightPanel.CARD_PREVIEW_Y;
         this.m_iTextY    = this.y + RightPanel.TITLE_Y;
         this.m_iSlotsPreviewY = this.y + RightPanel.SLOTS_PREVIEW_Y;
-        this.m_iProgressionY = this.y + RightPanel.PROGRESSION_Y;
+        this.m_iUsesY         = this.y + RightPanel.USES_Y;
+        this.m_iProgressionY  = this.y + RightPanel.PROGRESSION_Y;
     }
 
     // --------------------------------
@@ -33,19 +37,20 @@ class RightPanel extends Panel
     {
         super.Draw(ctx);
 
-        if (this.m_objSelectedCard != null)
+        var cThisCard = this.m_objSelectedCard;
+        if (cThisCard != null)
         {
-            this.m_objSelectedCard.DrawCopy(ctx, this.m_iPreviewX, this.m_iPreviewY, CONST.CARD_WIDTH_LARGE, CONST.CARD_HEIGHT_LARGE);
+            cThisCard.DrawCopy(ctx, this.m_iPreviewX, this.m_iPreviewY, CONST.CARD_WIDTH_LARGE, CONST.CARD_HEIGHT_LARGE);
 
-            var strName = this.m_objSelectedCard.GetName();
+            var strName = cThisCard.GetName();
             ctx.fillStyle = CONST.COLOR_BLACK;
             ctx.font = '26px serif';
             var iTextWidth = ctx.measureText(strName).width;
             ctx.fillText(strName, this.x + this.half_width - (iTextWidth/2), this.m_iTextY);
 
-            var arrSlots = (this.m_objSelectedCard.GetSlots != null) ? this.m_objSelectedCard.GetSlots() : [];
-            var iSlotCapacity = (this.m_objSelectedCard.GetSlotCapacity != null) ? this.m_objSelectedCard.GetSlotCapacity() : 0;
-            var iSlotsWidth = iSlotCapacity*CONST.CARD_WIDTH + (iSlotCapacity-1)*CONST.CARD_PREVIEW_SPACING;
+            var arrSlots = (cThisCard.GetSlots != null) ? cThisCard.GetSlots() : [];
+            var iSlotCapacity = (cThisCard.GetSlotCapacity != null) ? cThisCard.GetSlotCapacity() : 0;
+            var iSlotsWidth = iSlotCapacity*RightPanel.PREVIEW_CHILD_WIDTH + (iSlotCapacity-1)*CONST.CARD_PREVIEW_SPACING;
             var idx;
             var cCard;
             var bDrawEmpty;
@@ -58,30 +63,36 @@ class RightPanel extends Panel
                     cCard = arrSlots[idx];
                     if (cCard != null)
                     {
-                        cCard.DrawCopy(ctx, iSlotX, this.m_iSlotsPreviewY, CONST.CARD_WIDTH, CONST.CARD_HEIGHT);
+                        cCard.DrawCopy(ctx, iSlotX, this.m_iSlotsPreviewY, RightPanel.PREVIEW_CHILD_WIDTH, RightPanel.PREVIEW_CHILD_HEIGHT);
                         bDrawEmpty = false;
                     }
                 }
 
                 if (bDrawEmpty == true)
                 {
-                    g_IR.DrawImage(ctx, g_IR.CARD_SLOT_ADD, iSlotX, this.m_iSlotsPreviewY);
+                    g_IR.DrawImage(ctx, g_IR.CARD_SLOT_ADD, iSlotX, this.m_iSlotsPreviewY, RightPanel.PREVIEW_CHILD_WIDTH, RightPanel.PREVIEW_CHILD_HEIGHT);
                 }
 
-                iSlotX += CONST.CARD_WIDTH + 10;
+                iSlotX += RightPanel.PREVIEW_CHILD_WIDTH + CONST.CARD_PREVIEW_SPACING;
             } // end for loop
 
-            if (this.m_objSelectedCard.m_objProgressionPoints != null)
+            if (cThisCard.CanExpire != null && cThisCard.CanExpire() == true)
             {
-                var objCardData;
-                var objProgressionData = this.m_objSelectedCard.m_objProgressionPoints;
+                var strUses = "Uses left: " + ((cThisCard.GetUsesLeft != null) ? cThisCard.GetUsesLeft().toString() : "0");
+                iTextWidth = ctx.measureText(strUses).width;
+                ctx.fillText(strUses, this.x + this.half_width - (iTextWidth/2), this.m_iUsesY);
+            }
+
+            if (cThisCard.m_objProgressionPoints != null)
+            {
+                var objProgressionData = cThisCard.m_objProgressionPoints;
                 var strProgression;
-                for (var [id, obj] of Object.entries(objProgressionData))
+                var strName;
+                for (var [objCardData, obj] of Object.entries(objProgressionData))
                 {
                     if (obj != null && obj.iNeeded > 0)
                     {
-                        objCardData = CARD_DEF.ID[id];
-                        strProgression = "Turns to create " + objCardData.strName + " : " + (obj.iNeeded - obj.iPoints).toString();
+                        strProgression = "Turns left until production: " + (obj.iNeeded - obj.iPoints).toString();
                         iTextWidth = ctx.measureText(strProgression).width;
                         ctx.fillText(strProgression, this.x + this.half_width - (iTextWidth/2), this.m_iProgressionY);
                     }

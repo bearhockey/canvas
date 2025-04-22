@@ -1,27 +1,29 @@
-class Inventory
+class Inventory2
 {
     static GRID_HORIZONTAL_PADDING = 64;
     static GRID_VERTICAL_PADDING = 32;
     static GRID_SPACING = 16;
     static GRID_ROWS = 5;
     static GRID_COLUMNS = 9;
+
+    m_arrItems:Array<Card>;
     constructor()
     {
         this.m_arrItems = [];
     }
 
-    AddCard(obj)        { this.m_arrItems.push(obj); }
-    AddPack(arrPackDef)
+    AddItem(obj)        { this.m_arrItems.push(obj); }
+    AddPack(arrPackDef:Array<number>)
     {
         if (arrPackDef != null)
         {
-            var cCard;
-            var idx;
-            var iCards = arrPackDef.length;
+            var cCard:Card;
+            var idx:number;
+            var iCards:number = arrPackDef.length;
             for (idx = 0; idx < iCards; ++idx)
             {
                 cCard = new Card(arrPackDef[idx]);
-                this.AddCard(cCard);
+                this.AddItem(cCard);
             }
         }
     }

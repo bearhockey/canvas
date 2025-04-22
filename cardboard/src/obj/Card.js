@@ -3,26 +3,42 @@
 // ----------------------------------------------------------------
 class Card extends GameObject
 {
-    constructor(iType=Card.TYPE_BLANK)
+    constructor(strCardKey)
     {
-        var objCardData = CARD_DEF.ID[iType];
-        super(0, 0, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, objCardData.strImage, CONST.CARD_HIGHLIGHT_IMG);
-        this.m_iType = iType;
+        var objCardData = CARD.GetCardByName(strCardKey);
+        var strImage = (objCardData != null) ? objCardData.strImage : CONST.CARD_BACK_IMG;
+        super(0, 0, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, strImage, CONST.CARD_HIGHLIGHT_IMG);
         this.bCanGrab = true;
         this.m_bCanPreview = true;
-        this.m_iSlotCapacity = (objCardData != null && objCardData.iSlots != null) ? objCardData.iSlots : CONST.CARD_MAX_SLOTS;
+
+        this.idx             = (objCardData != null && objCardData.idx     != null) ? objCardData.idx     : -1;
+        this.id              = (objCardData != null && objCardData.id      != null) ? objCardData.id      : null;
+        this.m_iSlotCapacity = (objCardData != null && objCardData.iSlots  != null) ? objCardData.iSlots  : CONST.CARD_MAX_SLOTS;
+        this.m_iValue        = (objCardData != null && objCardData.iValue  != null) ? objCardData.iValue  : 0;
+        this.m_iUses         = (objCardData != null && objCardData.iUses   != null) ? objCardData.iUses   : 0;
+        this.m_strName       = (objCardData != null && objCardData.strName != null) ? objCardData.strName : "Card : " + this.idx.toString();
+        this.m_bCanSell      = (this.m_iValue > 0);
+        this.m_bCanExpire    = (this.m_iUses > 0);
+        this.m_bKillOnExpire = true;
+
         this.m_iPipXOffset = this.half_width - ((CONST.PIP_SIZE * this.m_iSlotCapacity) + (CONST.PIP_SPACING * (this.m_iSlotCapacity-1)))/2;
         this.m_iPipYOffset = this.height + CONST.PIP_SPACING;
+
         this.m_arrSlots = [];
-        this.m_strName = objCardData.strName;
         this.m_objProgressionPoints = {};
     }
 
     // Getters and setters
     // --------------------------------
-    GetType()           { return this.m_iType; }
+    GetIdx()            { return this.idx; }
+    GetId()             { return this.id; }
+    GetValue()          { return this.m_iValue; }
+    GetUsesLeft()       { return this.m_iUses; }
     GetSlotCapacity()   { return this.m_iSlotCapacity; }
     GetSlots()          { return this.m_arrSlots; }
+    CanExpire()         { return this.m_bCanExpire; }
+    DiesOnExpire()      { return this.m_bKillOnExpire; }
+    Use(iAmount = 1)    { this.m_iUses -= iAmount; }
 
     // --------------------------------
     // GetProgression
@@ -96,6 +112,14 @@ class Card extends GameObject
     Draw(ctx)
     {
         super.Draw(ctx);
+        if (this.m_strName !=- null)
+        {
+            var strName = this.GetName();
+            ctx.fillStyle = CONST.COLOR_BLACK;
+            ctx.font = '12px serif';
+            var iTextWidth = ctx.measureText(strName).width;
+            ctx.fillText(strName, this.x + this.half_width - (iTextWidth/2), this.y + this.height - 12);
+        }
         if (this.bHighlight == true && this.m_bIsVisible == true)
         {
             var pip_x = this.x + this.m_iPipXOffset;

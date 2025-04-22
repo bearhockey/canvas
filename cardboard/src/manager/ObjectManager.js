@@ -82,18 +82,33 @@ class ObjectManager
     }
 
     // --------------------------------
+    // SellGrabbedObject
+    // --------------------------------
+    SellGrabbedObject()
+    {
+        var obj = this.GetGrabbedObject();
+        if (obj != null && obj.GetValue != null && obj.GetValue() > 0)
+        {
+            this.PopObjectFromStage(obj);
+            this.m_cGrabbedObject = null;
+        }
+
+        return obj;
+    }
+
+    // --------------------------------
     // EnableCardButtons
     // --------------------------------
     EnableCardButtons()
     {
-        console.log("EnableCardButtons()");
+        var bEnableButtons = (this.m_cGrabbedObject != null && this.m_cGrabbedObject.GetValue != null && this.m_cGrabbedObject.GetValue() > 0);
         var cButton;
         var idx;
         var iButtons = this.m_arrCardButtons.length;
         for (idx = 0; idx < iButtons; ++idx)
         {
             cButton = this.m_arrCardButtons[idx];
-            if (cButton != null && cButton.SetEnabled != null) { cButton.SetEnabled(this.m_cGrabbedObject != null); }
+            if (cButton != null && cButton.SetEnabled != null) { cButton.SetEnabled(bEnableButtons); }
         }
     }
 
@@ -110,7 +125,7 @@ class ObjectManager
         var objChildren;
         var objChild;
         var iChild;
-        var iType;
+        var strType; // Card.id
         for (idx = 0; idx < iLength; ++idx)
         {
             objParent = this.m_arrStageObjects[idx];
@@ -123,89 +138,19 @@ class ObjectManager
                     for (iChild = 0; iChild < arrChildren.length; ++iChild)
                     {
                         objChild = arrChildren[iChild];
-                        if (objChild != null && objChild.GetType != null)
+                        if (objChild != null)
                         {
-                            iType = objChild.GetType();
-                            if (objChildren[iType] == null) { objChildren[iType] = 0; }
-                            objChildren[iType] += 1;
+                            strType = (objChild.GetId != null) ? objChild.GetId() : -1;
+                            if (objChildren[strType] == null) { objChildren[strType] = 0; }
+                            objChildren[strType] += 1;
                         }
                     } // end for loop
 
-                    this.CheckRecipes(objParent, objChildren, bAdvanceTurn);
-                }
-            }
-        }
-    }
-
-    // --------------------------------
-    // CheckRecipes
-    // --------------------------------
-    CheckRecipes(objParent, objChildren, bAddWork=false)
-    {
-        if (objParent != null && objChildren != null)
-        {
-            var iParentType = (objParent.GetType != null) ? objParent.GetType() : 0;
-            var arrOutput = [];
-            var arrRecipes = RECIPE_DEF.SOURCE[iParentType];
-            var objIngredients;
-            var objRecipe;
-            var idx;
-            var iRecipes = (arrRecipes != null) ? arrRecipes.length : 0;
-            var iOutputCount;
-            var iOutputIdx;
-            var cCard;
-            var bValidRecipe;
-            var iTurns;
-            var iProgression;
-            var iWorkValue;
-
-            for (idx = 0; idx < iRecipes; ++idx)
-            {
-                bValidRecipe = true;
-                objRecipe = arrRecipes[idx];
-                if (objRecipe != null && objRecipe.input != null)
-                {
-                    objIngredients = objRecipe.input;
-                    for (var [iType, iCount] of Object.entries(objIngredients))
+                    var arrPack = RecipeUtils.CheckRecipes(objParent, objChildren, bAdvanceTurn);
+                    if (arrPack != null && arrPack.length > 0)
                     {
-                        if (objChildren[iType] == null || objChildren[iType] < iCount)
-                        {
-                            bValidRecipe = false;
-                            break;
-                        }
-                    } // end of ingredient for loop
-
-                    if (bValidRecipe == true)
-                    {
-                        objIngredients = objRecipe.output;
-                        iTurns = (objRecipe.turns != null) ? objRecipe.turns : 1;
-                        iProgression = (objParent.GetProgression != null) ? objParent.GetProgression(objIngredients.id) : 0;
-
-                        iWorkValue = (bAddWork== true) ? 1 : 0; // TODO : Bonuses?
-                        if (iProgression + iWorkValue >= iTurns)
-                        {
-                            if (objParent.SetProgressionPoints != null) { objParent.SetProgressionPoints(objIngredients.id, 0, iTurns); }
-                            iOutputCount = (objIngredients != null && objIngredients.count != null) ? objIngredients.count : 1;
-                            for (iOutputIdx = 0; iOutputIdx < iOutputCount; ++iOutputIdx)
-                            {
-                                arrOutput.push(objIngredients.id);
-                            }
-                        }
-                        else if (objParent.SetProgressionPoints != null)
-                        {
-                            objParent.SetProgressionPoints(objIngredients.id, iProgression + iWorkValue, iTurns);
-                        }
+                        g_Inventory.AddPack(arrPack);
                     }
-                }
-            } // end of recipe for loop
-
-            if (bAddWork == true) // should only add cards if we are adding work
-            {
-                var iLength = arrOutput.length;
-                for (idx = 0; idx < iLength; ++idx)
-                {
-                    cCard = new Card(arrOutput[idx]);
-                    g_Inventory.AddToInventory(cCard);
                 }
             }
         }

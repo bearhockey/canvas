@@ -12,7 +12,12 @@ class Panel extends GameObject
     AddChildToPanel(obj)            { this.m_arrChildren.push(obj); }
     AddChildrenToPanel(arrObjects)  { this.m_arrChildren = this.m_arrChildren.concat(arrObjects); }
     GetChildren()                   { return this.m_arrChildren; }
-    ResetHighlight()                { this.m_cHighlightedObject = null; Update(); }
+    ResetHighlight() 
+    {
+        this.m_cHighlightedObject.SetHighlight(false);
+        this.m_cHighlightedObject = null;
+        Update();
+    }
 
     // --------------------------------
     // OnButtonClick
@@ -74,14 +79,28 @@ class Panel extends GameObject
             var bSuccess = this.m_cHighlightedObject.OnClick();
             if (bSuccess == false) // for some reason this means its a card so go ahead and do card stuff
             {
-                var idx = this.m_arrChildren.indexOf(this.m_cHighlightedObject);
-                if (idx >= 0) { this.m_arrChildren.splice(idx, 1); }
-                g_Inventory.TakeFromInventory(this.m_cHighlightedObject);
-                g_OM.GrabObject(this.m_cHighlightedObject);
-                g_DM.ShowDialog(false);
+                if (this.m_cHighlightedObject.CanGrab != null && this.m_cHighlightedObject.CanGrab() == true)
+                {
+                    var idx = this.m_arrChildren.indexOf(this.m_cHighlightedObject);
+                    if (idx >= 0) { this.m_arrChildren.splice(idx, 1); }
+                    g_Inventory.TakeFromInventory(this.m_cHighlightedObject);
+                    g_OM.GrabObject(this.m_cHighlightedObject);
+                    g_DM.ShowDialog(false);
+                }
+                else if (this.m_cHighlightedObject.GetCards != null) // must be a card pack
+                {
+                    var iCost = (this.m_cHighlightedObject.GetCost != null) ? this.m_cHighlightedObject.GetCost() : 0;
+                    if (g_Colony.GetCurrency() >= iCost)
+                    {
+                        g_Colony.SpendCurrency(iCost);
+                        var arrCards = this.m_cHighlightedObject.GetCards();
+                        g_Inventory.AddPack(arrCards);
+                        g_DM.ShowDialog(false);
+                    }
+                }
             }
 
-            this.m_cHighlightedObject = null;
+            this.ResetHighlight();
         }
     }
 

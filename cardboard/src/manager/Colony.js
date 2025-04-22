@@ -1,17 +1,19 @@
 class Colony
 {
     static BUTTON_NEXT_TURN = 1;
+    static BUTTON_SELL_CARD = 2;
     constructor()
     {
         this.m_iCurrentTurn = 0;
 
         this.m_iFoodStores = 0;
-        this.m_iCurrency = 0;
+        this.m_iCurrency = 5;
     }
 
     // getters and setters
-    GetTurn() { return this.m_iCurrentTurn; }
-    GetCurrency() { return this.m_iCurrency; }
+    GetTurn()              { return this.m_iCurrentTurn; }
+    GetCurrency()          { return this.m_iCurrency; }
+    SpendCurrency(iAmount) { this.m_iCurrency -= iAmount; }
 
     // --------------------------------
     // AdvanceTurn
@@ -24,15 +26,30 @@ class Colony
     }
 
     // --------------------------------
+    // SellCard
+    // --------------------------------
+    SellCard()
+    {
+        var cCard = g_OM.SellGrabbedObject();
+        if (cCard != null && cCard.GetValue != null)
+        {
+            this.m_iCurrency += cCard.GetValue();
+        }
+    }
+
+    // --------------------------------
     // OnButtonClick
     //     Listener for buttons to click
     // --------------------------------
     OnButtonClick(iButtonAction)
     {
-        if (iButtonAction == Colony.BUTTON_NEXT_TURN)
+        switch (iButtonAction)
         {
-            this.AdvanceTurn();
-            Update();
-        }
+            case Colony.BUTTON_NEXT_TURN: { this.AdvanceTurn(); break; }
+            case Colony.BUTTON_SELL_CARD: { this.SellCard();    break; }
+            default: break;
+        } // end of switch
+
+        Update();
     }
 }

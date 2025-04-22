@@ -6,20 +6,20 @@ var CONST = (function () {
       c.CANVAS_HEIGHT = 820;
       c.CANVAS_VIEW_AREA = { left:0, top:0, right:1560, bottom:820 };
       c.CANVAS_PLAY_WIDTH = 1160;
-      c.CANVAS_PLAY_HEIGHT = 820-64;
-      c.CANVAS_PLAY_AREA = { left:0, top:64, right:1160, bottom:820 };
+      c.CANVAS_PLAY_HEIGHT = 756; // 820-64
+      c.CANVAS_PLAY_AREA = { left:0, top:64, right:1160, bottom:756 };
+      c.PLAY_AREA_BACKGROUND = "./img/play_area.png";
       // panel consts
       c.RIGHT_PANEL_WIDTH = 400;
       c.TOP_PANEL_HEIGHT = 64;
       // dialog consts
-      c.DIALOG_X = 80;
-      c.DIALOG_Y = 164;
       c.DIALOG_WIDTH = 1000;
       c.DIALOG_HEIGHT = 556;
       // color consts
       c.COLOR_BLACK     = "#101010";
       c.COLOR_GREY      = "#8B8B8B";
       c.COLOR_WHITE     = "#EEEEEE";
+      c.COLOR_RED       = "#DD2222";
       c.COLOR_HIGHLIGHT = "#FFFFFF66";
       // card consts
       c.CARD_WIDTH = 75;
@@ -31,7 +31,7 @@ var CONST = (function () {
       c.CARD_SLOT_IMG = "./img/card_slot.png";
       c.CARD_SLOT_ADD_IMG = "./img/card_slot_add.png";
       c.CARD_MAX_SLOTS = 4;
-      c.CARD_PREVIEW_SPACING = 10;
+      c.CARD_PREVIEW_SPACING = 5;
       // button consts
       c.CLOSE_BUTTON_SIZE = 32;
       // pip consts

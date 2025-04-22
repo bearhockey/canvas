@@ -1,0 +1,7 @@
+class Notification
+{
+    constructor()
+    {
+        super();
+    }
+}

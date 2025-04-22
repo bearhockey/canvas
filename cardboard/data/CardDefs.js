@@ -1,21 +1,22 @@
 var CARD_DEF = (function () {
     var c = {};
+    
+    c.CID = { BLANK:{ idx:0, strName:"" } };
+    c.CID.COLONIST = { strName:"Colonist", iSlots:0, iValue:5,  iUses:0, strImage:"./img/card_colonist.png" };
 
-    c.TYPE = {};
-    c.TYPE.BLANK = 0;
-    c.TYPE.COLONIST = 1;
-    c.TYPE.HOUSE = 2;
-    c.TYPE.GARDEN = 3;
-    c.TYPE.POTATO = 4;
-    c.TYPE.TREE = 5;
+    c.CID.HOUSE    = { strName:"House",    iSlots:3, iValue:10, iUses:0, strImage:"./img/card_house.png"    };
+    c.CID.WORKSHOP = { strName:"Workshop", iSlots:5, iValue:10, iUses:0, strImage:"./img/card_house.png"    };
+    c.CID.GARDEN   = { strName:"Garden",   iSlots:1, iValue:6,  iUses:0, strImage:"./img/card_garden.png"   };
 
-    c.ID = [];
-    c.ID.push({ id:0, strName:"" });
-    c.ID.push({ id:1, strName:"Colonist", iSlots:0, strImage:"./img/card_colonist.png" });
-    c.ID.push({ id:2, strName:"House",    iSlots:3, strImage:"./img/card_house.png"    });
-    c.ID.push({ id:3, strName:"Garden",   iSlots:1, strImage:"./img/card_garden.png"   });
-    c.ID.push({ id:4, strName:"Potato",   iSlots:0, strImage:"./img/card_potato.png"   });
-    c.ID.push({ id:5, strName:"Tree",     iSlots:1, strImage:"./img/card_square.png"   });
+    c.CID.POTATO   = { strName:"Potato",   iSlots:0, iValue:1,  iUses:0, strImage:"./img/card_potato.png"   };
+    c.CID.BERRY    = { strName:"Berry",    iSlots:0, iValue:1,  iUses:0, strImage:"./img/card_berry.png"    };
+
+    c.CID.TREE     = { strName:"Tree",     iSlots:1, iValue:0,  iUses:4, strImage:"./img/card_tree.png"     };
+    c.CID.ROCK     = { strName:"Rock",     iSlots:1, iValue:0,  iUses:5, strImage:"./img/card_rock.png"     };
+    c.CID.BUSH     = { strName:"Bush",     iSlots:1, iValue:0,  iUses:3, strImage:"./img/card_bush.png"     };
+    
+    c.CID.WOOD     = { strName:"Wood",     iSlots:0, iValue:1,  iUses:0, strImage:"./img/card_back.png"     };
+    
 
     return c;
 }());
