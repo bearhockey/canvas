@@ -1,5 +1,6 @@
 // managers
-var CARD        = new CardData();
+let Data = new DataManager();
+
 var g_IR        = new ImageRenderer();
 var g_OM        = new ObjectManager();
 var g_PM        = new PanelManager();
@@ -88,8 +89,8 @@ function Init()
     cTopPanel.AddButtonToPanel(cInventoryButton);
     cTopPanel.AddButtonToPanel(cStoreButton);
 
-    g_Store.AddItem(new CardPack(PACK_DEF.TYPE.STARTER_PACK));
-    g_Store.AddItem(new CardPack(PACK_DEF.TYPE.BUILDER_PACK));
+    g_Store.AddItem(new CardPack(Data.GetPackData().GetPackByName("STARTER")));
+    g_Store.AddItem(new CardPack(Data.GetPackData().GetPackByName("BUILDER")));
 
     g_PM.AddPanel(cTopPanel);
     g_PM.AddPanel(cRightPanel);

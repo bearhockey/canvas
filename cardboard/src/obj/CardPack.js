@@ -4,11 +4,11 @@
 class CardPack extends GameObject
 {
     static COST_Y_OFFSET = 24;
-    constructor(id)
+    constructor(objPackData)
     {
-        var objPackData = PACK_DEF.ID[id];
+        let strImage = (objPackData != null) ? objPackData.strImage : "";
         super(0, 0, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, objPackData.strImage, CONST.CARD_HIGHLIGHT_IMG);
-        this.m_iType = id;
+        this.m_iType = (objPackData != null && objPackData.idx != null) ? objPackData.idx : 0;
         this.m_bShowPrice = true;
 
         this.m_strName  = (objPackData != null && objPackData.strName != null) ? objPackData.strName  : "Pack : " + this.idx.toString();

@@ -5,7 +5,7 @@ class Card extends GameObject
 {
     constructor(strCardKey)
     {
-        var objCardData = CARD.GetCardByName(strCardKey);
+        var objCardData = Data.GetCardData().GetCardByName(strCardKey);
         var strImage = (objCardData != null) ? objCardData.strImage : CONST.CARD_BACK_IMG;
         super(0, 0, CONST.CARD_WIDTH, CONST.CARD_HEIGHT, strImage, CONST.CARD_HIGHLIGHT_IMG);
         this.bCanGrab = true;

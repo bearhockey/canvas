@@ -10,7 +10,7 @@ class RecipeUtils
         var arrPack = [];
         if (objParent != null && objChildren != null)
         {
-            var arrRecipes = RECIPE_DEF.SOURCE[objParent];
+            var arrRecipes = Data.GetRecipes().GetRecipeByname(objParent.GetId());
             var objIngredients;
             var objRecipe;
             var idx;
