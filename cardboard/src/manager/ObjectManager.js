@@ -29,7 +29,7 @@ class ObjectManager
         this.EnableCardButtons();
         if (this.m_cGrabbedObject != null)
         {
-            if (arrMousePosition == null || arrMousePosition.length < 1) { arrMousePosition = m_Mouse.GetPosition(); }
+            if (arrMousePosition == null || arrMousePosition.length < 1) { arrMousePosition = Main.GetMouse().GetPosition(); }
             if (arrMousePosition == null || arrMousePosition.length < 1) { arrMousePosition = [this.m_cGrabbedObject.x, this.m_cGrabbedObject.y]; }
 
             this.m_iGrabbedX = arrMousePosition[0] - obj.x;
@@ -149,7 +149,7 @@ class ObjectManager
                     var arrPack = RecipeUtils.CheckRecipes(objParent, objChildren, bAdvanceTurn);
                     if (arrPack != null && arrPack.length > 0)
                     {
-                        g_Inventory.AddPack(arrPack);
+                        Main.GetInventory().AddPack(arrPack);
                     }
                 }
             }

@@ -61,7 +61,7 @@ class Card extends GameObject
     // --------------------------------
     OnClick()
     {
-        var objHeldCard = g_OM.GetGrabbedObject();
+        var objHeldCard = Main.GetObjectManager().GetGrabbedObject();
         if (objHeldCard != null)
         {
             return this.FillSlot(objHeldCard);
@@ -80,7 +80,7 @@ class Card extends GameObject
         {
             var objTopCard = this.m_arrSlots[0];
             this.m_arrSlots.splice(0, 1);
-            g_OM.AddObjectToStage(objTopCard);
+            Main.GetObjectManager().AddObjectToStage(objTopCard);
             return objTopCard;
         }
         else
@@ -98,8 +98,8 @@ class Card extends GameObject
         {
             this.m_arrSlots.push(objCard);
             objCard.Move(this.x, this.y);
-            g_OM.CalculateChildren();
-            g_OM.PopObjectFromStage(objCard);
+            Main.GetObjectManager().CalculateChildren();
+            Main.GetObjectManager().PopObjectFromStage(objCard);
             return true;
         }
 
@@ -127,8 +127,8 @@ class Card extends GameObject
             var idx;
             for (idx = 0; idx < this.m_iSlotCapacity; ++idx)
             {
-                var img = (this.m_arrSlots[idx] != null) ? g_IR.IMG_FILLED_PIP : g_IR.IMG_EMPTY_PIP;
-                g_IR.DrawImage(ctx, img, pip_x, pip_y);
+                var img = (this.m_arrSlots[idx] != null) ? Main.GetImageRenderer().IMG_FILLED_PIP : Main.GetImageRenderer().IMG_EMPTY_PIP;
+                Main.GetImageRenderer().DrawImage(ctx, img, pip_x, pip_y);
                 pip_x += CONST.PIP_SIZE + CONST.PIP_SPACING;
             } // end pip drawing for loop
         }

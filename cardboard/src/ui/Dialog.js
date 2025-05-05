@@ -8,7 +8,7 @@ class Dialog extends Panel
         super(x, y, width, height);
         this.m_iDialogID = 0;
 
-        this.AddChildToPanel(new CloseButton(this.x + Dialog.CLOSE_BUTTON_PADDING, this.y + Dialog.CLOSE_BUTTON_PADDING, g_DM));
+        this.AddChildToPanel(new CloseButton(this.x + Dialog.CLOSE_BUTTON_PADDING, this.y + Dialog.CLOSE_BUTTON_PADDING, Main.GetDialogManager()));
     }
 
     GetDialogID()   { return this.m_iDialogID; }

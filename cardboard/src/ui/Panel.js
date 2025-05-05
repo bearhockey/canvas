@@ -83,19 +83,19 @@ class Panel extends GameObject
                 {
                     var idx = this.m_arrChildren.indexOf(this.m_cHighlightedObject);
                     if (idx >= 0) { this.m_arrChildren.splice(idx, 1); }
-                    g_Inventory.TakeFromInventory(this.m_cHighlightedObject);
-                    g_OM.GrabObject(this.m_cHighlightedObject);
-                    g_DM.ShowDialog(false);
+                    Main.GetInventory().TakeFromInventory(this.m_cHighlightedObject);
+                    Main.GetObjectManager().GrabObject(this.m_cHighlightedObject);
+                    Main.GetDialogManager().ShowDialog(false);
                 }
                 else if (this.m_cHighlightedObject.GetCards != null) // must be a card pack
                 {
                     var iCost = (this.m_cHighlightedObject.GetCost != null) ? this.m_cHighlightedObject.GetCost() : 0;
-                    if (g_Colony.GetCurrency() >= iCost)
+                    if (Main.GetColony().GetCurrency() >= iCost)
                     {
-                        g_Colony.SpendCurrency(iCost);
+                        Main.GetColony().SpendCurrency(iCost);
                         var arrCards = this.m_cHighlightedObject.GetCards();
-                        g_Inventory.AddPack(arrCards);
-                        g_DM.ShowDialog(false);
+                        Main.GetInventory().AddPack(arrCards);
+                        Main.GetDialogManager().ShowDialog(false);
                     }
                 }
             }

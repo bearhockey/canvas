@@ -21,7 +21,7 @@ class Colony
     // --------------------------------
     AdvanceTurn(iTurns = 1)
     {
-        g_OM.CalculateChildren(true);
+        Main.GetObjectManager().CalculateChildren(true);
         this.m_iCurrentTurn += iTurns;
     }
 
@@ -30,7 +30,7 @@ class Colony
     // --------------------------------
     SellCard()
     {
-        var cCard = g_OM.SellGrabbedObject();
+        var cCard = Main.GetObjectManager().SellGrabbedObject();
         if (cCard != null && cCard.GetValue != null)
         {
             this.m_iCurrency += cCard.GetValue();

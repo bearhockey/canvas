@@ -30,7 +30,7 @@ class CardPack extends GameObject
         super.Draw(ctx);
         if (this.m_bShowPrice == true)
         {
-            var iCurrency = g_Colony.GetCurrency();
+            var iCurrency = Main.GetColony().GetCurrency();
             var strCost = this.m_iCost.toString() + " C";
             ctx.fillStyle = (iCurrency >= this.m_iCost) ? CONST.COLOR_BLACK : CONST.COLOR_RED;
             ctx.font = '26px serif';

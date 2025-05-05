@@ -70,7 +70,7 @@ class RightPanel extends Panel
 
                 if (bDrawEmpty == true)
                 {
-                    g_IR.DrawImage(ctx, g_IR.CARD_SLOT_ADD, iSlotX, this.m_iSlotsPreviewY, RightPanel.PREVIEW_CHILD_WIDTH, RightPanel.PREVIEW_CHILD_HEIGHT);
+                    Main.GetImageRenderer().DrawImage(ctx, Main.GetImageRenderer().CARD_SLOT_ADD, iSlotX, this.m_iSlotsPreviewY, RightPanel.PREVIEW_CHILD_WIDTH, RightPanel.PREVIEW_CHILD_HEIGHT);
                 }
 
                 iSlotX += RightPanel.PREVIEW_CHILD_WIDTH + CONST.CARD_PREVIEW_SPACING;

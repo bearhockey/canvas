@@ -20,12 +20,12 @@ class GameObject
 
         this.hitBox = { left:this.x, top:this.y, right:this.x+this.width, bottom:this.y+this.height };
 
-        this.iBaseImage = (imgSrc != null) ? g_IR.LoadImage(imgSrc) : null;
-        this.iHighlightImage = (imgHighlight != null) ? g_IR.LoadImage(imgHighlight) : null;
+        this.iBaseImage = (imgSrc != null) ? Main.GetImageRenderer().LoadImage(imgSrc) : null;
+        this.iHighlightImage = (imgHighlight != null) ? Main.GetImageRenderer().LoadImage(imgHighlight) : null;
 
         if (bAddToStage == true)
         {
-            g_OM.AddObject(this);
+            Main.GetObjectManager().AddObject(this);
         }
 
         this.m_strName = "Objecct " + this.idx.toString();
@@ -72,11 +72,11 @@ class GameObject
                 ctx.globalAlpha = GameObject.DISABLED_ALPHA;
             }
 
-            g_IR.DrawImage(ctx, this.iBaseImage, this.x, this.y);
+            Main.GetImageRenderer().DrawImage(ctx, this.iBaseImage, this.x, this.y);
 
             if (this.bHighlight == true && this.m_bIsEnabled == true)
             {
-                g_IR.DrawImage(ctx, this.iHighlightImage, this.x, this.y);
+                Main.GetImageRenderer().DrawImage(ctx, this.iHighlightImage, this.x, this.y);
             }
 
             ctx.globalAlpha = 1.0;
@@ -89,6 +89,6 @@ class GameObject
     // --------------------------------
     DrawCopy(ctx, x, y, width, height)
     {
-        g_IR.DrawImage(ctx, this.iBaseImage, x, y, width, height);
+        Main.GetImageRenderer().DrawImage(ctx, this.iBaseImage, x, y, width, height);
     }
 } // end of class
