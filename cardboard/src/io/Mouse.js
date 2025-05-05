@@ -12,7 +12,7 @@ class MouseManager
   // --------------------------------
   Move(evt)
   {
-    var rect = myGameArea.canvas.getBoundingClientRect();
+    var rect = Main.GetCanvas().getBoundingClientRect();
     this.m_arrPosition = [ evt.clientX - rect.left, evt.clientY - rect.top ];
     if (Main.GetDialogManager().IsDialogShowing())
     {

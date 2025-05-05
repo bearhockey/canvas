@@ -1,5 +1,6 @@
 class TopPanel extends Panel
 {
+    static TOP_PANEL_HEIGHT = 64;
     static V_PADDING = 8;
     static H_PADDING = 10;
     static BUTTON_SPACING = 8;
