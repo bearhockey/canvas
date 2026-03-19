@@ -1,0 +1,349 @@
+body
+{
+  background-color: #000000;
+}
+canvas
+{
+  border:1px solid #CCCCCC;
+  background-color: #000000;
+  display: inline-block;
+  padding: 0px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div#divLoad { text-align: center; }
+
+div#divMain { text-align: center; }
+
+div#divCanvas
+{
+  padding: 0px;
+  text-align: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* editor specific */
+div.divFlex { display:flex; margin-bottom:-20px; padding:0px; text-align: center; }
+div.divInnerFlex { margin-left: 8px; margin-right: 8px; }
+div.divChoiceItem { display:flex; margin:0px; }
+
+div#divFile
+{
+    width:100%;
+    background-color: #222256;
+    display:none;
+    padding: 16px;
+    margin-left: auto;
+    margin-right: auto;
+}
+div#divEdit
+{
+    background-color: #333344;
+    display:none;
+    margin-top: 16px;
+}
+
+div#divEditLeft
+{
+    padding: 4px;
+    margin: 4px;
+    text-align: left;
+    min-width:200px;
+    max-width:400px;
+    text-align:left;
+}
+
+div#divEditCenter
+{
+    padding: 4px;
+    text-align: center;
+    min-width: 600px;
+}
+
+div#divEditRight
+{
+    padding: 4px;
+    text-align: center;
+    min-width:200px;
+}
+
+div#divList
+{
+    margin: auto;
+    text-align: left;
+    width: 100%;
+}
+
+select#eventList
+{
+    padding: 2px;
+    min-width: 150px;
+    width:100%;
+    margin-top: 2px;
+    margin-right:0px;
+}
+
+div#divEventLabel
+{
+    display:flex;
+    text-align: center;
+    margin-bottom: 4px;
+    padding: 0px;
+}
+
+div#divName
+{
+    display:flex;
+    text-align:left;
+    padding-left:32px;
+}
+
+div#divTextChecks
+{
+    text-align:center;
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:10px;
+}
+
+div#divDialog
+{
+    text-align: center;
+    margin-bottom: 0px;
+    padding: 0px;
+}
+
+div#divFadeChecks
+{
+    text-align:center;
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top: -10px;
+}
+
+div#divChoiceList
+{
+    margin-top: 4px;
+}
+
+div#divSaveEvent
+{
+    text-align:center;
+}
+
+h3.edit_header
+{
+    color: #EEEEEE;
+    background-color: #555566;
+    margin: 0px;
+    text-align:center;
+}
+
+option
+{
+    font-size: 20px;
+    width: 100%;
+    min-width:160px;
+}
+
+label
+{
+    font-size:16px;
+    color:#EEEEEE;
+}
+
+label.big_label
+{
+    font-size: 20px;
+}
+
+input
+{
+    font-size: 16px;
+    min-width: 256px;
+}
+
+input.short
+{
+    font-size: 18px;
+    min-width: 64px;
+    width: 64px;
+}
+
+input.choice_text
+{
+    font-size: 18px;
+    min-width: 160px;
+    width: 160px;
+}
+
+input.checkbox
+{
+    width:24px;
+    height:24px;
+    margin-bottom: 4px;
+    margin-left: -105px;
+    margin-right: -80px;
+}
+
+p.choice_idx
+{
+    text-align: center;
+    font-size: 20px;
+    color:#EEEEFF;
+    margin: 0px;
+    padding: 0px;
+    border:2px solid #EEEEEE;
+    border-radius: 4px;
+    background-color: #666688;
+    width: 28px;
+    margin-left: 8px;
+    margin-right: 4px;
+}
+p#idx
+{
+    text-align: center;
+    font-size: 32px;
+    color:#EEEEFF;
+    margin: 0px;
+    padding: 0px;
+    border:2px solid #EEEEEE;
+    border-radius: 4px;
+    background-color: #666688;
+    width: 40px;
+    margin-left: 8px;
+    margin-right: 4px;
+}
+
+input.file_input
+{
+    font-size: 22px;
+    color: #EEEEEE;
+    background-color: #444488;
+}
+
+input#event_label
+{
+    font-size: 24px;
+    width: 100%;
+    text-align: center;
+    margin-right: 8px;
+}
+
+input#dialog_name
+{
+    font-size: 20px;
+    font-weight: 550;
+    color:#EEEEFF;
+    min-width: 250px;
+    margin-top: 4px;
+    margin-right: 10px;
+    padding:8px;
+    border:4px solid #EEEEEE;
+    border-radius: 12px;
+    background:#44AAEE;
+}
+
+textarea#dialog
+{
+    font-size: 24px;
+    color:#EEEEFF;
+    min-width: 585px;
+    margin-top: 8px;
+    padding:8px;
+    border:4px solid #EEEEEE;
+    border-radius: 16px;
+    background:#0033AA;
+}
+
+button.file_button
+{
+    color :#EEEEEE;
+    background-color: #333344;
+    font-size: 22px;
+    margin-left: 4px;
+    margin-right: 4px;
+    border-radius: 6px;
+}
+
+button.event_manage
+{
+    color: #EEEEEE;
+    font-size: 18px;
+    font-weight: 600;
+    margin-right: 8px;
+    margin-left: 2px;
+    margin-top: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: #448833;
+    border-radius: 4px;
+    width: 100%;
+}
+
+button.saved
+{
+    color: #777766;
+    font-size: 24px;
+    font-weight: 600;
+    background-color: #888899;
+    border-radius: 4px;
+    padding: 8px;
+    width:100%;
+}
+
+button.unsaved
+{
+    color: #EEEEEE;
+    font-size: 24px;
+    font-weight: 800;
+    background-color: #448833;
+    border-radius: 4px;
+    padding: 8px;
+    width:100%;
+}
+
+button#save_file
+{
+    color :#EEEEEE;
+    background-color: #448833;
+    font-size: 24px;
+    font-weight: 800;
+    margin-left: 4px;
+    margin-right: 4px;
+    border-radius: 6px;
+}
+
+button#remove_event
+{
+    background-color: #884433;
+}
+
+/* mobile css */
+@media screen and (max-width: 1480px)
+{
+  div#divTopButtons
+  {
+    display: inline-block;
+    float: none;
+    max-width: 960px;
+    text-align: center;
+    width: 100%;
+  }
+
+  div#divCanvas
+  {
+    display: inline-block;
+    margin: auto;
+    padding: 0px;
+    text-align: center;
+    width: 100%;
+  }
+}
