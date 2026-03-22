@@ -15,6 +15,9 @@ var EVENTS = (function () {
     var m_file_name;
     var m_events_data;
     var m_story_name = "";
+    var m_title_data;
+    var m_chapter_list = {};
+    var m_current_chapter = "0";
     var m_event_list = {};
     var m_event_idx = 0;
 
@@ -23,7 +26,7 @@ var EVENTS = (function () {
     // --------------------------------
     events.NewEventFile = function()
     {
-        EVENTS.SetEventsData({"events":{"0":{}}});
+        EVENTS.SetEventsData({"chapters": {"0":{ "events": {"0":{} } } } });
     };
 
     // --------------------------------
@@ -49,23 +52,30 @@ var EVENTS = (function () {
     events.SetEventsData = function(data)
     {
         m_events_data = data;
-        if (m_events_data != null && "events" in m_events_data)
+        if (m_events_data != null && "chapters" in m_events_data)
         {
-            m_event_list = m_events_data.events;
+            m_chapter_list = m_events_data.chapters;
+            EVENTS.SetChapter(m_current_chapter);
             LoadComplete();
             if (InEditMode()) { EDIT.EditFile(); }
-            else              { EVENTS.ParseNextEvent(); }
+            else              { EVENTS.ShowTitle(); }
         }
     };
 
     events.GetFileName = function() { return m_file_name; };
 
-    events.GetEventsData = function() { return m_events_data; };
-    events.GetEventsList = function() { return m_event_list; };
-    events.GetEventByID = function(idx) { return m_event_list[idx]; }
+    events.GetEventsData     = function()        { return m_events_data; };
+    events.GetChapters       = function()        { return m_chapter_list; };
+    events.GetCurrentChapter = function()        { return m_current_chapter; };
+    events.GetChapterName    = function()        { return (m_chapter_list[m_current_chapter] != null) ? m_chapter_list[m_current_chapter]["label"] : ""; };
+    events.SetChapterName    = function(strName) { if (m_chapter_list[m_current_chapter] != null) { m_chapter_list[m_current_chapter]["label"] = strName; } };
+    events.GetEventsList     = function()        { return m_event_list; };
+    events.GetEventByID      = function(idx)     { return m_event_list[idx]; }
 
     events.GetStoryName = function()        { return (m_events_data != null) ? m_events_data.story_name : ""; }
     events.SetStoryName = function(strName) { m_events_data.story_name = strName; };
+    events.GetTitleScreen = function()          { return (m_events_data != null && m_events_data.title_data != null) ? m_events_data.title_data.title_screen : ""; };
+    events.SetTitleScreen = function(strURL)    { m_events_data.title_data = {"title_screen":strURL}; };
 
     // ----------------
     // SetNextEventIdx
@@ -83,6 +93,11 @@ var EVENTS = (function () {
         {
             var next_event = m_event_list[m_event_idx]
             if (next_event == null) { return; }
+
+            if ("chapter" in next_event)
+            {
+                EVENTS.SetChapter(next_event.chapter);
+            }
 
             if ("next" in next_event)
             {
@@ -117,9 +132,45 @@ var EVENTS = (function () {
         }
     };
 
-    // ----------------
+    // --------------------------------
+    // SetChapter
+    // --------------------------------
+    events.SetChapter = function(idx)
+    {
+        var strKey = idx.toString();
+        if (m_chapter_list != null && m_chapter_list[strKey] != null)
+        {
+            m_current_chapter = strKey;
+            var chapter = m_chapter_list[m_current_chapter];
+            if (chapter != null) { m_event_list = chapter.events; }
+        }
+    };
+
+    // --------------------------------
+    // ShowTitle
+    // --------------------------------
+    events.ShowTitle = function()
+    {
+        var title_data = (m_events_data != null) ? m_events_data["title_data"] : null;
+        if (title_data != null)
+        {
+            RENDER.SetFade(0.0);
+            if (title_data.title_screen != null) { RENDER.SetBackground(title_data.title_screen); }
+            m_event_list["-1"] = { "fadeout":true, "next":0 };
+            // if we have save data use that to populate iCheckpoint
+            iCheckpoint = -1;
+            var arrTitleData = [ {"text":"New Game", "target":-1}, {"text":"Load Game", "target":iCheckpoint } ];
+            DIALOG.SetText("", "", false, false, arrTitleData);
+        }
+        else
+        {
+            EVENTS.ParseNextEvent();
+        }
+    };
+
+    // --------------------------------
     // AutoAdvance
-    // ----------------
+    // --------------------------------
     events.AutoAdvance = async function(wait_time)
     {
         const x = await EVENTS.WaitOneSec(wait_time);
@@ -134,12 +185,29 @@ var EVENTS = (function () {
         return new Promise((resolve) => { setTimeout(() => { resolve(); }, wait_time); });
     };
 
-    // --------
+    // ----------------------------------------------------------------
     // Editing functions
-    //--------
+    // ----------------------------------------------------------------
+    // AddChapter
+    // --------------------------------
+    events.AddChapter = function(idx)
+    {
+        if (m_chapter_list != null)
+        {
+            if (idx in m_chapter_list == false)
+            {
+                m_chapter_list[idx] = { "events": {"0":{ "next":1 } } };
+            }
+        }
+    };
+
+    // --------------------------------
+    // AddEvent
+    // --------------------------------
     events.AddEvent = function(idx)
     {
-        m_event_list[idx] = {"next":(idx+1)};
+        if (m_event_list != null && idx >= 0 && idx in m_event_list == false)
+        { m_event_list[idx] = {"next":(idx+1)}; }
     };
 
     // --------------------------------
@@ -175,6 +243,42 @@ var EVENTS = (function () {
             } // end for loop
             // now insert one at the index
             m_event_list[iNewIdx.toString()] = {};
+            return true;
+        }
+
+        return false;
+    };
+
+    // --------------------------------
+    // SaveCurrentChapter
+    // --------------------------------
+    events.SaveCurrentChapter = function()
+    {
+        m_chapter_list[m_current_chapter] = m_event_list;
+    };
+
+    // --------------------------------
+    // RemoveCurrentChapter
+    // --------------------------------
+    events.RemoveCurrentChapter = function()
+    {
+        if (m_chapter_list != null)
+        {
+            delete m_chapter_list[m_current_chapter];
+            var list_copy = Object.assign({}, m_chapter_list);
+            var idx;
+            var iRemoveIdx = parseInt(m_current_chapter, 10);
+            var iLargestIdx = 0;
+            for (let [key, item] of Object.entries(list_copy))
+            {
+                idx = parseInt(key, 10);
+                if (idx > iLargestIdx) { iLargestIdx = idx; }
+                if (idx > iRemoveIdx)
+                {
+                    m_chapter_list[(idx - 1).toString()] = item;
+                }
+            } // end for loop
+            delete m_chapter_list[iLargestIdx.toString()];
             return true;
         }
 

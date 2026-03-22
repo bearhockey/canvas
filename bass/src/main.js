@@ -3,7 +3,7 @@ const CANVAS_WIDTH = 1170;
 const CANVAS_HEIGHT = 540;
 const PREVIEW_WIDTH = 585;
 const PREVIEW_HEIGHT = 270;
-
+const LOGO_URL = "./res/logo_screen.png";
 
 var m_bEditMode = false;
 
@@ -19,6 +19,7 @@ var myGameArea =
         this.canvas.addEventListener('mousemove', MOUSE.Move);
         this.canvas.addEventListener('click', MOUSE.LeftClick);
         // this.canvas.addEventListener('contextmenu', MOUSE.RightClick);
+        RENDER.DrawImage(LOGO_URL);
     },
     clear : function(strFill=null)
     {
@@ -100,7 +101,7 @@ function LoadComplete()
     }
     if (s_file_div != null)
     {
-        s_file_div.style.display = 'inline';
+        s_file_div.style.display = 'block';
     }
     if (s_edit_div != null)
     {

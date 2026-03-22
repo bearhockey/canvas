@@ -27,15 +27,16 @@ div#divCanvas
 
 /* editor specific */
 div.divFlex { display:flex; margin-bottom:-20px; padding:0px; text-align: center; }
+div.divFlexTop { display:flex; margin-bottom: 8px; }
 div.divInnerFlex { margin-left: 8px; margin-right: 8px; }
 div.divChoiceItem { display:flex; margin:0px; }
 
-div#divFile
+div.divTopButtons
 {
     width:100%;
     background-color: #222256;
     display:none;
-    padding: 16px;
+    padding: 8px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -67,7 +68,7 @@ div#divEditRight
 {
     padding: 4px;
     text-align: center;
-    min-width:200px;
+    min-width:256px;
 }
 
 div#divList
@@ -75,15 +76,6 @@ div#divList
     margin: auto;
     text-align: left;
     width: 100%;
-}
-
-select#eventList
-{
-    padding: 2px;
-    min-width: 150px;
-    width:100%;
-    margin-top: 2px;
-    margin-right:0px;
 }
 
 div#divEventLabel
@@ -160,6 +152,7 @@ label
 label.big_label
 {
     font-size: 20px;
+    margin-top: 4px;
 }
 
 input
@@ -205,6 +198,25 @@ p.choice_idx
     margin-left: 8px;
     margin-right: 4px;
 }
+
+select#chapterList
+{
+    font-size: 20px;
+    padding: 2px;
+    min-width: 150px;
+    width:100%;
+    margin-top: 2px;
+    margin-right:0px;
+}
+select#eventList
+{
+    padding: 2px;
+    min-width: 150px;
+    width:100%;
+    margin-top: 2px;
+    margin-right:0px;
+}
+
 p#idx
 {
     text-align: center;
@@ -225,6 +237,7 @@ input.file_input
     font-size: 22px;
     color: #EEEEEE;
     background-color: #444488;
+    margin-right: 8px;
 }
 
 input#event_label
@@ -274,15 +287,15 @@ button.file_button
 button.event_manage
 {
     color: #EEEEEE;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     margin-right: 8px;
     margin-left: 2px;
     margin-top: 2px;
     padding-left: 4px;
     padding-right: 4px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
     background-color: #448833;
     border-radius: 4px;
     width: 100%;
@@ -321,23 +334,12 @@ button#save_file
     border-radius: 6px;
 }
 
-button#remove_event
-{
-    background-color: #884433;
-}
+button#delete_chapter { background-color: #884433; }
+button#remove_event   { background-color: #884433; }
 
 /* mobile css */
 @media screen and (max-width: 1480px)
 {
-  div#divTopButtons
-  {
-    display: inline-block;
-    float: none;
-    max-width: 960px;
-    text-align: center;
-    width: 100%;
-  }
-
   div#divCanvas
   {
     display: inline-block;

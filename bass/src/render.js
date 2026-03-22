@@ -2,6 +2,8 @@ var RENDER = (function () {
     // consts
     const FADE_DELTA = 0.05;
     // private vars
+    var m_adhoc_image;
+
     var m_background;
     var m_bBackgroundLoaded = false;
 
@@ -9,6 +11,8 @@ var RENDER = (function () {
     var m_fForegroundAlpha = 1.0;
     var m_fForegroundAlphaTarget = 1.0;
     var m_bForegroundLoaded = false;
+    var m_fForegroundWidth;
+    var m_fForegroundHeight;
 
     var m_effects;
     var m_fEffectsAlpha = 1.0;
@@ -24,9 +28,9 @@ var RENDER = (function () {
     // main
     var r = {};
 
-    // ----------------
+    // --------------------------------
     // EnableShadow
-    // ----------------
+    // --------------------------------
     r.EnableShadow = function()
     {
         var ctx = GetCanvas();
@@ -61,9 +65,12 @@ var RENDER = (function () {
     {
         m_bBackgroundLoaded = false;
         m_background = null;
-        m_background = new Image();
-        m_background.onload = function () { m_bBackgroundLoaded = true; RENDER.CheckPreview(); };
-        m_background.src = strURL;
+        if (strURL != "clear")
+        {
+            m_background = new Image();
+            m_background.onload = function () { m_bBackgroundLoaded = true; RENDER.CheckPreview(); };
+            m_background.src = strURL;
+        }
     };
 
     // --------------------------------
@@ -76,7 +83,14 @@ var RENDER = (function () {
         m_fForegroundAlpha = 0.0;
         m_fForegroundAlphaTarget = 1.0;
         m_foreground = new Image();
-        m_foreground.onload = function () { m_bForegroundLoaded = true; RENDER.CheckPreview(); };
+        m_foreground.onload = function ()
+        {
+            m_fForegroundWidth = this.naturalWidth;
+            m_fForegroundHeight = this.naturalHeight;
+            m_bForegroundLoaded = true;
+            RENDER.CheckPreview();
+        };
+
         m_foreground.src = strURL;
     };
 
@@ -143,8 +157,10 @@ var RENDER = (function () {
             }
             else
             {
+                let x_pos = GetCanvasWidth()/2 - m_fForegroundWidth/2;
+                let y_pos = GetCanvasHeight() - m_fForegroundHeight;
                 ctx.globalAlpha = m_fForegroundAlpha;
-                ctx.drawImage(m_foreground, 0, 0);
+                ctx.drawImage(m_foreground, x_pos, y_pos);
                 ctx.globalAlpha = 1.0; // reset alpha
             }
         }
@@ -211,11 +227,30 @@ var RENDER = (function () {
     r.CheckPreview = function()
     {
         if (InEditMode()) { RENDER.Render(); }
-    }
+    };
 
-    // ----------------
+    // --------------------------------
+    // DrawImage
+    //     Draws a single image outside of the render loop
+    // --------------------------------
+    r.DrawImage = function(strURL)
+    {
+        m_adhoc_image = new Image();
+        m_adhoc_image.onload = function ()
+        {
+             var ctx = GetCanvas();
+             if (ctx != null)
+             {
+                myGameArea.clear();
+                ctx.drawImage(m_adhoc_image, 0, 0, GetCanvasWidth(), GetCanvasHeight());
+             }
+        };
+        m_adhoc_image.src = strURL;
+    };
+
+    // --------------------------------
     // Render
-    // ----------------
+    // --------------------------------
     r.Render = function()
     {
         var ctx = GetCanvas();

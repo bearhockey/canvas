@@ -22,7 +22,8 @@ var DIALOG = (function () {
     const BUTTON_SPACING = 16;
     const BUTTON_WIDTH = 128;
     const BUTTON_HEIGHT = 64;
-    const BUTTON_Y_POSITION = 308;
+    const BUTTON_Y_WITH_DIALOG = 308;
+    const BUTTON_Y_NO_DIALOG = 468;
     // private vars
     var m_strDialog = "";
     var m_strName = "";
@@ -77,6 +78,7 @@ var DIALOG = (function () {
         {
             var iLength = m_arrChoiceData.length;
             var iStartingX = GetCanvasWidth()/2 - ( (BUTTON_WIDTH - BUTTON_SPACING) * (iLength/2));
+            var iYposition = (m_strDialog != "") ? BUTTON_Y_WITH_DIALOG : BUTTON_Y_NO_DIALOG;
             for (var idx = 0; idx < iLength; ++idx)
             {
                 var button_choice = m_arrChoices[idx];
@@ -84,7 +86,7 @@ var DIALOG = (function () {
                 if (button_choice != null && objChoice != null)
                 {
                     button_choice.SetLabel(objChoice.text);
-                    button_choice.SetPosition(iStartingX, BUTTON_Y_POSITION);
+                    button_choice.SetPosition(iStartingX, iYposition);
                     iStartingX += (BUTTON_WIDTH + BUTTON_SPACING);
                 }
             }
@@ -117,7 +119,7 @@ var DIALOG = (function () {
     d.DrawBox = function(arrBounds, box_gradient)
     {
         var ctx = GetCanvas();
-        if (ctx != null && arrBounds.length > 3)
+        if (ctx != null && arrBounds.length > 3 && m_strDialog != "")
         {
             ctx.fillStyle = box_gradient;
             ctx.fillRect(arrBounds[0], arrBounds[1], arrBounds[2], arrBounds[3]);

@@ -5,9 +5,8 @@ var EDIT = (function () {
     var edit = {};
 
     var s_story_name;
+    var s_title_screen;
     var s_export_file;
-
-    var s_event_list;
 
     var s_idx_label;
     var s_label_edit;
@@ -24,18 +23,33 @@ var EDIT = (function () {
     var s_fade_out;
     var s_wait_time;
 
-
     var s_choice_div_a;
     var s_choice_div_b;
     var s_choice_div_c;
     var s_choice_div_d;
     var m_arrChoices;
-
     var s_save_event;
+
+    var s_chapter_list;
+    var s_event_list;
 
     var m_iChoices = 0;
 
     var m_bPendingEventChange = false;
+
+    // --------------------------------
+    // AddChapter
+    // --------------------------------
+    edit.AddChapter = function()
+    {
+        if (s_chapter_list != null)
+        {
+            var count = s_chapter_list.options.length;
+            EVENTS.AddChapter(count);
+            EDIT.EditFile();
+            s_chapter_list.selectedIndex = parseInt(count, 10);
+        }
+    };
 
     // --------------------------------
     // AddEvent
@@ -46,7 +60,38 @@ var EDIT = (function () {
         {
             var count = s_event_list.options.length;
             EVENTS.AddEvent(count);
-            EDIT.EditFile();
+            EDIT.GetEvents(); // reload side bar
+        }
+    };
+
+    // --------------------------------
+    // ChangeChapter
+    // --------------------------------
+    edit.ChangeChapter = function()
+    {
+        if (s_chapter_list != null)
+        {
+            s_event_list.selectedIndex = 0;
+            var idx = s_chapter_list.selectedIndex;
+            EVENTS.SetChapter(idx);
+            EDIT.GetEvents();
+        }
+    };
+
+    // --------------------------------
+    // DeleteChapter
+    // --------------------------------
+    edit.DeleteChapter = function()
+    {
+        let bConfirm = window.confirm("Are you sure you want to delete the chapter and all events within it?");
+        if (bConfirm)
+        {
+            var idx = s_chapter_list.selectedIndex;
+            if (idx > 0) { idx -= 1; }
+            EVENTS.RemoveCurrentChapter();
+            EVENTS.SetChapter(idx);
+            EDIT.GetChapters(idx);
+            EDIT.GetEvents();
         }
     };
 
@@ -122,22 +167,18 @@ var EDIT = (function () {
         {
             s_story_name.value = EVENTS.GetStoryName();
         }
+        if (s_title_screen != null && EVENTS.GetTitleScreen() != null)
+        {
+            s_title_screen.value = EVENTS.GetTitleScreen();
+            EDIT.PreviewTitle();
+        }
         if (s_export_file != null && EVENTS.GetFileName() != null)
         {
             s_export_file.value = EVENTS.GetFileName();
         }
 
-        if (s_event_list != null)
-        {
-            s_event_list.options.length = 0;
-            var events = EVENTS.GetEventsList();
-            var strLabel = "";
-            for (let [key, item] of Object.entries(events))
-            {
-                strLabel = "[" + key + "] " + (events[key]["label"] != null ? events[key]["label"] : "Event: " + key);
-                s_event_list.add(new Option(strLabel, key, false, false));
-            }
-        }
+        EDIT.GetChapters();
+        EDIT.GetEvents();
     };
 
     // --------------------------------
@@ -163,8 +204,48 @@ var EDIT = (function () {
             var bSuccess = EVENTS.InsertEvent(idx);
             if (bSuccess == true)
             {
-                EDIT.EditFile();
+                EDIT.GetEvents(); // reload side bar
             }
+        }
+    };
+
+    // --------------------------------
+    // GetChapters
+    // --------------------------------
+    edit.GetChapters = function(idx = 0)
+    {
+        var strLabel = "";
+        if (s_chapter_list != null)
+        {
+            s_chapter_list.options.length = 0;
+            var chapters = EVENTS.GetChapters();
+            for (let [key, item] of Object.entries(chapters))
+            {
+                strLabel = "[" + key + "] " + (chapters[key]["label"] != null ? chapters[key]["label"] : "CHAPTER: " + key);
+                s_chapter_list.add(new Option(strLabel, key, false, false));
+            }
+
+            if (s_chapter_list.options.length > idx) { s_chapter_list.selectedIndex = idx; }
+        }
+    };
+
+    // --------------------------------
+    // GetEvents
+    //     Gets a new events list based on the chapter selected
+    // --------------------------------
+    edit.GetEvents = function()
+    {
+        if (s_event_list != null)
+        {
+            var strLabel;
+            s_event_list.options.length = 0;
+            var events = EVENTS.GetEventsList();
+            for (let [key, item] of Object.entries(events))
+            {
+                strLabel = "[" + key + "] " + (events[key]["label"] != null ? events[key]["label"] : "Event: " + key);
+                s_event_list.add(new Option(strLabel, key, false, false));
+            }
+            s_event_list.selectedIndex = 0;
         }
     };
 
@@ -182,8 +263,8 @@ var EDIT = (function () {
     edit.Populate = function()
     {
         s_story_name = document.getElementById('story_name');
+        s_title_screen = document.getElementById('title_screen');
         s_export_file = document.getElementById('file_name');
-        s_event_list = document.getElementById('eventList');
 
         s_idx_label = document.getElementById('idx');
         s_label_edit = document.getElementById('event_label');
@@ -207,6 +288,20 @@ var EDIT = (function () {
         m_arrChoices = [s_choice_a, s_choice_b, s_choice_c, s_choice_d];
 
         s_save_event = document.getElementById('save_event');
+
+        s_chapter_list = document.getElementById('chapterList');
+        s_event_list = document.getElementById('eventList');
+    };
+
+    // --------------------------------
+    // PreviewTitle
+    // --------------------------------
+    edit.PreviewTitle = function()
+    {
+        if (s_title_screen != null && s_title_screen.value != "")
+        {
+            RENDER.SetBackground(s_title_screen.value);
+        }
     };
 
     // --------------------------------
@@ -238,7 +333,7 @@ var EDIT = (function () {
     {
         if (s_effects_scene != null && s_effects_scene.value != "")
         {
-            RENDER.SetBackground(s_foreground_scene.value);
+            RENDER.SetEffects(s_foreground_scene.value);
         }
     }
 
@@ -253,8 +348,22 @@ var EDIT = (function () {
             var bSuccess = EVENTS.RemoveEvent(idx);
             if (bSuccess == true)
             {
-                EDIT.EditFile();
+                EDIT.GetEvents(); // reload side bar
             }
+        }
+    };
+
+    // --------------------------------
+    // RenameChapter
+    // --------------------------------
+    edit.RenameChapter = function()
+    {
+        let chapter_name = prompt("Chapter Name:", "");
+        if (chapter_name != "")
+        {
+            let current_chapter_key = EVENTS.GetCurrentChapter();
+            EVENTS.SetChapterName(chapter_name);
+            EDIT.GetChapters(current_chapter_key);
         }
     };
 
@@ -322,7 +431,7 @@ var EDIT = (function () {
             }
 
             EVENTS.SaveEvent(idx, objSaveData);
-            EDIT.EditFile(); // reload side bar
+            EDIT.GetEvents(); // reload side bar
 
             m_bPendingEventChange = false;
             if (s_save_event != null) { s_save_event.className = "saved"; }
@@ -334,10 +443,8 @@ var EDIT = (function () {
     // --------------------------------
     edit.SaveFile = function()
     {
-        if (s_story_name != null && s_story_name.value != "")
-        {
-            EVENTS.SetStoryName(s_story_name.value);
-        }
+        if (s_story_name != null && s_story_name.value != "") { EVENTS.SetStoryName(s_story_name.value); }
+        if (s_title_screen != null && s_title_screen.value != "") { EVENTS.SetTitleScreen(s_title_screen.value); }
 
         var data = EVENTS.GetEventsData();
         var jsonData = JSON.stringify(data);

@@ -22,20 +22,30 @@
     <button type="button" class="file_button" onclick="EDIT.NewFile();">NEW STORY</button>
     <button type="button" class="file_button" onclick="LoadFile();">LOAD STORY</button><input type="text" class="big_input" id="load_file"/>
 </div>
-<div id="divFile">
-    <label class="big_label" for="story_name">Story Name: </label><input type="text" class="file_input" id="story_name" name="story_name" placeholder="<Story Name>" onchange="EDIT.FieldChanged();" />
-    <label class="big_label" for="file_name">File Name: </label><input type="text" class="file_input" id="file_name" name="file_name" placeholder="new_story.json" onchange="EDIT.FieldChanged();" />
-    <button type="button" id="save_file" name="save_file" onclick="EDIT.SaveFile();">SAVE FILE</button>
+<div class="divTopButtons" id="divFile">
+    <div class="divFlexTop">
+        <label class="big_label" for="story_name">Story Name: </label><input type="text" class="file_input" id="story_name" name="story_name" placeholder="<Story Name>" />
+        <label class="big_label" for="file_name">File Name: </label><input type="text" class="file_input" id="file_name" name="file_name" placeholder="new_story.json"  />
+        <button type="button" id="save_file" name="save_file" onclick="EDIT.SaveFile();">SAVE FILE</button>
+    </div>
+    <div class="divFlexTop">
+        <label class="big_label" for="title_screen">Title Screen: </label><input type="text" class="file_input" id="title_screen" name="title_screen" placeholder="<title url>" />
+        <button type="button" id="preview_title" name="preview_title" onclick="EDIT.PreviewTitle();">Preview</button>
+    </div>
 </div>
 <div id="divEdit">
     <div id="divEditLeft">
         <div class="divFlex">
             <div class="divInnerFlex">
-                <label for="next">Next Event:</label>
+                <label for="chapter">Next Chapter</label><br>
+                <input type="number" class="short" id="chapter" name="chapter" placeholder="-1" onchange="EDIT.FieldChanged();" />
+            </div>
+            <div class="divInnerFlex">
+                <label for="next">Next Event</label><br>
                 <input type="number" class="short" id="next" name="next" placeholder="0" onchange="EDIT.FieldChanged();" />
             </div>
             <div class="divInnerFlex">
-                <label for="wait_time">Wait Time:</label>
+                <label for="wait_time">Wait Time</label><br>
                 <input type="number" class="short" id="wait_time" name="wait_time" placeholder="1000" onchange="EDIT.FieldChanged();"/>
             </div>
         </div>
@@ -107,10 +117,17 @@
       <div id="divDialog"><textarea id="dialog" name="dialog" rows="5" placeholder="DIALOG TEXT" onchange="EDIT.FieldChanged();"></textarea></div>
   </div>
   <div id="divEditRight">
-      <div id="divList">
-          <select name="eventList", id="eventList" size=15 onchange="EDIT.EditEvent();" onfocus="this.selectedIndex=-1;"></select>
-      </div>
+      <button type="button" class="event_manage" id="add_chapter" nam="add_chapter" onclick="EDIT.AddChapter();">ADD CHAPTER</button>
+      <br>
+      <button type="button" class="event_manage" id="rename_chapter" nam="rename_chapter" onclick="EDIT.RenameChapter();">RENAME CHAPTER</button>
+      <br>
+      <button type="button" class="event_manage" id="delete_chapter" nam="delete_chapter" onclick="EDIT.DeleteChapter();">DELETE CHAPTER</button>
+      <br>
+      <select id="chapterList" id="chapterList" onchange="EDIT.ChangeChapter();"></select>
       <hr>
+      <div id="divList">
+          <select name="eventList" id="eventList" size=10 onchange="EDIT.EditEvent();" onfocus="this.selectedIndex=-1;"></select>
+      </div>
       <button type="button" class="event_manage" id="add_event" nam="add_event" onclick="EDIT.AddEvent();">ADD EVENT TO END</button>
       <br>
       <button type="button" class="event_manage" id="insert_event" nam="insert_event" onclick="EDIT.InsertEvent();">INSERT EVENT</button>
