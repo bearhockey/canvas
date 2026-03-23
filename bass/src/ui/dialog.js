@@ -58,9 +58,9 @@ var DIALOG = (function () {
         }
     };
 
-    // ----------------
+    // --------------------------------
     // SetText
-    // ----------------
+    // --------------------------------
     d.SetText = function(strText, strName="", bUseItalics=false, bUseBold=false, arrChoice=null)
     {
         m_strDialog = strText;
@@ -91,7 +91,22 @@ var DIALOG = (function () {
                 }
             }
         }
-    }
+    };
+
+    // --------------------------------
+    // ClearText
+    // --------------------------------
+    d.ClearText = function()
+    {
+        m_strDialog = "";
+        m_strName = "";
+        m_bItalics = false;
+        m_bBold = false;
+        m_arrChoiceData = [];
+        m_iTextIdx = 0;
+        m_bDialogShowing = false;
+        m_bDialogDone = true;
+    };
 
     // ----------------
     // DrawDialog

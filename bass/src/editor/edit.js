@@ -15,13 +15,17 @@ var EDIT = (function () {
     var s_bold;
     var s_dialog_edit;
 
+    var s_next_chapter;
     var s_next_event;
+    var s_wait_time;
     var s_background_scene;
+    var s_background_clear;
     var s_foreground_scene;
+    var s_foreground_clear;
     var s_effects_scene;
+    var s_effects_clear;
     var s_fade_in;
     var s_fade_out;
-    var s_wait_time;
 
     var s_choice_div_a;
     var s_choice_div_b;
@@ -114,14 +118,20 @@ var EDIT = (function () {
                 if (s_bold != null)        { s_bold.checked = ev["bold"] != null ? ev["bold"] : false; }
                 if (s_dialog_edit != null) { s_dialog_edit.value = ev["dialog"] != null ? ev["dialog"] : ""; }
                 // left side panel
+                if (s_next_chapter != null)     { s_next_chapter.value = ev["chapter"] != null ? ev["chapter"] : ""; }
                 if (s_next_event != null)       { s_next_event.value = ev["next"] != null ? ev["next"] : ""; }
                 if (s_wait_time != null)        { s_wait_time.value = ev["wait"] != null ? ev["wait"] : ""; }
+
                 if (s_background_scene != null) { s_background_scene.value = ev["background"] != null ? ev["background"] : ""; }
+                if (s_background_clear != null) { s_background_clear.checked = ev["background_clear"] != null ? ev["background_clear"] : false; }
                 EDIT.PreviewBackground();
                 if (s_foreground_scene != null) { s_foreground_scene.value = ev["foreground"] != null ? ev["foreground"] : ""; }
+                if (s_foreground_clear != null) { s_foreground_clear.checked = ev["foreground_clear"] != null ? ev["foreground_clear"] : false; }
                 EDIT.PreviewForeground();
                 if (s_effects_scene != null) { s_effects_scene.value = ev["effects"] != null ? ev["effects"] : ""; }
+                if (s_effects_clear != null) { s_effects_clear.checked = ev["effects_clear"] != null ? ev["effects_clear"] : false; }
                 EDIT.PreviewEffects();
+
                 if (s_fade_in != null)          { s_fade_in.checked = ev["fadein"] != null ? ev["fadein"] : false; }
                 if (s_fade_out != null)         { s_fade_out.checked = ev["fadeout"] != null ? ev["fadeout"] : false; }
                 // choice panel
@@ -273,11 +283,15 @@ var EDIT = (function () {
         s_bold = document.getElementById('bold');
         s_dialog_edit = document.getElementById('dialog');
 
+        s_next_chapter = document.getElementById('chapter');
         s_next_event = document.getElementById('next');
         s_wait_time = document.getElementById('wait_time');
         s_background_scene = document.getElementById('background');
+        s_background_clear = document.getElementById('clear_background');
         s_foreground_scene = document.getElementById('foreground');
+        s_foreground_clear = document.getElementById('clear_foreground');
         s_effects_scene = document.getElementById('effects');
+        s_effects_clear = document.getElementById('clear_effects');
         s_fade_in = document.getElementById('fadein');
         s_fade_out = document.getElementById('fadeout');
 
@@ -300,6 +314,8 @@ var EDIT = (function () {
     {
         if (s_title_screen != null && s_title_screen.value != "")
         {
+            RENDER.ClearForeground(false); // skip redraw since it will redraw when we set the background
+            RENDER.ClearEffects(false);
             RENDER.SetBackground(s_title_screen.value);
         }
     };
@@ -309,10 +325,8 @@ var EDIT = (function () {
     // --------------------------------
     edit.PreviewBackground = function()
     {
-        if (s_background_scene != null && s_background_scene.value != "")
-        {
-            RENDER.SetBackground(s_background_scene.value);
-        }
+        if (s_background_clear != null && s_background_clear.checked)           { RENDER.ClearBackground(); }
+        else if (s_background_scene != null && s_background_scene.value != "")  { RENDER.SetBackground(s_background_scene.value); }
     };
 
     // --------------------------------
@@ -320,10 +334,8 @@ var EDIT = (function () {
     // --------------------------------
     edit.PreviewForeground = function()
     {
-        if (s_foreground_scene != null && s_foreground_scene.value != "")
-        {
-            RENDER.SetForeground(s_foreground_scene.value);
-        }
+        if (s_foreground_clear != null && s_foreground_clear.checked)           { RENDER.ClearForeground(); }
+        else if (s_foreground_scene != null && s_foreground_scene.value != "")  { RENDER.SetForeground(s_foreground_scene.value); }
     }
 
     // --------------------------------
@@ -331,10 +343,8 @@ var EDIT = (function () {
     // --------------------------------
     edit.PreviewEffects = function()
     {
-        if (s_effects_scene != null && s_effects_scene.value != "")
-        {
-            RENDER.SetEffects(s_foreground_scene.value);
-        }
+        if (s_effects_clear != null && s_effects_clear.checked)           { RENDER.ClearEffects(); }
+        else if (s_effects_scene != null && s_effects_scene.value != "")  { RENDER.SetEffects(s_foreground_scene.value); }
     }
 
     // --------------------------------
@@ -416,10 +426,15 @@ var EDIT = (function () {
             if (s_bold != null && s_bold.checked) { objSaveData.bold = true; }
             if (s_dialog_edit != null && s_dialog_edit.value != "") { objSaveData.dialog = s_dialog_edit.value; }
 
+            if (s_next_chapter != null && s_next_chapter.value != "") { objSaveData.chapter = s_next_chapter.value; }
             if (s_next_event != null && s_next_event.value != "") { objSaveData.next = s_next_event.value; }
             if (s_wait_time != null && s_wait_time.value != "") { objSaveData.wait = s_wait_time.value; }
             if (s_background_scene != null && s_background_scene.value != "") { objSaveData.background = s_background_scene.value; }
+            if (s_background_clear != null && s_background_clear.checked) { objSaveData.background_clear = true; }
             if (s_foreground_scene != null && s_foreground_scene.value != "") { objSaveData.foreground = s_foreground_scene.value; }
+            if (s_foreground_clear != null && s_foreground_clear.checked) { objSaveData.foreground_clear = true; }
+            if (s_effects_scene != null && s_effects_scene.value != "") { objSaveData.effects = s_effects_scene.value; }
+            if (s_effects_clear != null && s_effects_clear.checked) { objSaveData.effects_clear = true; }
 
             if (s_fade_in != null && s_fade_in.checked) { objSaveData.fadein = true; }
             if (s_fade_out != null && s_fade_out.checked) { objSaveData.fadeout = true; }

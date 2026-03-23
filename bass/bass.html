@@ -1,7 +1,6 @@
 <html>
 <head>
 <link rel="stylesheet" href="./css/style.css">
-<link rel="stylesheet" href="./css/ui.css">
 </head>
 <body onload="StartGame()">
 <!-- consts must be imported first -->
@@ -17,10 +16,8 @@
 <script type="text/javascript">
 </script>
 
-<div id="divLoad"><button type="button" class="file_button"  onclick="LoadFile();">LOAD STORY</button><input type="text" id="load_file"/></div>
-<div id="divMain">
-  <div id="divCanvas"></div>
-</div>
+<div id="divLoad" class="center_div"><button type="button" class="file_button" onclick="LoadFile();">LOAD STORY</button><input type="text" id="load_file"/></div>
+<div id="divMain" class="center_div"><div id="divCanvas"></div></div>
 
 </body>
 </html>

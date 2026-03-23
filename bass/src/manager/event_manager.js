@@ -107,15 +107,11 @@ var EVENTS = (function () {
             if (next_event.fadein == true)       { RENDER.SetFade(0.0); }
             else if (next_event.fadeout == true) { RENDER.SetFade(1.0, true); }
 
-            if ("background" in next_event)
-            {
-                RENDER.SetBackground(next_event.background);
-            }
-            if ("foreground" in next_event)
-            {
-                if (next_event.foreground == "clear") { RENDER.ClearForeground(); }
-                else                                  { RENDER.SetForeground(next_event.foreground); }
-            }
+            if (next_event["background_clear"] == true) { RENDER.ClearBackground(); }
+            else if ("background" in next_event)        { RENDER.SetBackground(next_event.background); }
+
+            if (next_event["foreground_clear"] == true) { RENDER.ClearForeground(); }
+            else if ("foreground" in next_event)        { RENDER.SetForeground(next_event.foreground); }
 
             if ("dialog" in next_event)
             {
@@ -123,6 +119,7 @@ var EVENTS = (function () {
             }
             else
             {
+                DIALOG.ClearText();
                 EVENTS.AutoAdvance(next_event.wait);
             }
         }

@@ -63,14 +63,10 @@ var RENDER = (function () {
     // ----------------
     r.SetBackground = function(strURL)
     {
-        m_bBackgroundLoaded = false;
-        m_background = null;
-        if (strURL != "clear")
-        {
-            m_background = new Image();
-            m_background.onload = function () { m_bBackgroundLoaded = true; RENDER.CheckPreview(); };
-            m_background.src = strURL;
-        }
+        RENDER.ClearBackground();
+        m_background = new Image();
+        m_background.onload = function () { m_bBackgroundLoaded = true; RENDER.CheckPreview(); };
+        m_background.src = strURL;
     };
 
     // --------------------------------
@@ -109,11 +105,45 @@ var RENDER = (function () {
     };
 
     // --------------------------------
+    // ClearBackground
+    // --------------------------------
+    r.ClearBackground = function()
+    {
+        m_bBackgroundLoaded = false;
+        m_background = null;
+    };
+
+    // --------------------------------
     // ClearForeground
     // --------------------------------
-    r.ClearForeground = function()
+    r.ClearForeground = function(bRedraw=true)
     {
-        m_fForegroundAlphaTarget = 0.0;
+        if (InEditMode())
+        {
+            m_bForegroundLoaded = false;
+            m_foreground = null;
+            if (bRedraw == true) { RENDER.Render(); }
+        }
+        else
+        {
+            m_fForegroundAlphaTarget = 0.0;
+        }
+    };
+
+    // --------------------------------
+    // ClearEffects
+    // --------------------------------
+    r.ClearEffects = function()
+    {
+        if (InEditMode())
+        {
+            m_bEffectsLoaded = false;
+            m_effects = null;
+        }
+        else
+        {
+            m_fEffectsAlphaTarget = 0.0;
+        }
     };
 
     // --------------------------------
@@ -148,8 +178,11 @@ var RENDER = (function () {
         var ctx = GetCanvas();
         if (ctx != null && m_bForegroundLoaded)
         {
-            if (m_fForegroundAlpha < m_fForegroundAlphaTarget) { m_fForegroundAlpha += FADE_DELTA; }
+            let bInEditMode = InEditMode();
+            if (bInEditMode == true) { m_fForegroundAlpha = m_fForegroundAlphaTarget = 1.0; }
+            else if (m_fForegroundAlpha < m_fForegroundAlphaTarget) { m_fForegroundAlpha += FADE_DELTA; }
             else if (m_fForegroundAlpha > m_fForegroundAlphaTarget) { m_fForegroundAlpha -= FADE_DELTA; }
+
             if (m_fForegroundAlpha <= 0.0 && m_foreground != null)
             {
                 m_foreground = null;
@@ -157,10 +190,12 @@ var RENDER = (function () {
             }
             else
             {
-                let x_pos = GetCanvasWidth()/2 - m_fForegroundWidth/2;
-                let y_pos = GetCanvasHeight() - m_fForegroundHeight;
+                let fAdjustedWidth = (bInEditMode) ? m_fForegroundWidth/2 : m_fForegroundWidth;
+                let fAdjustedHeight = (bInEditMode) ? m_fForegroundHeight/2 : m_fForegroundHeight;
+                let x_pos = GetCanvasWidth()/2 - fAdjustedWidth/2;
+                let y_pos = GetCanvasHeight() - fAdjustedHeight;
                 ctx.globalAlpha = m_fForegroundAlpha;
-                ctx.drawImage(m_foreground, x_pos, y_pos);
+                ctx.drawImage(m_foreground, x_pos, y_pos, fAdjustedWidth, fAdjustedHeight);
                 ctx.globalAlpha = 1.0; // reset alpha
             }
         }

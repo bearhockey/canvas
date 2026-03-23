@@ -1,7 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="./css/style.css">
-<link rel="stylesheet" href="./css/ui.css">
+<link rel="stylesheet" href="./css/edit.css">
 </head>
 <body onload="EditGame()">
 <!-- consts must be imported first -->
@@ -18,7 +18,7 @@
 <script type="text/javascript">
 </script>
 
-<div id="divLoad">
+<div id="divLoad" class="center_div">
     <button type="button" class="file_button" onclick="EDIT.NewFile();">NEW STORY</button>
     <button type="button" class="file_button" onclick="LoadFile();">LOAD STORY</button><input type="text" class="big_input" id="load_file"/>
 </div>
@@ -30,11 +30,12 @@
     </div>
     <div class="divFlexTop">
         <label class="big_label" for="title_screen">Title Screen: </label><input type="text" class="file_input" id="title_screen" name="title_screen" placeholder="<title url>" />
-        <button type="button" id="preview_title" name="preview_title" onclick="EDIT.PreviewTitle();">Preview</button>
+        <button type="button" class="preview" id="preview_title" name="preview_title" onclick="EDIT.PreviewTitle();">Preview</button>
     </div>
 </div>
+
 <div id="divEdit">
-    <div id="divEditLeft">
+    <div id="divEditLeft" class="edit_panel">
         <div class="divFlex">
             <div class="divInnerFlex">
                 <label for="chapter">Next Chapter</label><br>
@@ -50,25 +51,34 @@
             </div>
         </div>
         <br><br>
-        <label for="background">Background:</label><br>
-        <input type="text" id="background" name="background" placeholder="<background url>" onchange="EDIT.FieldChanged();"/>
-        <button type="button" id="preview_background" name="preview_background" onclick="EDIT.PreviewBackground();">Preview</button>
+        <label for="background">Background</label>
+        <label for="clear_background" class="clear_label">Clear:</label>
+        <input type="checkbox" id="clear_background" name="clear_background" onchange="EDIT.FieldChanged();" />
+        <br>
+        <input type="text" class="url" id="background" name="background" placeholder="<background url>" onchange="EDIT.FieldChanged();"/>
+        <button type="button" class="preview" id="preview_background" name="preview_background" onclick="EDIT.PreviewBackground();">Preview</button>
         <br><br>
-        <label for="foreground">Foreground:</label><br>
-        <input type="text", id="foreground" name="foreground" placeholder="<foreground url>" onchange="EDIT.FieldChanged();"/>
-        <button type="button" id="preview_foreground" name="preview_foreground" onclick="EDIT.PreviewForeground();">Preview</button>
+        <label for="foreground">Foreground</label>
+        <label for="clear_foreground" class="clear_label">Clear:</label>
+        <input type="checkbox" id="clear_foreground" name="clear_foreground" onchange="EDIT.FieldChanged();" />
+        <br>
+        <input type="text" class="url" id="foreground" name="foreground" placeholder="<foreground url>" onchange="EDIT.FieldChanged();"/>
+        <button type="button" class="preview" id="preview_foreground" name="preview_foreground" onclick="EDIT.PreviewForeground();">Preview</button><br>
         <br><br>
-        <label for="effects">Effects:</label><br>
-        <input type="text", id="effects" name="effects" placeholder="<effects url>" onchange="EDIT.FieldChanged();"/>
-        <button type="button" id="preview_effects" name="preview_effects" onclick="EDIT.PreviewEffects();">Preview</button>
+        <label for="effects">Effects</label>
+        <label for="clear_effects" class="clear_label">Clear:</label>
+        <input type="checkbox" id="clear_effects" name="clear_effects" onchange="EDIT.FieldChanged();" />
+        <br>
+        <input type="text" class="url" id="effects" name="effects" placeholder="<effects url>" onchange="EDIT.FieldChanged();"/>
+        <button type="button" class="preview" id="preview_effects" name="preview_effects" onclick="EDIT.PreviewEffects();">Preview</button>
         <br><br>
         <div id="divFadeChecks">
             <h3 class="edit_header" id="fade_header" name="fade_header">FADE</h3>
-            <label for="fadeout">IN:</label>
-            <input type="checkbox" class="checkbox" id="fadein" name="fadein" onchange="EDIT.FieldChanged();"/>
-
-            <label for="fadeout">OUT:</label>
-            <input type="checkbox" class="checkbox" id="fadeout" name="fadeout" onchange="EDIT.FieldChanged();"/>
+            <label class="big_label" for="fadeout">IN </label>
+            <input type="checkbox" class="big_check" id="fadein" name="fadein" onchange="EDIT.FieldChanged();"/>
+            <p class="magic_space"></p>
+            <input type="checkbox" class="big_check" id="fadeout" name="fadeout" onchange="EDIT.FieldChanged();"/>
+            <label class="big_label" for="fadeout"> OUT</label>
         </div>
         <div id="divChoices">
             <h3 class="edit_header" id="choice_header" name="choice_header">CHOICES</h3>
@@ -77,25 +87,21 @@
                     <p class="choice_idx">A</p>
                     <input type="text" id="choice_a" class="choice_text" placeholder="Choice A Text" />
                     <input type="number" id="choice_a_target" class="short" placeholder=0 />
-                    <button type="button" id="choice_a_delete" class="remove_choice">X</button>
                 </div>
                 <div id="divChoice_b" class="divChoiceItem">
                     <p class="choice_idx">B</p>
                     <input type="text" id="choice_b" class="choice_text" placeholder="Choice B Text" />
                     <input type="number" id="choice_b_target" class="short" placeholder=0 />
-                    <button type="button" id="choice_b_delete" class="remove_choice">X</button>
                 </div>
                 <div id="divChoice_c" class="divChoiceItem">
                     <p class="choice_idx">C</p>
                     <input type="text" id="choice_c" class="choice_text" placeholder="Choice C Text" />
                     <input type="number" id="choice_c_target" class="short" placeholder=0 />
-                    <button type="button" id="choice_c_delete" class="remove_choice">X</button>
                 </div>
                 <div id="divChoice_d" class="divChoiceItem">
                     <p class="choice_idx">D</p>
                     <input type="text" id="choice_d" class="choice_text" placeholder="Choice D Text" />
                     <input type="number" id="choice_d_target" class="short" placeholder=0 />
-                    <button type="button" id="choice_d_delete" class="remove_choice">X</button>
                 </div>
             </div>
         </div>
@@ -104,19 +110,22 @@
             <button type="button" id="save_event" name="save_event" class="saved" onclick="EDIT.SaveEvent();">SAVE EVENT</button>
         </div>
   </div>
-  <div id="divEditCenter">
-      <div id="divEventLabel"><p id="idx" name="idx">0</p><input type="text" id="event_label" name="event_label" placeholder="New Event" onchange="EDIT.FieldChanged();"/></div>
+
+  <div id="divEditCenter" class="edit_panel">
+      <div id="divEventLabel"><p id="idx" name="idx">0</p><input type="text" id="event_label" name="event_label" placeholder="New Event Label" onchange="EDIT.FieldChanged();"/></div>
       <div id="divCanvas"></div>
           <div id="divName">
               <input type="text" id="dialog_name" placeholder="NAME" onchange="EDIT.FieldChanged();"/>
               <div id="divTextChecks">
-                  <label for="italics">ITALICS:</label><input type="checkbox" class="checkbox" id="italics" name="italics" onchange="EDIT.FieldChanged();"/>
-                  <label for="bold">BOLD:</label><input type="checkbox" class="checkbox" id="bold" name="bold" onchange="EDIT.FieldChanged();"/>
+                  <label class="big_label" for="italics"><i>ITALICS </i></label><input type="checkbox" class="big_check" id="italics" name="italics" onchange="EDIT.FieldChanged();"/>
+                  <p class="magic_space"></p>
+                  <label class="big_label" for="bold"><b>BOLD </b></label><input type="checkbox" class="big_check" id="bold" name="bold" onchange="EDIT.FieldChanged();"/>
               </div>
           </div>
       <div id="divDialog"><textarea id="dialog" name="dialog" rows="5" placeholder="DIALOG TEXT" onchange="EDIT.FieldChanged();"></textarea></div>
   </div>
-  <div id="divEditRight">
+
+  <div id="divEditRight" class="edit_panel">
       <button type="button" class="event_manage" id="add_chapter" nam="add_chapter" onclick="EDIT.AddChapter();">ADD CHAPTER</button>
       <br>
       <button type="button" class="event_manage" id="rename_chapter" nam="rename_chapter" onclick="EDIT.RenameChapter();">RENAME CHAPTER</button>
