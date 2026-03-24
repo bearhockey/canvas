@@ -15,12 +15,8 @@ var DIALOG = (function () {
     const NAME_GRADIENT_BOTTOM = "#44AAEE";
     const NAME_GRADIENT_TOP = "#88CCFF"
 
-    const BORDER_WIDTH = 4;
-    const BORDER_GRADIENT_TOP = "#EEEEEE";
-    const BORDER_GRADIENT_BOTTOM = "#AAAAAA";
-
     const BUTTON_SPACING = 16;
-    const BUTTON_WIDTH = 128;
+    const BUTTON_WIDTH = 160;
     const BUTTON_HEIGHT = 64;
     const BUTTON_Y_WITH_DIALOG = 308;
     const BUTTON_Y_NO_DIALOG = 468;
@@ -120,8 +116,8 @@ var DIALOG = (function () {
             gradient.addColorStop(0, TEXT_GRADIENT_TOP); // Start
             gradient.addColorStop(1, TEXT_GRADIENT_BOTTOM);  // End
 
-            DIALOG.DrawBox(DEFAULT_BOX, gradient);
-            DIALOG.DrawName();
+            if (m_strDialog != "") { RENDER.DrawRoundedBox(DEFAULT_BOX, gradient); }
+            if (m_strName != "")   { DIALOG.DrawName(); }
             DIALOG.DrawText();
 
             for (const choice_button of m_arrChoices)
@@ -131,37 +127,18 @@ var DIALOG = (function () {
         }
     };
 
-    d.DrawBox = function(arrBounds, box_gradient)
-    {
-        var ctx = GetCanvas();
-        if (ctx != null && arrBounds.length > 3 && m_strDialog != "")
-        {
-            ctx.fillStyle = box_gradient;
-            ctx.fillRect(arrBounds[0], arrBounds[1], arrBounds[2], arrBounds[3]);
-
-            const lineGradient = ctx.createLinearGradient(arrBounds[0], arrBounds[1], arrBounds[0]+arrBounds[2], arrBounds[1]+arrBounds[3]);
-            lineGradient.addColorStop(0, BORDER_GRADIENT_TOP); // Start
-            lineGradient.addColorStop(1, BORDER_GRADIENT_BOTTOM);  // End
-            ctx.beginPath();
-            ctx.lineWidth = BORDER_WIDTH;
-            ctx.strokeStyle = lineGradient;
-            ctx.roundRect(arrBounds[0], arrBounds[1], arrBounds[2], arrBounds[3], 8);
-            ctx.stroke();
-        }
-    };
-
     // ----------------
     // DrawName
     // ----------------
     d.DrawName = function()
     {
         var ctx = GetCanvas();
-        if (ctx != null && m_strName != "")
+        if (ctx != null)
         {
             const name_grad = ctx.createLinearGradient(0, NAME_BOX[1], 0, NAME_BOX[1]+NAME_BOX[3]);
             name_grad.addColorStop(0, NAME_GRADIENT_TOP); // Start
             name_grad.addColorStop(1, NAME_GRADIENT_BOTTOM);  // End
-            DIALOG.DrawBox(NAME_BOX, name_grad);
+            RENDER.DrawRoundedBox(NAME_BOX, name_grad);
             ctx.font = DEFAULT_FONT;
             ctx.fillStyle = TEXT_COLOR;
             RENDER.EnableShadow();

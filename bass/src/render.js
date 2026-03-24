@@ -1,6 +1,9 @@
 var RENDER = (function () {
     // consts
     const FADE_DELTA = 0.05;
+    const BORDER_WIDTH = 4;
+    const BORDER_GRADIENT_TOP = "#EEEEEE";
+    const BORDER_GRADIENT_BOTTOM = "#AAAAAA";
     // private vars
     var m_adhoc_image;
 
@@ -27,6 +30,30 @@ var RENDER = (function () {
 
     // main
     var r = {};
+
+    // --------------------------------
+    // DrawRoundedBox
+    //      Draws a rounded box with a border and gradiant background
+    // --------------------------------
+    r.DrawRoundedBox = function(arr_bounds, box_gradient, line_width=BORDER_WIDTH, border_radius=8)
+    {
+        var ctx = GetCanvas();
+        if (ctx != null && arr_bounds.length > 3)
+        {
+            ctx.fillStyle = box_gradient;
+            ctx.fillRect(arr_bounds[0], arr_bounds[1], arr_bounds[2], arr_bounds[3]);
+
+            const line_gradient = ctx.createLinearGradient(arr_bounds[0], arr_bounds[1], arr_bounds[0]+arr_bounds[2], arr_bounds[1]+arr_bounds[3]);
+            line_gradient.addColorStop(0, BORDER_GRADIENT_TOP); // Start
+            line_gradient.addColorStop(1, BORDER_GRADIENT_BOTTOM);  // End
+
+            ctx.beginPath();
+            ctx.lineWidth = line_width;
+            ctx.strokeStyle = line_gradient;
+            ctx.roundRect(arr_bounds[0], arr_bounds[1], arr_bounds[2], arr_bounds[3], border_radius);
+            ctx.stroke();
+        }
+    };
 
     // --------------------------------
     // EnableShadow

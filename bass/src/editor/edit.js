@@ -65,6 +65,8 @@ var EDIT = (function () {
             var count = s_event_list.options.length;
             EVENTS.AddEvent(count);
             EDIT.GetEvents(); // reload side bar
+            s_event_list.focus();
+            s_event_list.selectedIndex = (s_event_list.options.length - 1);
         }
     };
 
@@ -215,6 +217,8 @@ var EDIT = (function () {
             if (bSuccess == true)
             {
                 EDIT.GetEvents(); // reload side bar
+                s_event_list.focus();
+                s_event_list.selectedIndex = (idx+1);
             }
         }
     };

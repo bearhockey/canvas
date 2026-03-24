@@ -1,19 +1,16 @@
 var BUTTON = (function () {
-    const BUTTON_COLOR      = "#AAAAAA";
-    const BUTTON_HIGHLIGHT  = "#DDDDDD";
-    const BUTTON_SHADOW     = "#666666";
+    const BUTTON_COLOR_1    = "#8888DD";
+    const BUTTON_COLOR_2    = "#6666BB";
 
-    const HOVER_COLOR       = "#CCCCCC";
-    const HOVER_HIGHLIGHT   = "#EEEEEE";
-    const HOVER_SHADOW      = "#999999";
+    const HOVER_COLOR_1     = "#AAAAFF";
+    const HOVER_COLOR_2     = "#8888DD";
 
-    const PRESS_COLOR       = "#888888";
-    const PRESS_HIGHLIGHT   = "#AAAAAA";
-    const PRESS_SHADOW      = "#444444";
+    const PRESS_COLOR_1     = "#7777AA";
+    const PRESS_COLOR_2     = "#555588";
 
-    const BUTTON_TEXT_COLOR = "#111122";
-    const BUTTON_DISABLED   = "#998888";
-    const BUTTON_FONT       = "20px mono";
+    const BUTTON_TEXT_COLOR = "#EEEEFF";
+    const BUTTON_DISABLED   = "#99888888";
+    const BUTTON_FONT       = "32px Classic Console";
 
     const BS_DEFAULT        = 1;
     const BS_HOVER          = 2;
@@ -84,10 +81,7 @@ var BUTTON = (function () {
     // CheckPoint
     //     Checks if the given x,y coordinates are inside the BUTTON
     // ----------------
-    this.CheckPoint = function(x, y)
-    {
-        return this.rect.CheckPoint(x, y);
-    };
+    this.CheckPoint = function(x, y) { return this.rect.CheckPoint(x, y); };
 
     // ----------------
     // GetButtonColor
@@ -95,17 +89,17 @@ var BUTTON = (function () {
     // ----------------
     this.GetButtonColor = function()
     {
-        var objColor;
+        var arrColor;
         switch (this.iState)
         {
-            case BS_HOVER:   { objColor = { color:HOVER_COLOR, highlight:HOVER_HIGHLIGHT, shadow:HOVER_SHADOW }; break; }
-            case BS_PRESSED: { objColor = { color:PRESS_COLOR, highlight:PRESS_HIGHLIGHT, shadow:PRESS_SHADOW }; break; }
+            case BS_HOVER:   { arrColor = [HOVER_COLOR_1, HOVER_COLOR_2]; break; }
+            case BS_PRESSED: { arrColor = [PRESS_COLOR_1, PRESS_COLOR_2]; break; }
             case BS_DISABLED:
             case BS_DEFAULT:
-            default:         { objColor = { color:BUTTON_COLOR, highlight:BUTTON_HIGHLIGHT, shadow:BUTTON_SHADOW }; break; }
+            default:         { arrColor = [BUTTON_COLOR_1, BUTTON_COLOR_2]; break; }
         } // end of switch
 
-        return objColor;
+        return arrColor;
     };
 
     // ----------------
@@ -116,12 +110,16 @@ var BUTTON = (function () {
     {
         if (ctx != null && this.visible == true)
         {
-            var objColor = this.GetButtonColor();
-            RENDER.DrawBevel(ctx, this.rect, objColor, 4);
+            let arrColor = this.GetButtonColor();
+            const gradient = ctx.createLinearGradient(0, this.rect.y, 0, this.rect.y+this.rect.height);
+            gradient.addColorStop(0, arrColor[0]); // Start
+            gradient.addColorStop(1, arrColor[1]);  // End
+
+            RENDER.DrawRoundedBox(this.rect.toArray(), gradient);
             ctx.font = this.strFont;
-            ctx.textAlign = 'center';
+            ctx.textAlign = "center";
             ctx.fillStyle = (this.iState == BS_DISABLED) ? BUTTON_DISABLED : BUTTON_TEXT_COLOR;
-            ctx.fillText(this.strLabel, this.rect.x + this.rect.width/2, this.rect.y+this.rect.height-15);
+            ctx.fillText(this.strLabel, this.rect.x + this.rect.width/2, this.rect.y+this.rect.height-25);
             ctx.textAlign = 'left';
         }
     };
