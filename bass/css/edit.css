@@ -101,11 +101,6 @@ div#divChoiceList
     margin-top: 4px;
 }
 
-div#divSaveEvent
-{
-    text-align:center;
-}
-
 h3.edit_header
 {
     color: #EEEEEE;
@@ -316,28 +311,6 @@ button.event_manage
     background-color: #448833;
     border-radius: 4px;
     width: 100%;
-}
-
-button.saved
-{
-    color: #777766;
-    font-size: 24px;
-    font-weight: 600;
-    background-color: #888899;
-    border-radius: 4px;
-    padding: 8px;
-    width:100%;
-}
-
-button.unsaved
-{
-    color: #EEEEEE;
-    font-size: 24px;
-    font-weight: 800;
-    background-color: #448833;
-    border-radius: 4px;
-    padding: 8px;
-    width:100%;
 }
 
 button#save_file

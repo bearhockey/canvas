@@ -43,6 +43,7 @@ var EDIT = (function () {
 
     var m_iChoices = 0;
 
+    var m_iSelectedEventIdx = -1;
     var m_bPendingEventChange = false;
 
     // --------------------------------
@@ -55,8 +56,9 @@ var EDIT = (function () {
         {
             let count = s_chapter_list.options.length;
             EVENTS.AddChapter(count);
-            EDIT.EditFile();
+            EDIT.GetChapters();
             s_chapter_list.selectedIndex = parseInt(count, 10);
+            EDIT.ChangeChapter();
         }
     };
 
@@ -68,11 +70,13 @@ var EDIT = (function () {
     {
         if (s_event_list != null)
         {
+            EDIT.SaveEvent();
             let count = s_event_list.options.length;
             EVENTS.AddEvent(count);
             EDIT.GetEvents(); // reload side bar
+            s_event_list.selectedIndex = s_event_list.options.length - 1;
             s_event_list.focus();
-            s_event_list.selectedIndex = (s_event_list.options.length - 1);
+            EDIT.EditEvent(false);
         }
     };
 
@@ -84,10 +88,11 @@ var EDIT = (function () {
     {
         if (s_chapter_list != null)
         {
-            s_event_list.selectedIndex = 0;
+            EDIT.SaveEvent();
             let idx = s_chapter_list.selectedIndex;
             EVENTS.SetChapter(idx);
             EDIT.GetEvents();
+            EDIT.EditEvent(false);
         }
     };
 
@@ -106,18 +111,26 @@ var EDIT = (function () {
             EVENTS.SetChapter(idx);
             EDIT.GetChapters(idx);
             EDIT.GetEvents();
+            EDIT.EditEvent(false);
         }
     };
 
     // --------------------------------
     // EditEvent
     //     Sets up the editor to read in a selected event for editing
+    // @param - bSaveEvent : Boolean, if true save the previously loaded event before editing a new one
     // --------------------------------
-    edit.EditEvent = function()
+    edit.EditEvent = function(bSaveEvent=true)
     {
         if (s_event_list != null)
         {
-            let idx = s_event_list.selectedIndex;
+            let idx = s_event_list.selectedIndex; // grab the idx first since SaveEvent changes it
+            if (bSaveEvent == true)
+            {
+                EDIT.SaveEvent(); // save off old events
+            }
+
+            s_event_list.selectedIndex = m_iSelectedEventIdx = idx;
             let ev = EVENTS.GetEventByID(idx);
             if (ev != null)
             {
@@ -206,6 +219,7 @@ var EDIT = (function () {
 
         EDIT.GetChapters();
         EDIT.GetEvents();
+        EDIT.EditEvent(false);
     };
 
     // --------------------------------
@@ -214,11 +228,7 @@ var EDIT = (function () {
     // --------------------------------
     edit.FieldChanged = function()
     {
-        if (m_bPendingEventChange == false && s_save_event != null)
-        {
-            m_bPendingEventChange = true;
-            s_save_event.className = "unsaved";
-        }
+        EDIT.SaveEvent();
     };
 
     // --------------------------------
@@ -229,13 +239,15 @@ var EDIT = (function () {
     {
         if (s_event_list != null)
         {
+            EDIT.SaveEvent();
             let idx = s_event_list.selectedIndex;
             let bSuccess = EVENTS.InsertEvent(idx);
             if (bSuccess == true)
             {
                 EDIT.GetEvents(); // reload side bar
-                s_event_list.focus();
                 s_event_list.selectedIndex = (idx+1);
+                s_event_list.focus();
+                EDIT.EditEvent(false);
             }
         }
     };
@@ -265,8 +277,9 @@ var EDIT = (function () {
     // --------------------------------
     // GetEvents
     //     Gets a new events list based on the chapter selected
+    // @param - idx : Index of the event we should higlhight on load
     // --------------------------------
-    edit.GetEvents = function()
+    edit.GetEvents = function(idx = 0)
     {
         if (s_event_list != null)
         {
@@ -278,7 +291,8 @@ var EDIT = (function () {
                 strLabel = "[" + key + "] " + (events[key]["label"] != null ? events[key]["label"] : "Event: " + key);
                 s_event_list.add(new Option(strLabel, key, false, false));
             }
-            s_event_list.selectedIndex = 0;
+
+            s_event_list.selectedIndex = idx;
         }
     };
 
@@ -389,6 +403,7 @@ var EDIT = (function () {
             if (bSuccess == true)
             {
                 EDIT.GetEvents(); // reload side bar
+                EDIT.EditEvent(false);
             }
         }
     };
@@ -442,48 +457,35 @@ var EDIT = (function () {
     // --------------------------------
     edit.SaveEvent = function()
     {
-        if (s_event_list != null)
+        let objSaveData = {};
+
+        if (s_label_edit != null && s_label_edit.value != "") { objSaveData.label = s_label_edit.value; }
+        if (s_name_edit != null && s_name_edit.value != "") { objSaveData.name = s_name_edit.value; }
+        if (s_italics != null && s_italics.checked) { objSaveData.italics = true; }
+        if (s_bold != null && s_bold.checked) { objSaveData.bold = true; }
+        if (s_dialog_edit != null && s_dialog_edit.value != "") { objSaveData.dialog = s_dialog_edit.value; }
+
+        if (s_next_chapter != null && s_next_chapter.value != "") { objSaveData.chapter = s_next_chapter.value; }
+        if (s_next_event != null && s_next_event.value != "") { objSaveData.next = s_next_event.value; }
+        if (s_wait_time != null && s_wait_time.value != "") { objSaveData.wait = s_wait_time.value; }
+        if (s_background_scene != null && s_background_scene.value != "") { objSaveData.background = s_background_scene.value; }
+        if (s_background_clear != null && s_background_clear.checked) { objSaveData.background_clear = true; }
+        if (s_foreground_scene != null && s_foreground_scene.value != "") { objSaveData.foreground = s_foreground_scene.value; }
+        if (s_foreground_clear != null && s_foreground_clear.checked) { objSaveData.foreground_clear = true; }
+        if (s_effects_scene != null && s_effects_scene.value != "") { objSaveData.effects = s_effects_scene.value; }
+        if (s_effects_clear != null && s_effects_clear.checked) { objSaveData.effects_clear = true; }
+
+        if (s_fade_in != null && s_fade_in.checked) { objSaveData.fadein = true; }
+        if (s_fade_out != null && s_fade_out.checked) { objSaveData.fadeout = true; }
+
+        let arrChoices = EDIT.SaveChoices();
+        if (arrChoices != null && arrChoices.length > 0)
         {
-            if (m_bPendingEventChange == false)
-            {
-                console.log("Nothing was changed so nothing to save!");
-                return;
-            }
-
-            let idx = s_event_list.selectedIndex;
-            let objSaveData = {};
-
-            if (s_label_edit != null && s_label_edit.value != "") { objSaveData.label = s_label_edit.value; }
-            if (s_name_edit != null && s_name_edit.value != "") { objSaveData.name = s_name_edit.value; }
-            if (s_italics != null && s_italics.checked) { objSaveData.italics = true; }
-            if (s_bold != null && s_bold.checked) { objSaveData.bold = true; }
-            if (s_dialog_edit != null && s_dialog_edit.value != "") { objSaveData.dialog = s_dialog_edit.value; }
-
-            if (s_next_chapter != null && s_next_chapter.value != "") { objSaveData.chapter = s_next_chapter.value; }
-            if (s_next_event != null && s_next_event.value != "") { objSaveData.next = s_next_event.value; }
-            if (s_wait_time != null && s_wait_time.value != "") { objSaveData.wait = s_wait_time.value; }
-            if (s_background_scene != null && s_background_scene.value != "") { objSaveData.background = s_background_scene.value; }
-            if (s_background_clear != null && s_background_clear.checked) { objSaveData.background_clear = true; }
-            if (s_foreground_scene != null && s_foreground_scene.value != "") { objSaveData.foreground = s_foreground_scene.value; }
-            if (s_foreground_clear != null && s_foreground_clear.checked) { objSaveData.foreground_clear = true; }
-            if (s_effects_scene != null && s_effects_scene.value != "") { objSaveData.effects = s_effects_scene.value; }
-            if (s_effects_clear != null && s_effects_clear.checked) { objSaveData.effects_clear = true; }
-
-            if (s_fade_in != null && s_fade_in.checked) { objSaveData.fadein = true; }
-            if (s_fade_out != null && s_fade_out.checked) { objSaveData.fadeout = true; }
-
-            let arrChoices = EDIT.SaveChoices();
-            if (arrChoices != null && arrChoices.length > 0)
-            {
-                objSaveData.choice = arrChoices;
-            }
-
-            EVENTS.SaveEvent(idx, objSaveData);
-            EDIT.GetEvents(); // reload side bar
-
-            m_bPendingEventChange = false;
-            if (s_save_event != null) { s_save_event.className = "saved"; }
+            objSaveData.choice = arrChoices;
         }
+
+        EVENTS.SaveEvent(m_iSelectedEventIdx, objSaveData);
+        EDIT.GetEvents(m_iSelectedEventIdx);
     };
 
     // --------------------------------
