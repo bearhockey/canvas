@@ -1,13 +1,9 @@
+// ----------------------------------------------------------------
+// EVENTS
+//     Event manager for all of the events in a story
+// ----------------------------------------------------------------
 var EVENTS = (function () {
     // consts
-    const TYPE_NONE = 0;
-    const TYPE_DIALOG = 1;
-    const TYPE_FADE_IN = 2;
-    const TYPE_FADE_OUT = 3;
-    const TYPE_BACKGROUND = 4;
-    const TYPE_FOREGROUND = 5;
-    const TYPE_WAIT = 6;
-
     const DEFAULT_WAIT = 1000;
     // main
     var events = {};
@@ -22,19 +18,13 @@ var EVENTS = (function () {
     var m_event_idx = 0;
 
     // --------------------------------
-    // NewEventFile
-    // --------------------------------
-    events.NewEventFile = function()
-    {
-        EVENTS.SetEventsData({"chapters": {"0":{ "events": {"0":{} } } } });
-    };
-
-    // --------------------------------
     // FetchEventsFile
+    //     Reads in a story file from a remote location
+    // @param - strPath : String URL (file and path) of the file to read
     // --------------------------------
     events.FetchEventsFile = function(strPath)
     {
-        var arrPathSplit = strPath.split("/");
+        let arrPathSplit = strPath.split("/");
         m_file_name = arrPathSplit.pop();
         fetch(strPath)
             .then(response =>
@@ -48,6 +38,8 @@ var EVENTS = (function () {
 
     // --------------------------------
     // SetEventsData
+    //     Callback to set the story and events data after loading it
+    // @param - data - A data object parsed from a JSON string that is all story events and metadata
     // --------------------------------
     events.SetEventsData = function(data)
     {
@@ -62,6 +54,10 @@ var EVENTS = (function () {
         }
     };
 
+    // --------------------------------
+    // Getters and Setters
+    //     Various get and set functions for the data
+    // --------------------------------
     events.GetFileName = function() { return m_file_name; };
 
     events.GetEventsData     = function()        { return m_events_data; };
@@ -77,32 +73,28 @@ var EVENTS = (function () {
     events.GetTitleScreen = function()          { return (m_events_data != null && m_events_data.title_data != null) ? m_events_data.title_data.title_screen : ""; };
     events.SetTitleScreen = function(strURL)    { m_events_data.title_data = {"title_screen":strURL}; };
 
-    // ----------------
+    // --------------------------------
     // SetNextEventIdx
-    // ----------------
+    //     Sets the ID of the next event
+    // --------------------------------
     events.SetNextEventIdx = function(idx)
     {
         m_event_idx = idx;
     };
-    // ----------------
+
+    // --------------------------------
     // ParseNextEvent
-    // ----------------
+    //     Parses through the next event object and fires off the different functions for each flag
+    // --------------------------------
     events.ParseNextEvent = function()
     {
         if (m_event_list[m_event_idx] != null)
         {
-            var next_event = m_event_list[m_event_idx]
+            let next_event = m_event_list[m_event_idx]
             if (next_event == null) { return; }
 
-            if ("chapter" in next_event)
-            {
-                EVENTS.SetChapter(next_event.chapter);
-            }
-
-            if ("next" in next_event)
-            {
-                m_event_idx = next_event.next;
-            }
+            if ("chapter" in next_event) { EVENTS.SetChapter(next_event.chapter); }
+            if ("next" in next_event)    { m_event_idx = next_event.next; }
 
             if (next_event.fadein == true)       { RENDER.SetFade(0.0); }
             else if (next_event.fadeout == true) { RENDER.SetFade(1.0, true); }
@@ -131,24 +123,27 @@ var EVENTS = (function () {
 
     // --------------------------------
     // SetChapter
+    //     Sets the currently-read chapter
+    // @param - idx : ID key of the chapter to load
     // --------------------------------
     events.SetChapter = function(idx)
     {
-        var strKey = idx.toString();
+        let strKey = idx.toString();
         if (m_chapter_list != null && m_chapter_list[strKey] != null)
         {
             m_current_chapter = strKey;
-            var chapter = m_chapter_list[m_current_chapter];
+            let chapter = m_chapter_list[m_current_chapter];
             if (chapter != null) { m_event_list = chapter.events; }
         }
     };
 
     // --------------------------------
     // ShowTitle
+    //     Shows the title screen, if it exists
     // --------------------------------
     events.ShowTitle = function()
     {
-        var title_data = (m_events_data != null) ? m_events_data["title_data"] : null;
+        let title_data = (m_events_data != null) ? m_events_data["title_data"] : null;
         if (title_data != null)
         {
             RENDER.SetFade(0.0);
@@ -156,7 +151,7 @@ var EVENTS = (function () {
             m_event_list["-1"] = { "fadeout":true, "next":0 };
             // if we have save data use that to populate iCheckpoint
             iCheckpoint = -1;
-            var arrTitleData = [ {"text":"New Game", "target":-1}, {"text":"Load Game", "target":iCheckpoint } ];
+            let arrTitleData = [ {"text":"New Game", "target":-1}, {"text":"Load Game", "target":iCheckpoint } ];
             DIALOG.SetText("", "", false, false, arrTitleData);
         }
         else
@@ -167,6 +162,8 @@ var EVENTS = (function () {
 
     // --------------------------------
     // AutoAdvance
+    //     Automatically advance to the next event
+    // @param - wait_time - Time in milleseconds to wait until advancing
     // --------------------------------
     events.AutoAdvance = async function(wait_time)
     {
@@ -174,9 +171,11 @@ var EVENTS = (function () {
         EVENTS.ParseNextEvent();
     };
 
-    // ----------------
+    // --------------------------------
     // WaitOneSec
-    // ----------------
+    //     Waits one second
+    // @param - wait_time : How long to actual wait in milleseconds
+    // --------------------------------
     events.WaitOneSec = function(wait_time = DEFAULT_WAIT)
     {
         return new Promise((resolve) => { setTimeout(() => { resolve(); }, wait_time); });
@@ -186,40 +185,44 @@ var EVENTS = (function () {
     // Editing functions
     // ----------------------------------------------------------------
     // AddChapter
+    //     Adds a blank chapter to the events data
+    // @param - idx : ID key of the new chapter
     // --------------------------------
     events.AddChapter = function(idx)
     {
-        if (m_chapter_list != null)
+        if (m_chapter_list != null && idx in m_chapter_list == false)
         {
-            if (idx in m_chapter_list == false)
-            {
-                m_chapter_list[idx] = { "events": {"0":{ "next":1 } } };
-            }
+            m_chapter_list[idx] = { "events": {"0":{ "next":1 } } };
         }
     };
 
     // --------------------------------
     // AddEvent
+    //     Adds a new event to the end of the current chapter
+    // @param - idx : ID key of the new event
     // --------------------------------
     events.AddEvent = function(idx)
     {
         if (m_event_list != null && idx >= 0 && idx in m_event_list == false)
-        { m_event_list[idx] = {"next":(idx+1)}; }
+        {
+            m_event_list[idx] = {"next":(idx+1)};
+        }
     };
 
     // --------------------------------
     // InsertEvent
+    //     Adds a new event to the current chapter in the middle of the chapter
+    // @param - iInsertAtIdx : ID key where the event should be inserted after
     // --------------------------------
     events.InsertEvent = function(iInsertAtIdx)
     {
         if (m_event_list != null)
         {
-            var iNewIdx = iInsertAtIdx +1;
-            // copy object
-            var list_copy = Object.assign({}, m_event_list);
+            let iNewIdx = iInsertAtIdx +1;
+            let list_copy = Object.assign({}, m_event_list); // copy object
             // first move everything up
-            var idx;
-            var iNextEvent;
+            let idx;
+            let iNextEvent;
             for (let [key, item] of Object.entries(list_copy))
             {
                 if (item != null && item.next != null)
@@ -247,7 +250,17 @@ var EVENTS = (function () {
     };
 
     // --------------------------------
+    // NewEventFile
+    //     Creates a new story file
+    // --------------------------------
+    events.NewEventFile = function()
+    {
+        EVENTS.SetEventsData({"chapters": {"0":{ "events": {"0":{} } } } });
+    };
+
+    // --------------------------------
     // SaveCurrentChapter
+    //     Saves the current chapter data to the storry file
     // --------------------------------
     events.SaveCurrentChapter = function()
     {
@@ -256,16 +269,17 @@ var EVENTS = (function () {
 
     // --------------------------------
     // RemoveCurrentChapter
+    //     Removes the current chapter from data
     // --------------------------------
     events.RemoveCurrentChapter = function()
     {
         if (m_chapter_list != null)
         {
             delete m_chapter_list[m_current_chapter];
-            var list_copy = Object.assign({}, m_chapter_list);
-            var idx;
-            var iRemoveIdx = parseInt(m_current_chapter, 10);
-            var iLargestIdx = 0;
+            let list_copy = Object.assign({}, m_chapter_list);
+            let idx;
+            let iRemoveIdx = parseInt(m_current_chapter, 10);
+            let iLargestIdx = 0;
             for (let [key, item] of Object.entries(list_copy))
             {
                 idx = parseInt(key, 10);
@@ -284,6 +298,9 @@ var EVENTS = (function () {
 
     // --------------------------------
     // SaveEvent
+    //     Saves an event data to the event list
+    // @param - idx : ID key of the event to save
+    // @param - obj : Saved object data of the event
     // --------------------------------
     events.SaveEvent = function(idx, obj)
     {
@@ -292,15 +309,17 @@ var EVENTS = (function () {
 
     // --------------------------------
     // RemoveEvent
+    //     Removes a given event from the event list
+    // @param - iRemoveIdx : ID key of the event to remove
     // --------------------------------
     events.RemoveEvent = function(iRemoveIdx)
     {
         if (m_event_list != null && iRemoveIdx >= 0)
         {
             delete m_event_list[iRemoveIdx];
-            var list_copy = Object.assign({}, m_event_list);
-            var idx;
-            var iLargestIdx = 0;
+            let list_copy = Object.assign({}, m_event_list);
+            let idx;
+            let iLargestIdx = 0;
             for (let [key, item] of Object.entries(list_copy))
             {
                 if (item != null && item.next != null && item.next > iRemoveIdx)
@@ -323,4 +342,4 @@ var EVENTS = (function () {
     };
 
     return events;
-}());
+}()); // end of class

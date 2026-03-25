@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------
+// RECT
+//     Helper class to define a rectangle
+// ----------------------------------------------------------------
 var RECT = (function () {
   var rect = function(x, y, width, height)
   {
@@ -27,4 +31,4 @@ var RECT = (function () {
 
 
   return rect;
-}());
+}()); // end of class

@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------
+// EDIT
+//     Manager file for handling all the editor commands
+// ----------------------------------------------------------------
 var EDIT = (function () {
     // consts
     const OUTPUT_FILE_DEFAULT = "new_story.json";
@@ -43,12 +47,13 @@ var EDIT = (function () {
 
     // --------------------------------
     // AddChapter
+    //     Adds a chapter
     // --------------------------------
     edit.AddChapter = function()
     {
         if (s_chapter_list != null)
         {
-            var count = s_chapter_list.options.length;
+            let count = s_chapter_list.options.length;
             EVENTS.AddChapter(count);
             EDIT.EditFile();
             s_chapter_list.selectedIndex = parseInt(count, 10);
@@ -57,12 +62,13 @@ var EDIT = (function () {
 
     // --------------------------------
     // AddEvent
+    //     Adds an event to the end of the current chapter
     // --------------------------------
     edit.AddEvent = function()
     {
         if (s_event_list != null)
         {
-            var count = s_event_list.options.length;
+            let count = s_event_list.options.length;
             EVENTS.AddEvent(count);
             EDIT.GetEvents(); // reload side bar
             s_event_list.focus();
@@ -72,13 +78,14 @@ var EDIT = (function () {
 
     // --------------------------------
     // ChangeChapter
+    //     Changes which chapter we are editing
     // --------------------------------
     edit.ChangeChapter = function()
     {
         if (s_chapter_list != null)
         {
             s_event_list.selectedIndex = 0;
-            var idx = s_chapter_list.selectedIndex;
+            let idx = s_chapter_list.selectedIndex;
             EVENTS.SetChapter(idx);
             EDIT.GetEvents();
         }
@@ -86,13 +93,14 @@ var EDIT = (function () {
 
     // --------------------------------
     // DeleteChapter
+    //     Removes the currently selected chapter from data
     // --------------------------------
     edit.DeleteChapter = function()
     {
         let bConfirm = window.confirm("Are you sure you want to delete the chapter and all events within it?");
         if (bConfirm)
         {
-            var idx = s_chapter_list.selectedIndex;
+            let idx = s_chapter_list.selectedIndex;
             if (idx > 0) { idx -= 1; }
             EVENTS.RemoveCurrentChapter();
             EVENTS.SetChapter(idx);
@@ -103,13 +111,14 @@ var EDIT = (function () {
 
     // --------------------------------
     // EditEvent
+    //     Sets up the editor to read in a selected event for editing
     // --------------------------------
     edit.EditEvent = function()
     {
         if (s_event_list != null)
         {
-            var idx = s_event_list.selectedIndex;
-            var ev = EVENTS.GetEventByID(idx);
+            let idx = s_event_list.selectedIndex;
+            let ev = EVENTS.GetEventByID(idx);
             if (ev != null)
             {
                 // center panel
@@ -139,25 +148,30 @@ var EDIT = (function () {
                 // choice panel
                 if (m_arrChoices != null && m_arrChoices.length > 0)
                 {
-                    var arrEventChoices = ev["choice"];
-                    var objChoice;
-                    var divChoice;
-                    var iChoice;
-                    var iLength = m_arrChoices.length;
+                    let arrEventChoices = ev["choice"];
+                    let objChoice;
+                    let divChoice;
+                    let arrInputs;
+                    let choice_text;
+                    let arrNumbers;
+                    let choice_target;
+                    let iChoice;
+                    let iLength = m_arrChoices.length;
                     for (iChoice = 0; iChoice < iLength; ++iChoice)
                     {
                         divChoice = m_arrChoices[iChoice];
                         if (divChoice != null)
                         {
                             objChoice = (arrEventChoices != null && iChoice < arrEventChoices.length) ? arrEventChoices[iChoice] : null;
-                            var arrInputs = divChoice.getElementsByClassName("choice_text");
-                            var choice_text = (arrInputs != null && arrInputs.length > 0) ? arrInputs[0] : null;
+                            arrInputs = divChoice.getElementsByClassName("choice_text");
+                            choice_text = (arrInputs != null && arrInputs.length > 0) ? arrInputs[0] : null;
                             if (choice_text != null)
                             {
                                 choice_text.value = (objChoice != null) ? objChoice.text : "";
                             }
-                            var arrNumbers = divChoice.getElementsByClassName("short");
-                            var choice_target = (arrNumbers != null && arrNumbers.length > 0) ? arrNumbers[0] : null;
+
+                            arrNumbers = divChoice.getElementsByClassName("short");
+                            choice_target = (arrNumbers != null && arrNumbers.length > 0) ? arrNumbers[0] : null;
                             if (choice_target != null)
                             {
                                 choice_target.value = (objChoice != null) ? objChoice.target : "";
@@ -172,6 +186,7 @@ var EDIT = (function () {
 
     // --------------------------------
     // EditFile
+    //     Loads the story file and events for editing
     // --------------------------------
     edit.EditFile = function()
     {
@@ -195,6 +210,7 @@ var EDIT = (function () {
 
     // --------------------------------
     // FieldChanged
+    //     Callback signal for when a field has changed
     // --------------------------------
     edit.FieldChanged = function()
     {
@@ -207,13 +223,14 @@ var EDIT = (function () {
 
     // --------------------------------
     // InsertEvent
+    //     Adds an event to the middle of the chapter
     // --------------------------------
     edit.InsertEvent = function()
     {
         if (s_event_list != null)
         {
-            var idx = s_event_list.selectedIndex;
-            var bSuccess = EVENTS.InsertEvent(idx);
+            let idx = s_event_list.selectedIndex;
+            let bSuccess = EVENTS.InsertEvent(idx);
             if (bSuccess == true)
             {
                 EDIT.GetEvents(); // reload side bar
@@ -225,14 +242,16 @@ var EDIT = (function () {
 
     // --------------------------------
     // GetChapters
+    //     Gets an updated list of chapter data
+    // @param - idx : ID key of chapter to start highlighted
     // --------------------------------
     edit.GetChapters = function(idx = 0)
     {
-        var strLabel = "";
+        let strLabel = "";
         if (s_chapter_list != null)
         {
             s_chapter_list.options.length = 0;
-            var chapters = EVENTS.GetChapters();
+            let chapters = EVENTS.GetChapters();
             for (let [key, item] of Object.entries(chapters))
             {
                 strLabel = "[" + key + "] " + (chapters[key]["label"] != null ? chapters[key]["label"] : "CHAPTER: " + key);
@@ -251,9 +270,9 @@ var EDIT = (function () {
     {
         if (s_event_list != null)
         {
-            var strLabel;
+            let strLabel;
             s_event_list.options.length = 0;
-            var events = EVENTS.GetEventsList();
+            let events = EVENTS.GetEventsList();
             for (let [key, item] of Object.entries(events))
             {
                 strLabel = "[" + key + "] " + (events[key]["label"] != null ? events[key]["label"] : "Event: " + key);
@@ -265,6 +284,7 @@ var EDIT = (function () {
 
     // --------------------------------
     // NewFile
+    //     Creates a new story file
     // --------------------------------
     edit.NewFile = function()
     {
@@ -273,31 +293,32 @@ var EDIT = (function () {
 
     // --------------------------------
     // Populate
+    //     Gets references to all of the HTML elements on the page
     // --------------------------------
     edit.Populate = function()
     {
-        s_story_name = document.getElementById('story_name');
-        s_title_screen = document.getElementById('title_screen');
-        s_export_file = document.getElementById('file_name');
+        s_story_name = document.getElementById("story_name");
+        s_title_screen = document.getElementById("title_screen");
+        s_export_file = document.getElementById("file_name");
 
-        s_idx_label = document.getElementById('idx');
-        s_label_edit = document.getElementById('event_label');
-        s_name_edit = document.getElementById('dialog_name');
-        s_italics = document.getElementById('italics');
-        s_bold = document.getElementById('bold');
-        s_dialog_edit = document.getElementById('dialog');
+        s_idx_label = document.getElementById("idx");
+        s_label_edit = document.getElementById("event_label");
+        s_name_edit = document.getElementById("dialog_name");
+        s_italics = document.getElementById("italics");
+        s_bold = document.getElementById("bold");
+        s_dialog_edit = document.getElementById("dialog");
 
-        s_next_chapter = document.getElementById('chapter');
-        s_next_event = document.getElementById('next');
-        s_wait_time = document.getElementById('wait_time');
-        s_background_scene = document.getElementById('background');
-        s_background_clear = document.getElementById('clear_background');
-        s_foreground_scene = document.getElementById('foreground');
-        s_foreground_clear = document.getElementById('clear_foreground');
-        s_effects_scene = document.getElementById('effects');
-        s_effects_clear = document.getElementById('clear_effects');
-        s_fade_in = document.getElementById('fadein');
-        s_fade_out = document.getElementById('fadeout');
+        s_next_chapter = document.getElementById("chapter");
+        s_next_event = document.getElementById("next");
+        s_wait_time = document.getElementById("wait_time");
+        s_background_scene = document.getElementById("background");
+        s_background_clear = document.getElementById("clear_background");
+        s_foreground_scene = document.getElementById("foreground");
+        s_foreground_clear = document.getElementById("clear_foreground");
+        s_effects_scene = document.getElementById("effects");
+        s_effects_clear = document.getElementById("clear_effects");
+        s_fade_in = document.getElementById("fadein");
+        s_fade_out = document.getElementById("fadeout");
 
         s_choice_a = document.getElementById("divChoice_a");
         s_choice_b = document.getElementById("divChoice_b");
@@ -305,14 +326,15 @@ var EDIT = (function () {
         s_choice_d = document.getElementById("divChoice_d");
         m_arrChoices = [s_choice_a, s_choice_b, s_choice_c, s_choice_d];
 
-        s_save_event = document.getElementById('save_event');
+        s_save_event = document.getElementById("save_event");
 
-        s_chapter_list = document.getElementById('chapterList');
-        s_event_list = document.getElementById('eventList');
+        s_chapter_list = document.getElementById("chapterList");
+        s_event_list = document.getElementById("eventList");
     };
 
     // --------------------------------
     // PreviewTitle
+    //    Displays the title screen file in the preview window
     // --------------------------------
     edit.PreviewTitle = function()
     {
@@ -326,6 +348,7 @@ var EDIT = (function () {
 
     // --------------------------------
     // PreviewBackground
+    //     Displays the background file in the preview window
     // --------------------------------
     edit.PreviewBackground = function()
     {
@@ -335,6 +358,7 @@ var EDIT = (function () {
 
     // --------------------------------
     // PreviewForeground
+    //     Displays the foreground file in the preview window
     // --------------------------------
     edit.PreviewForeground = function()
     {
@@ -344,6 +368,7 @@ var EDIT = (function () {
 
     // --------------------------------
     // PreviewEffects
+    //     Displays the effects file in the prview window
     // --------------------------------
     edit.PreviewEffects = function()
     {
@@ -353,13 +378,14 @@ var EDIT = (function () {
 
     // --------------------------------
     // RemoveEvent
+    //     Removes the selected event from the current chapter
     // --------------------------------
     edit.RemoveEvent = function()
     {
         if (s_event_list != null)
         {
-            var idx = s_event_list.selectedIndex;
-            var bSuccess = EVENTS.RemoveEvent(idx);
+            let idx = s_event_list.selectedIndex;
+            let bSuccess = EVENTS.RemoveEvent(idx);
             if (bSuccess == true)
             {
                 EDIT.GetEvents(); // reload side bar
@@ -369,6 +395,7 @@ var EDIT = (function () {
 
     // --------------------------------
     // RenameChapter
+    //     Displays a popup prompt to rename the current chapter
     // --------------------------------
     edit.RenameChapter = function()
     {
@@ -383,21 +410,22 @@ var EDIT = (function () {
 
     // --------------------------------
     // SaveChoices
+    //     Helper function for packing the choice data into the appropriate JSON-string format
     // --------------------------------
     edit.SaveChoices = function()
     {
-        var idx;
-        var iLength = m_arrChoices.length;
-        var arrSavedChoices = [];
+        let idx;
+        let iLength = m_arrChoices.length;
+        let arrSavedChoices = [];
         for (idx = 0; idx < iLength; ++idx)
         {
-            var divChoice = m_arrChoices[idx];
+            let divChoice = m_arrChoices[idx];
             if (divChoice != null)
             {
-                var arrInputs = divChoice.getElementsByClassName("choice_text");
-                var strText = (arrInputs != null && arrInputs.length > 0) ? arrInputs[0].value : "";
-                var arrNumbers = divChoice.getElementsByClassName("short");
-                var iTarget = (arrNumbers != null && arrNumbers.length > 0) ? arrNumbers[0].value : "";
+                let arrInputs = divChoice.getElementsByClassName("choice_text");
+                let strText = (arrInputs != null && arrInputs.length > 0) ? arrInputs[0].value : "";
+                let arrNumbers = divChoice.getElementsByClassName("short");
+                let iTarget = (arrNumbers != null && arrNumbers.length > 0) ? arrNumbers[0].value : "";
                 if (strText != "" && iTarget != "")
                 {
                     arrSavedChoices.push( {"text":strText, "target":iTarget} );
@@ -410,6 +438,7 @@ var EDIT = (function () {
 
     // --------------------------------
     // SaveEvent
+    //     Saves the current event data to the events list
     // --------------------------------
     edit.SaveEvent = function()
     {
@@ -421,8 +450,8 @@ var EDIT = (function () {
                 return;
             }
 
-            var idx = s_event_list.selectedIndex;
-            var objSaveData = {};
+            let idx = s_event_list.selectedIndex;
+            let objSaveData = {};
 
             if (s_label_edit != null && s_label_edit.value != "") { objSaveData.label = s_label_edit.value; }
             if (s_name_edit != null && s_name_edit.value != "") { objSaveData.name = s_name_edit.value; }
@@ -443,7 +472,7 @@ var EDIT = (function () {
             if (s_fade_in != null && s_fade_in.checked) { objSaveData.fadein = true; }
             if (s_fade_out != null && s_fade_out.checked) { objSaveData.fadeout = true; }
 
-            var arrChoices = EDIT.SaveChoices();
+            let arrChoices = EDIT.SaveChoices();
             if (arrChoices != null && arrChoices.length > 0)
             {
                 objSaveData.choice = arrChoices;
@@ -459,20 +488,21 @@ var EDIT = (function () {
 
     // --------------------------------
     // SaveFile
+    //     Saves off the story data to a donwnloadable JSON file
     // --------------------------------
     edit.SaveFile = function()
     {
         if (s_story_name != null && s_story_name.value != "") { EVENTS.SetStoryName(s_story_name.value); }
         if (s_title_screen != null && s_title_screen.value != "") { EVENTS.SetTitleScreen(s_title_screen.value); }
 
-        var data = EVENTS.GetEventsData();
-        var jsonData = JSON.stringify(data);
-        var a = document.createElement("a");
-        var file = new Blob([jsonData], {type:'text/plain'});
+        let data = EVENTS.GetEventsData();
+        let jsonData = JSON.stringify(data);
+        let a = document.createElement("a");
+        let file = new Blob([jsonData], {type:'text/plain'});
         a.href = URL.createObjectURL(file);
         a.download = (s_export_file != null && s_export_file.value != "") ? s_export_file.value : OUTPUT_FILE_DEFAULT;
         a.click();
     };
 
     return edit;
-}());
+}()); // end of class

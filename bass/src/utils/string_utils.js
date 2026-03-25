@@ -1,25 +1,29 @@
+// ----------------------------------------------------------------
+// STRINGUTILS
+//     A collection of utility functions related to parsing strings
+// ----------------------------------------------------------------
 var STRINGUTILS = (function () {
-    // consts
+    var s = {}; // main
 
-    // private vars
-
-    // main
-    var s = {};
-
-    // ----------------
+    // --------------------------------
     // GetLines
-    // ----------------
+    //     Gets the number pf lines of text a given string would take up
+    // @param - text : The text string to check
+    // @param - iMaxWidth : The width of the box to check against
+    // --------------------------------
     s.GetLines = function(text, iMaxWidth)
     {
-        var ctx = GetCanvas();
-        var arrWords = text.split(" ");
-        var arrLines = [];
-        var arrCurrentLine = arrWords[0];
+        let arrLines = [];
+        let ctx = GetCanvas();
+        if (ctx == null) { return arrLines; }
 
-        var strWord;
-        var iWordsLength = arrWords.length;
-        var idx;
-        var iWidth;
+        let arrWords = text.split(" ");
+        let arrCurrentLine = arrWords[0];
+
+        let strWord;
+        let iWordsLength = (arrWords != null) ? arrWords.length : 0;
+        let idx;
+        let iWidth;
         for (idx = 1; idx < iWordsLength; ++idx)
         {
             strWord = arrWords[idx];
@@ -40,4 +44,4 @@ var STRINGUTILS = (function () {
     };
 
     return s;
-  }());
+}()); // end of class

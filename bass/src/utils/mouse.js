@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------
+// MOUSE
+//     Handles mouse logic: clicking, moving, etc
+// ----------------------------------------------------------------
 var MOUSE = (function () {
     // const
     const VIEW_AREA = { left:0, top:0, right:1170, bottom:540 };
@@ -7,9 +11,15 @@ var MOUSE = (function () {
     var m_arrButtons = [];
     var m_arrPosition = [];
 
-    // ----------------
-    // mouse.IsInBox
-    // ----------------
+    // --------------------------------
+    // IsInBox
+    //     Returns if the mouse is inside the given point
+    // @param - x1 : Left-top corner of the bounding box
+    // @param - y1 : Left-top corner of the bounding box
+    // @param - x2 : Right-bottom corner of the bounding box
+    // @param - y2 : Right-bottom corner of the bounding box
+    // @param - bIncludeBounds : Boolean, if true then include the edges of the boundingg box
+    // --------------------------------
     mouse.IsInBox = function(x1, y1, x2, y2, bIncludeBounds = false)
     {
         if (bIncludeBounds)
@@ -26,26 +36,29 @@ var MOUSE = (function () {
                 m_arrPosition[1] < y2);
     };
 
-    // ----------------
-    // mouse.IsInView
-    // ----------------
+    // --------------------------------
+    // IsInView
+    //     Returns true if the mouse is inside the current canvas
+    // --------------------------------
     mouse.IsInView = function()
     {
         return mouse.IsInBox(VIEW_AREA.left, VIEW_AREA.top, VIEW_AREA.right, VIEW_AREA.bottom);
     };
 
-    // ----------------
+    // --------------------------------
     // Move
-    // ----------------
+    //     Called when the mouse move event listener is triggered
+    // @param - evt : The mouse event passed in from the event listener
+    // --------------------------------
     mouse.Move = function(evt)
     {
         m_arrPosition = mouse.GetMousePosition(evt);
         if (mouse.IsInView())
         {
-            var idx;
-            var iLength = m_arrButtons.length;
-            var cButton;
-            var arrBounds;
+            let idx;
+            let iLength = m_arrButtons.length;
+            let cButton;
+            let arrBounds;
             for (idx = 0; idx < iLength; ++idx)
             {
                 cButton = m_arrButtons[idx];
@@ -58,32 +71,17 @@ var MOUSE = (function () {
         } // end main vs side view check
     };
 
-    // ----------------
-    // MouseDown
-    // ----------------
-    mouse.MouseDown = function(evt)
-    {
-        // if (STATE.GetWaitState()) { return; } // disable mouse if client is waiting
-    };
-
-    // ----------------
-    // MouseUp
-    // ----------------
-    mouse.MouseUp = function(evt)
-    {
-        // if (STATE.GetWaitState()) { return; } // disable mouse if client is waiting
-    };
-
-    // ----------------
+    // --------------------------------
     // LeftClick
     //     Handles left mouse clicks and screen taps
-    // ----------------
+    // @param - evt : The mouse event passed in from the event listener
+    // --------------------------------
     mouse.LeftClick = function(evt)
     {
         m_arrPosition = mouse.GetMousePosition(evt);
         if (mouse.IsInView())
         {
-            var cButton = mouse.GetSelectedButton();
+            let cButton = mouse.GetSelectedButton();
             if (cButton != null && cButton.visible == true && typeof cButton.Use === "function")
             {
                 cButton.Use();
@@ -95,38 +93,37 @@ var MOUSE = (function () {
         } // end main vs side view check
     };
 
-    // ----------------
-    // RightClick
-    // ----------------
-    mouse.RightClick = function(evt) {};
-
-    // ----------------
+    // --------------------------------
     // GetMousePosition
-    // ----------------
+    //     Returns the current mouse position as an array [x, y]
+    // @param - evt : The mouse event passed in from the event listener
+    // --------------------------------
     mouse.GetMousePosition = function(evt)
     {
-        var rect = myGameArea.canvas.getBoundingClientRect();
+        let rect = myGameArea.canvas.getBoundingClientRect();
         return [ evt.clientX - rect.left, evt.clientY - rect.top ];
     };
 
-    // ----------------
+    // --------------------------------
     // AddButton
-    // ----------------
+    //     Adds a button to the screen for the mouse to check against clicks for
+    // @param - button : A BUTTON object to be added
+    // --------------------------------
     mouse.AddButton = function(button)
     {
-        if (m_arrButtons.includes(button)) {}
-        else
+        if (m_arrButtons.includes(button) == false)
         {
             m_arrButtons.push(button);
         }
     };
 
-    // ----------------
+    // --------------------------------
     // ClearButtons
-    // ----------------
+    //     Clears the button cache
+    // --------------------------------
     mouse.ClearButtons = function()
     {
-        var cButton;
+        let cButton;
         while (m_arrButtons.length > 0)
         {
           cButton = m_arrButtons.pop();
@@ -134,15 +131,16 @@ var MOUSE = (function () {
         }
     };
 
-    // ---------------
+    // --------------------------------
     // GetSelectedButton
-    // ----------------
+    //     Returns any button if it is currently hovered over
+    // --------------------------------
     mouse.GetSelectedButton = function()
     {
-        var idx;
-        var iLength = m_arrButtons.length;
-        var cButton;
-        var arrBounds;
+        let idx;
+        let iLength = m_arrButtons.length;
+        let cButton;
+        let arrBounds;
         for (idx = 0; idx < iLength; ++idx)
         {
             cButton = m_arrButtons[idx];
@@ -156,4 +154,4 @@ var MOUSE = (function () {
     };
 
     return mouse;
-}());
+}()); // end of class

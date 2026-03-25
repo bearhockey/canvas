@@ -1,10 +1,18 @@
+// ----------------------------------------------------------------
+// DIALOG
+//     Handles the drawing and logic of showing dialogs, which include the text box, name box, and choice buttons
+// ----------------------------------------------------------------
 var DIALOG = (function () {
     // consts
     const DEFAULT_BOX = [64, 404, 1042, 128];
     const DEFAULT_FONT = "24px Verdana";
+    const BOX_X_PADDING = 16;
+    const BOX_Y_PADDING = 32;
     const TEXT_COLOR = "#EEEEFF";
 
     const NAME_BOX = [80, 372, 256, 32];
+    const NAME_X_OFFSET = 16;
+    const NAME_Y_OFFSET = 24;
     const NAME_FONT = "32px serif";
 
     const CURSOR_POSITION = [1064, 492];
@@ -38,11 +46,17 @@ var DIALOG = (function () {
     // main
     var d = {};
 
+    // --------------------------------
     // constructor logic
+    // --------------------------------
     m_cursor = new Image();
     m_cursor.onload = function () { m_bCursorLoaded = true; };
     m_cursor.src = CURSOR_URL;
 
+    // --------------------------------
+    // Init
+    //     Initialization logic for setting things up that needs to run after the canvas has been created
+    // --------------------------------
     d.Init = function()
     {
         var choice_button;
@@ -56,6 +70,12 @@ var DIALOG = (function () {
 
     // --------------------------------
     // SetText
+    //     Sets the text and other data for the dialog
+    // @param - strText : String of the text to display in the text box
+    // @param - strName : String of the text to display in the name box
+    // @param - bUseItalics : Boolean, if true format the text box to be italic
+    // @param - bUseBold : Boolean, if true format the text box to be bold
+    // @param - arChoice : An array of possible choices to present to the player
     // --------------------------------
     d.SetText = function(strText, strName="", bUseItalics=false, bUseBold=false, arrChoice=null)
     {
@@ -72,13 +92,16 @@ var DIALOG = (function () {
 
         if (m_arrChoiceData != null && m_arrChoiceData.length > 0)
         {
-            var iLength = m_arrChoiceData.length;
-            var iStartingX = GetCanvasWidth()/2 - ( (BUTTON_WIDTH - BUTTON_SPACING) * (iLength/2));
-            var iYposition = (m_strDialog != "") ? BUTTON_Y_WITH_DIALOG : BUTTON_Y_NO_DIALOG;
-            for (var idx = 0; idx < iLength; ++idx)
+            let iLength = m_arrChoiceData.length;
+            let iStartingX = GetCanvasWidth()/2 - ( (BUTTON_WIDTH - BUTTON_SPACING) * (iLength/2));
+            let iYposition = (m_strDialog != "") ? BUTTON_Y_WITH_DIALOG : BUTTON_Y_NO_DIALOG;
+            let idx;
+            let button_choice;
+            let objChoice;
+            for (idx = 0; idx < iLength; ++idx)
             {
-                var button_choice = m_arrChoices[idx];
-                var objChoice = (idx < m_arrChoiceData.length) ? m_arrChoiceData[idx] : null;
+                button_choice = m_arrChoices[idx];
+                objChoice = (idx < m_arrChoiceData.length) ? m_arrChoiceData[idx] : null;
                 if (button_choice != null && objChoice != null)
                 {
                     button_choice.SetLabel(objChoice.text);
@@ -91,6 +114,7 @@ var DIALOG = (function () {
 
     // --------------------------------
     // ClearText
+    //     Clears all the dialog data
     // --------------------------------
     d.ClearText = function()
     {
@@ -104,12 +128,13 @@ var DIALOG = (function () {
         m_bDialogDone = true;
     };
 
-    // ----------------
+    // --------------------------------
     // DrawDialog
-    // ----------------
+    //     Draws all of the dialog components to the screen
+    // --------------------------------
     d.DrawDialog = function()
     {
-        var ctx = GetCanvas();
+        let ctx = GetCanvas();
         if (ctx != null && m_bDialogShowing)
         {
             const gradient = ctx.createLinearGradient(0, DEFAULT_BOX[1], 0, DEFAULT_BOX[1]+DEFAULT_BOX[3]);
@@ -127,85 +152,86 @@ var DIALOG = (function () {
         }
     };
 
-    // ----------------
+    // --------------------------------
     // DrawName
-    // ----------------
+    //     Draws the name box to the screen
+    // --------------------------------
     d.DrawName = function()
     {
-        var ctx = GetCanvas();
-        if (ctx != null)
-        {
-            const name_grad = ctx.createLinearGradient(0, NAME_BOX[1], 0, NAME_BOX[1]+NAME_BOX[3]);
-            name_grad.addColorStop(0, NAME_GRADIENT_TOP); // Start
-            name_grad.addColorStop(1, NAME_GRADIENT_BOTTOM);  // End
-            RENDER.DrawRoundedBox(NAME_BOX, name_grad);
-            ctx.font = DEFAULT_FONT;
-            ctx.fillStyle = TEXT_COLOR;
-            RENDER.EnableShadow();
-            ctx.fillText(m_strName, NAME_BOX[0]+16, NAME_BOX[1]+24);
-            RENDER.DisableShadow();
-        }
+        let ctx = GetCanvas();
+        if (ctx == null) { return; }
+
+        const name_grad = ctx.createLinearGradient(0, NAME_BOX[1], 0, NAME_BOX[1]+NAME_BOX[3]);
+        name_grad.addColorStop(0, NAME_GRADIENT_TOP); // Start
+        name_grad.addColorStop(1, NAME_GRADIENT_BOTTOM);  // End
+        RENDER.DrawRoundedBox(NAME_BOX, name_grad);
+        ctx.font = DEFAULT_FONT;
+        ctx.fillStyle = TEXT_COLOR;
+        RENDER.EnableShadow();
+        ctx.fillText(m_strName, NAME_BOX[0]+NAME_X_OFFSET, NAME_BOX[1]+NAME_Y_OFFSET);
+        RENDER.DisableShadow();
     };
 
-    // ----------------
+    // --------------------------------
     // DrawText
-    // ----------------
+    //     Draws the text in the text box using an animation function to simulate a typewriter effect
+    // --------------------------------
     d.DrawText = function()
     {
-        var ctx = GetCanvas();
-        if (ctx != null)
+        let ctx = GetCanvas();
+        if (ctx == null) { return; }
+
+        ctx.font = DIALOG.GetFont();
+        ctx.fillStyle = TEXT_COLOR;
+        RENDER.EnableShadow();
+        let strText;
+        let idx;
+        let bTextDone = m_iTextIdx >= m_strDialog.length;
+        if (bTextDone)
         {
-            ctx.font = DIALOG.GetFont();
-            ctx.fillStyle = TEXT_COLOR;
-            RENDER.EnableShadow();
-            var strText;
-            var bTextDone = m_iTextIdx >= m_strDialog.length;
-            if (bTextDone)
+            m_bDialogDone = true;
+            strText = m_strDialog;
+            if (m_arrChoiceData != null)
             {
-                m_bDialogDone = true;
-                strText = m_strDialog;
-                if (m_arrChoiceData != null)
+                let iLength = m_arrChoiceData.length;
+                let choice_button;
+                for (idx=0; idx < iLength; ++idx)
                 {
-                    var iLength = m_arrChoiceData.length;
-                    var choice_button;
-                    for (var idx=0; idx < iLength; ++idx)
-                    {
-                        choice_button = (idx < m_arrChoices.length) ? m_arrChoices[idx] : null;
-                        if (choice_button != null) { choice_button.visible = true; }
-                    }
-                }
-                else if (m_bCursorLoaded)
-                {
-                    ctx.drawImage(m_cursor, CURSOR_POSITION[0], CURSOR_POSITION[1]);
+                    choice_button = (idx < m_arrChoices.length) ? m_arrChoices[idx] : null;
+                    if (choice_button != null) { choice_button.visible = true; }
                 }
             }
-            else
+            else if (m_bCursorLoaded)
             {
-                strText = m_strDialog.substring(0, m_iTextIdx);
-                m_iTextIdx += 1;
+                ctx.drawImage(m_cursor, CURSOR_POSITION[0], CURSOR_POSITION[1]);
             }
-
-            var arrLines = STRINGUTILS.GetLines(strText, DEFAULT_BOX[2]-32);
-            var iTextHeight;
-            var idx;
-            var iLines = arrLines.length;
-            var textMetrics = ctx.measureText(strText);
-            iTextHeight = textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent;
-            for (idx = 0; idx < iLines; ++idx)
-            {
-                ctx.fillText(arrLines[idx], DEFAULT_BOX[0]+16, DEFAULT_BOX[1]+32 + (iTextHeight * idx));
-            }
-
-            RENDER.DisableShadow();
         }
+        else
+        {
+            strText = m_strDialog.substring(0, m_iTextIdx);
+            m_iTextIdx += 1;
+        }
+
+        let arrLines = STRINGUTILS.GetLines(strText, DEFAULT_BOX[2]-32);
+        let iTextHeight;
+        let iLines = arrLines.length;
+        let textMetrics = ctx.measureText(strText);
+        iTextHeight = textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent;
+        for (idx = 0; idx < iLines; ++idx)
+        {
+            ctx.fillText(arrLines[idx], DEFAULT_BOX[0]+BOX_X_PADDING, DEFAULT_BOX[1]+BOX_Y_PADDING + (iTextHeight * idx));
+        }
+
+        RENDER.DisableShadow();
     };
 
     // --------------------------------
     // GetFont
+    //     Gets the currently set font for the text box and adds any markup
     // --------------------------------
     d.GetFont = function()
     {
-        var strFont = "";
+        let strFont = "";
         if (m_bItalics) { strFont += "italic "; }
         if (m_bBold)    { strFont += "bold "; }
         return strFont + DEFAULT_FONT;
@@ -213,15 +239,16 @@ var DIALOG = (function () {
 
     // --------------------------------
     // OnChoiceClick
+    //     Called when a choice button is clicked
     // --------------------------------
     d.OnChoiceClick = function(button)
     {
         if (m_arrChoiceData != null)
         {
-            var idx = m_arrChoices.indexOf(button);
+            let idx = m_arrChoices.indexOf(button);
             if (idx >= 0)
             {
-                var objChoice = (idx < m_arrChoiceData.length) ? m_arrChoiceData[idx] : null;
+                let objChoice = (idx < m_arrChoiceData.length) ? m_arrChoiceData[idx] : null;
                 if (objChoice != null && objChoice.target != null)
                 {
                     EVENTS.SetNextEventIdx(objChoice.target);
@@ -231,9 +258,10 @@ var DIALOG = (function () {
         }
     };
 
-    // ----------------
+    // --------------------------------
     // OnMouseClick
-    // ----------------
+    //     When the mouse is clicked
+    // --------------------------------
     d.OnMouseClick = function()
     {
         if (m_bDialogShowing)
@@ -251,4 +279,4 @@ var DIALOG = (function () {
     };
 
     return d;
-  }());
+}()); // end of class

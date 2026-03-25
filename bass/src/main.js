@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------
+// main.js
+//     The main JS file loaded on start
+// ----------------------------------------------------------------
 // consts
 const CANVAS_WIDTH = 1170;
 const CANVAS_HEIGHT = 540;
@@ -15,10 +19,9 @@ var myGameArea =
         this.canvas.width = (m_bEditMode) ? PREVIEW_WIDTH : CANVAS_WIDTH;
         this.canvas.height = (m_bEditMode) ? PREVIEW_HEIGHT : CANVAS_HEIGHT;
         this.context = this.canvas.getContext("2d");
-        document.getElementById('divCanvas').appendChild(this.canvas);
-        this.canvas.addEventListener('mousemove', MOUSE.Move);
-        this.canvas.addEventListener('click', MOUSE.LeftClick);
-        // this.canvas.addEventListener('contextmenu', MOUSE.RightClick);
+        document.getElementById("divCanvas").appendChild(this.canvas);
+        this.canvas.addEventListener("mousemove", MOUSE.Move);
+        this.canvas.addEventListener("click", MOUSE.LeftClick);
         RENDER.DrawImage(LOGO_URL);
     },
     clear : function(strFill=null)
@@ -32,41 +35,50 @@ var myGameArea =
     }
 };
 
-// ----------------
+// --------------------------------
 // GetCanvas
 //     Returns the canvas object
-// ----------------
+// --------------------------------
 function GetCanvas() { return myGameArea.context; }
 
-// ----------------
+// --------------------------------
 // GetCanvasWidth
-//     Returns how wide ( and thus how tall ) the canvas is in pixels
-// ----------------
+// GetCanvasHeight
+//     Returns how wide / tall the canvas object is
+// --------------------------------
 function GetCanvasWidth()  { return myGameArea.canvas.width;  }
 function GetCanvasHeight() { return myGameArea.canvas.height; }
 
+// --------------------------------
+// InEditMode
+//     Returns if we are in edit mode or player mode
+// --------------------------------
 function InEditMode() { return m_bEditMode; }
 
-// ----------------
+// --------------------------------
 // Update
-// ----------------
+//     Main update loop for animating
+// --------------------------------
 function Update()
 {
     RENDER.Render();
     requestAnimationFrame(Update);
 }
 
-// ----------------
+// --------------------------------
 // StartGame
 //     Starts the game
-// ----------------
+// --------------------------------
 function StartGame()
 {
     myGameArea.start();
     DIALOG.Init();
 }
 
-// ----------------
+// --------------------------------
+// EditGame
+//     Starts the game in edit mode
+// --------------------------------
 function EditGame()
 {
     m_bEditMode = true;
@@ -76,6 +88,7 @@ function EditGame()
 
 // --------------------------------
 // LoadFile
+//     Loads a story file for editing or playing
 // --------------------------------
 function LoadFile()
 {
@@ -88,33 +101,27 @@ function LoadFile()
 
 // --------------------------------
 // LoadComplete
+//     Callback after the story file has been loaded
 // --------------------------------
 function LoadComplete()
 {
     if (m_bEditMode == false) { Update(); }
-    var s_load_div = document.getElementById('divLoad');
-    var s_file_div = document.getElementById('divFile');
-    var s_edit_div = document.getElementById('divEdit');
-    if (s_load_div != null)
-    {
-        s_load_div.style.display = 'none';
-    }
-    if (s_file_div != null)
-    {
-        s_file_div.style.display = 'block';
-    }
-    if (s_edit_div != null)
-    {
-        s_edit_div.style.display = 'flex';
-    }
+    let s_load_div = document.getElementById("divLoad");
+    let s_file_div = document.getElementById("divFile");
+    let s_edit_div = document.getElementById("divEdit");
+
+    if (s_load_div != null) { s_load_div.style.display = "none"; }
+    if (s_file_div != null) { s_file_div.style.display = "block"; }
+    if (s_edit_div != null) { s_edit_div.style.display = "flex";  }
 }
 
 // --------------------------------
 // LoadFailed
+//     xcallback after a failed file load
 // --------------------------------
 function LoadFailed(err)
 {
     window.alert("ERROR loading file : " + err);
 }
-// ----------------
+
 // end of main

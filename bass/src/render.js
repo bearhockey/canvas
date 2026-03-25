@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------
+// RENDER
+//     Handles rendering the screen
+// ----------------------------------------------------------------
 var RENDER = (function () {
     // consts
     const FADE_DELTA = 0.05;
@@ -28,16 +32,19 @@ var RENDER = (function () {
     var m_bIsFadingOut = false;
     var m_bHoldFade = false;
 
-    // main
-    var r = {};
+    var r = {}; // main
 
     // --------------------------------
     // DrawRoundedBox
     //      Draws a rounded box with a border and gradiant background
+    // @param - arr_bounds : The bounding dimmensions of the box as defined as an array [x, y, width, height]
+    // @param - box_gradient : A canvas gradient object to fill the box background
+    // @param - line_width : The width of the box border
+    // @param - border_radius : The degree which the corners of the box should be rounded
     // --------------------------------
     r.DrawRoundedBox = function(arr_bounds, box_gradient, line_width=BORDER_WIDTH, border_radius=8)
     {
-        var ctx = GetCanvas();
+        let ctx = GetCanvas();
         if (ctx != null && arr_bounds.length > 3)
         {
             ctx.fillStyle = box_gradient;
@@ -57,37 +64,39 @@ var RENDER = (function () {
 
     // --------------------------------
     // EnableShadow
+    //     Enables a shadow renderered under text
     // --------------------------------
     r.EnableShadow = function()
     {
-        var ctx = GetCanvas();
-        if (ctx != null)
-        {
-            ctx.shadowColor = "black"; // Shadow color
-            ctx.shadowBlur = 1; // Blur level
-            ctx.shadowOffsetX = 2; // Horizontal offset
-            ctx.shadowOffsetY = 2; // Vertical offset
-        }
+        let ctx = GetCanvas();
+        if (ctx == null) { return; }
+
+        ctx.shadowColor = "black";  // Shadow color
+        ctx.shadowBlur = 1;         // Blur level
+        ctx.shadowOffsetX = 2;      // Horizontal offset
+        ctx.shadowOffsetY = 2;      // Vertical offset
     };
 
-    // ----------------
+    // --------------------------------
     // DisableShadow
-    // ----------------
+    //     Disables a shadow renderered under text
+    // --------------------------------
     r.DisableShadow = function()
     {
-        var ctx = GetCanvas();
-        if (ctx != null)
-        {
-            ctx.shadowColor = "transparent";
-            ctx.shadowBlur = 0;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 0;
-        }
+        let ctx = GetCanvas();
+        if (ctx == null) { return; }
+
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
     };
 
-    // ----------------
+    // --------------------------------
     // SetBackground
-    // ----------------
+    //     Sets the background image to be loaded and rendered when it is loaded
+    // @param - strURL : The URL of the image to be loaded
+    // --------------------------------
     r.SetBackground = function(strURL)
     {
         RENDER.ClearBackground();
@@ -98,6 +107,8 @@ var RENDER = (function () {
 
     // --------------------------------
     // SetForeground
+    //     Sets the foreground image to be loaded and faded in when it is loaded
+    // @param - strURL : The URL of the image to be loaded
     // --------------------------------
     r.SetForeground = function(strURL)
     {
@@ -119,6 +130,8 @@ var RENDER = (function () {
 
     // --------------------------------
     // SetEffects
+    //     Sets the effects image when it is loaded (might be unused / not work)
+    // @param - strURL : The URL of the image to be loaded
     // --------------------------------
     r.SetEffects = function(strURL)
     {
@@ -133,6 +146,7 @@ var RENDER = (function () {
 
     // --------------------------------
     // ClearBackground
+    //     Clears the background image
     // --------------------------------
     r.ClearBackground = function()
     {
@@ -142,6 +156,8 @@ var RENDER = (function () {
 
     // --------------------------------
     // ClearForeground
+    //     Clears the foreground image - fades it out if in player, clears completely in editor
+    // @param - bRedraw : Boolean, if true then run the main render loop
     // --------------------------------
     r.ClearForeground = function(bRedraw=true)
     {
@@ -159,6 +175,7 @@ var RENDER = (function () {
 
     // --------------------------------
     // ClearEffects
+    //     Clears the effects image - fades out if in player, immediately if in editor
     // --------------------------------
     r.ClearEffects = function()
     {
@@ -175,10 +192,11 @@ var RENDER = (function () {
 
     // --------------------------------
     // DrawEffects
+    //     Draws the effects layer if it is loaded
     // --------------------------------
     r.DrawEffects = function()
     {
-        var ctx = GetCanvas();
+        let ctx = GetCanvas();
         if (ctx != null && m_bEffectsLoaded)
         {
             if (m_fEffectsAlpha < m_fEffectsAlphaTarget) { m_fEffectsAlpha += FADE_DELTA; }
@@ -199,10 +217,11 @@ var RENDER = (function () {
 
     // --------------------------------
     // DrawForeground
+    //      Draws the foreground image if it is loaded
     // --------------------------------
     r.DrawForeground = function()
     {
-        var ctx = GetCanvas();
+        let ctx = GetCanvas();
         if (ctx != null && m_bForegroundLoaded)
         {
             let bInEditMode = InEditMode();
@@ -228,9 +247,12 @@ var RENDER = (function () {
         }
     };
 
-    // ----------------
+    // --------------------------------
     // SetFade
-    // ----------------
+    //     Sets a screen-wide fade target: 1.0 is faded out, 0.0 is fully visible
+    // @param - fTarget : Float, the target opacity of the fullscreen fade
+    // @param - bStayFaded - Boolean, if true the fade should remain on screen after it is done
+    // --------------------------------
     r.SetFade = function(fTarget, bStayFaded=false)
     {
         m_fFadeTarget = fTarget;
@@ -239,12 +261,15 @@ var RENDER = (function () {
         m_bIsFadingOut = (m_fFadeTarget > m_fFadeAlpha);
     };
 
-    // ----------------
+    // --------------------------------
     // DrawFade
-    // ----------------
+    //     Draws the full-screen fade at the appropriate opacity
+    // --------------------------------
     r.DrawFade = function()
     {
-        var ctx = GetCanvas();
+        let ctx = GetCanvas();
+        if (ctx == null) { return; }
+
         if (m_bIsFadingIn)
         {
             if (m_fFadeAlpha >= m_fFadeTarget) { m_fFadeAlpha -= FADE_DELTA; }
@@ -265,27 +290,10 @@ var RENDER = (function () {
         }
     };
 
-    r.DrawBevel = function(ctx, rRect, objColor, iLineWidth=4)
-    {
-      ctx.fillStyle = objColor.color;
-      ctx.fillRect(rRect.x, rRect.y, rRect.width, rRect.height);
-      ctx.beginPath();
-      ctx.lineWidth = iLineWidth;
-      ctx.strokeStyle = objColor.highlight;
-      ctx.moveTo(rRect.x, rRect.y + rRect.height);
-      ctx.lineTo(rRect.x, rRect.y);
-      ctx.lineTo(rRect.x + rRect.width, rRect.y);
-      ctx.stroke();
-      ctx.closePath();
-      ctx.beginPath();
-      ctx.strokeStyle = objColor.shadow;
-      ctx.moveTo(rRect.x, rRect.y + rRect.height);
-      ctx.lineTo(rRect.x + rRect.width, rRect.y + rRect.height);
-      ctx.lineTo(rRect.x + rRect.width, rRect.y);
-      ctx.stroke();
-      ctx.closePath();
-    };
-
+    // --------------------------------
+    // CheckPreview
+    //      Runs after setting an image and renders it immediately if in edit mode since edit mode does not run the update loop
+    // --------------------------------
     r.CheckPreview = function()
     {
         if (InEditMode()) { RENDER.Render(); }
@@ -293,39 +301,41 @@ var RENDER = (function () {
 
     // --------------------------------
     // DrawImage
-    //     Draws a single image outside of the render loop
+    //     Draws a single full-screen image outside of the render loop
+    // @param - strUROL : URL of the image to load
     // --------------------------------
     r.DrawImage = function(strURL)
     {
         m_adhoc_image = new Image();
         m_adhoc_image.onload = function ()
         {
-             var ctx = GetCanvas();
+             let ctx = GetCanvas();
              if (ctx != null)
              {
                 myGameArea.clear();
                 ctx.drawImage(m_adhoc_image, 0, 0, GetCanvasWidth(), GetCanvasHeight());
              }
         };
+
         m_adhoc_image.src = strURL;
     };
 
     // --------------------------------
     // Render
+    //     The main render loop
     // --------------------------------
     r.Render = function()
     {
-        var ctx = GetCanvas();
-        if (ctx != null)
-        {
-            myGameArea.clear();
-            if (m_bBackgroundLoaded) { ctx.drawImage(m_background, 0, 0, GetCanvasWidth(), GetCanvasHeight()); }
-            RENDER.DrawForeground();
-            RENDER.DrawEffects();
-            DIALOG.DrawDialog();
-            RENDER.DrawFade();
-        }
+        let ctx = GetCanvas();
+        if (ctx == null) { return; }
+
+        myGameArea.clear();
+        if (m_bBackgroundLoaded) { ctx.drawImage(m_background, 0, 0, GetCanvasWidth(), GetCanvasHeight()); }
+        RENDER.DrawForeground();
+        RENDER.DrawEffects();
+        DIALOG.DrawDialog();
+        RENDER.DrawFade();
     };
 
     return r;
-  }());
+}()); // end of class
