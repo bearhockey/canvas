@@ -55,6 +55,22 @@ var EVENTS = (function () {
     };
 
     // --------------------------------
+    // ClearEventsData
+    //     Clears out the current story in memory
+    // --------------------------------
+    events.ClearEventsData = function()
+    {
+        m_file_name = ""
+        m_events_data = null;
+        m_story_name = "";
+        m_title_data = null;
+        m_chapter_list = {};
+        m_current_chapter = "0";
+        m_event_list = {};
+        m_event_idx = 0;
+    };
+
+    // --------------------------------
     // Getters and Setters
     //     Various get and set functions for the data
     // --------------------------------
@@ -117,7 +133,8 @@ var EVENTS = (function () {
         }
         else
         {
-            console.log("No next event!");
+            console.log("No next event - assuming this is the end of the story");
+            RENDER.SetBackground(FIN_URL);
         }
     };
 
@@ -255,7 +272,9 @@ var EVENTS = (function () {
     // --------------------------------
     events.NewEventFile = function()
     {
-        EVENTS.SetEventsData({"chapters": {"0":{ "events": {"0":{} } } } });
+        let new_file = { "chapters":{} };
+        new_file["chapters"]["0"] = { "events": {"0":{ "next":1 } } };
+        EVENTS.SetEventsData(new_file);
     };
 
     // --------------------------------

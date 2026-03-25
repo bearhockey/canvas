@@ -313,16 +313,19 @@ button.event_manage
     width: 100%;
 }
 
-button#save_file
+button.file_button
 {
     color :#EEEEEE;
-    background-color: #448833;
     font-size: 24px;
     font-weight: 800;
     margin-left: 4px;
     margin-right: 4px;
     border-radius: 6px;
 }
+
+button#save_file { background-color: #448833; }
+button#run_file { background-color: #334488; }
+
 
 button#delete_chapter { background-color: #884433; }
 button#remove_event   { background-color: #884433; }

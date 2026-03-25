@@ -8,18 +8,19 @@ const CANVAS_HEIGHT = 540;
 const PREVIEW_WIDTH = 585;
 const PREVIEW_HEIGHT = 270;
 const LOGO_URL = "./res/logo_screen.png";
+const FIN_URL = "./res/fin_screen.png";
 
 var m_bEditMode = false;
 
 var myGameArea =
 {
     canvas : document.createElement("canvas"),
-    start  : function()
+    start  : function(canvas_target)
     {
         this.canvas.width = (m_bEditMode) ? PREVIEW_WIDTH : CANVAS_WIDTH;
         this.canvas.height = (m_bEditMode) ? PREVIEW_HEIGHT : CANVAS_HEIGHT;
         this.context = this.canvas.getContext("2d");
-        document.getElementById("divCanvas").appendChild(this.canvas);
+        document.getElementById(canvas_target).appendChild(this.canvas);
         this.canvas.addEventListener("mousemove", MOUSE.Move);
         this.canvas.addEventListener("click", MOUSE.LeftClick);
         RENDER.DrawImage(LOGO_URL);
@@ -54,6 +55,7 @@ function GetCanvasHeight() { return myGameArea.canvas.height; }
 //     Returns if we are in edit mode or player mode
 // --------------------------------
 function InEditMode() { return m_bEditMode; }
+function SetEditMode(bEdit) { m_bEditMode = bEdit; }
 
 // --------------------------------
 // Update
@@ -66,33 +68,22 @@ function Update()
 }
 
 // --------------------------------
-// StartGame
-//     Starts the game
+// OnStart
+//     Called when the page loads
 // --------------------------------
-function StartGame()
+function OnStart()
 {
-    myGameArea.start();
-    DIALOG.Init();
-}
-
-// --------------------------------
-// EditGame
-//     Starts the game in edit mode
-// --------------------------------
-function EditGame()
-{
-    m_bEditMode = true;
     EDIT.Populate();
-    StartGame();
 }
 
 // --------------------------------
 // LoadFile
 //     Loads a story file for editing or playing
 // --------------------------------
-function LoadFile()
+function LoadFile(bEditMode = false)
 {
-    var load_file = document.getElementById("load_file");
+    m_bEditMode = bEditMode;
+    let load_file = document.getElementById("load_file");
     if (load_file != null && load_file.value != null)
     {
         EVENTS.FetchEventsFile(load_file.value);
@@ -105,14 +96,27 @@ function LoadFile()
 // --------------------------------
 function LoadComplete()
 {
-    if (m_bEditMode == false) { Update(); }
-    let s_load_div = document.getElementById("divLoad");
-    let s_file_div = document.getElementById("divFile");
-    let s_edit_div = document.getElementById("divEdit");
+    let canvas_target = (m_bEditMode) ? "divCanvasEdit" : "divCanvas";
+    myGameArea.start(canvas_target);
+    DIALOG.Init();
 
+    let s_load_div = document.getElementById("divLoad");
     if (s_load_div != null) { s_load_div.style.display = "none"; }
-    if (s_file_div != null) { s_file_div.style.display = "block"; }
-    if (s_edit_div != null) { s_edit_div.style.display = "flex";  }
+    let s_logo = document.getElementById("logo");
+    if (s_logo != null) { s_logo.parentNode.removeChild(s_logo); }
+
+    if (m_bEditMode)
+    {
+        let s_file_div = document.getElementById("divFile");
+        let s_edit_div = document.getElementById("divEdit");
+
+        if (s_file_div != null) { s_file_div.style.display = "block"; }
+        if (s_edit_div != null) { s_edit_div.style.display = "flex";  }
+    }
+    else
+    {
+        Update();
+    }
 }
 
 // --------------------------------
@@ -122,6 +126,25 @@ function LoadComplete()
 function LoadFailed(err)
 {
     window.alert("ERROR loading file : " + err);
+}
+
+// --------------------------------
+// ExitEditMode
+//     Exits the editing mode and runs whatever is passed
+// @param - data : Events data to run
+// --------------------------------
+function ExitEditMode(data)
+{
+    let s_file_div = document.getElementById("divFile");
+    let s_edit_div = document.getElementById("divEdit");
+
+    if (s_file_div != null) { s_file_div.style.display = "none"; }
+    if (s_edit_div != null) { s_edit_div.style.display = "none";  }
+
+    m_bEditMode = false;
+    myGameArea.start("divCanvas");
+    Update();
+    EVENTS.SetEventsData(data);
 }
 
 // end of main

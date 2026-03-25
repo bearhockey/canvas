@@ -302,7 +302,9 @@ var EDIT = (function () {
     // --------------------------------
     edit.NewFile = function()
     {
+        SetEditMode(true);
         EVENTS.NewEventFile();
+        LoadComplete();
     };
 
     // --------------------------------
@@ -420,6 +422,25 @@ var EDIT = (function () {
             let current_chapter_key = EVENTS.GetCurrentChapter();
             EVENTS.SetChapterName(chapter_name);
             EDIT.GetChapters(current_chapter_key);
+        }
+    };
+
+    // --------------------------------
+    // RunFile
+    //     Saves the current project in memory and runs the game
+    // --------------------------------
+    edit.RunFile = function()
+    {
+        let bConfirm = window.confirm("You cannot return to edit mode once the game is running - make sure you save before you continue!");
+        if (bConfirm == true)
+        {
+            EDIT.SaveEvent();
+            if (s_story_name != null && s_story_name.value != "") { EVENTS.SetStoryName(s_story_name.value); }
+            if (s_title_screen != null && s_title_screen.value != "") { EVENTS.SetTitleScreen(s_title_screen.value); }
+
+            let saved_data = EVENTS.GetEventsData();
+            EVENTS.ClearEventsData();
+            ExitEditMode(saved_data);
         }
     };
 
