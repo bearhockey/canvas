@@ -300,6 +300,18 @@ var RENDER = (function () {
     };
 
     // --------------------------------
+    // Clear
+    //     Clears out all images
+    // --------------------------------
+    r.Clear = function()
+    {
+        RENDER.ClearBackground();
+        RENDER.ClearForeground();
+        RENDER.ClearEffects();
+        myGameArea.clear();
+    };
+
+    // --------------------------------
     // DrawImage
     //     Draws a single full-screen image outside of the render loop
     // @param - strUROL : URL of the image to load

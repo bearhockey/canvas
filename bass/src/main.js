@@ -142,6 +142,7 @@ function ExitEditMode(data)
     if (s_edit_div != null) { s_edit_div.style.display = "none";  }
 
     m_bEditMode = false;
+    RENDER.Clear();
     myGameArea.start("divCanvas");
     Update();
     EVENTS.SetEventsData(data);

@@ -134,6 +134,7 @@ var EVENTS = (function () {
         else
         {
             console.log("No next event - assuming this is the end of the story");
+            RENDER.Clear();
             RENDER.SetBackground(FIN_URL);
         }
     };
