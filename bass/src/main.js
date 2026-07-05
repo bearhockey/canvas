@@ -15,14 +15,19 @@ var m_bEditMode = false;
 var myGameArea =
 {
     canvas : document.createElement("canvas"),
+    bListenersAttached : false,
     start  : function(canvas_target)
     {
         this.canvas.width = (m_bEditMode) ? PREVIEW_WIDTH : CANVAS_WIDTH;
         this.canvas.height = (m_bEditMode) ? PREVIEW_HEIGHT : CANVAS_HEIGHT;
         this.context = this.canvas.getContext("2d");
         document.getElementById(canvas_target).appendChild(this.canvas);
-        this.canvas.addEventListener("mousemove", MOUSE.Move);
-        this.canvas.addEventListener("click", MOUSE.LeftClick);
+        if (this.bListenersAttached == false)
+        {
+            this.canvas.addEventListener("mousemove", MOUSE.Move);
+            this.canvas.addEventListener("click", MOUSE.LeftClick);
+            this.bListenersAttached = true;
+        }
         RENDER.DrawImage(LOGO_URL);
     },
     clear : function(strFill=null)
@@ -61,9 +66,15 @@ function SetEditMode(bEdit) { m_bEditMode = bEdit; }
 // Update
 //     Main update loop for animating
 // --------------------------------
-function Update()
+var m_fLastTimestamp = null;
+
+function Update(timestamp)
 {
-    RENDER.Render();
+    if (typeof timestamp !== "number") { timestamp = performance.now(); }
+    let fDeltaMs = (m_fLastTimestamp != null) ? (timestamp - m_fLastTimestamp) : (1000/60);
+    m_fLastTimestamp = timestamp;
+
+    RENDER.Render(fDeltaMs);
     requestAnimationFrame(Update);
 }
 

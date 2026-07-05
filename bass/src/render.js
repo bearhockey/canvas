@@ -4,7 +4,8 @@
 // ----------------------------------------------------------------
 var RENDER = (function () {
     // consts
-    const FADE_DELTA = 0.05;
+    const FADE_DELTA = 0.05; // reference: fade amount per ~60fps frame
+    const FADE_RATE_PER_MS = FADE_DELTA * 60 / 1000;
     const BORDER_WIDTH = 4;
     const BORDER_GRADIENT_TOP = "#EEEEEE";
     const BORDER_GRADIENT_BOTTOM = "#AAAAAA";
@@ -100,9 +101,14 @@ var RENDER = (function () {
     r.SetBackground = function(strURL)
     {
         RENDER.ClearBackground();
-        m_background = new Image();
-        m_background.onload = function () { m_bBackgroundLoaded = true; RENDER.CheckPreview(); };
-        m_background.src = strURL;
+        let img = new Image();
+        m_background = img;
+        img.onload = function ()
+        {
+            // guard against a stale load finishing after Clear/SetBackground moved on to something else
+            if (m_background === img) { m_bBackgroundLoaded = true; RENDER.CheckPreview(); }
+        };
+        img.src = strURL;
     };
 
     // --------------------------------
@@ -116,16 +122,21 @@ var RENDER = (function () {
         m_foreground = null;
         m_fForegroundAlpha = 0.0;
         m_fForegroundAlphaTarget = 1.0;
-        m_foreground = new Image();
-        m_foreground.onload = function ()
+        let img = new Image();
+        m_foreground = img;
+        img.onload = function ()
         {
-            m_fForegroundWidth = this.naturalWidth;
-            m_fForegroundHeight = this.naturalHeight;
-            m_bForegroundLoaded = true;
-            RENDER.CheckPreview();
+            // guard against a stale load finishing after Clear/SetForeground moved on to something else
+            if (m_foreground === img)
+            {
+                m_fForegroundWidth = img.naturalWidth;
+                m_fForegroundHeight = img.naturalHeight;
+                m_bForegroundLoaded = true;
+                RENDER.CheckPreview();
+            }
         };
 
-        m_foreground.src = strURL;
+        img.src = strURL;
     };
 
     // --------------------------------
@@ -139,9 +150,14 @@ var RENDER = (function () {
         m_effects = null;
         m_fEffectsAlpha = 0.0;
         m_fEffectsAlphaTarget = 1.0;
-        m_effects = new Image();
-        m_effects.onload = function () { m_bEffectsLoaded = true; RENDER.CheckPreview(); };
-        m_effects.src = strURL;
+        let img = new Image();
+        m_effects = img;
+        img.onload = function ()
+        {
+            // guard against a stale load finishing after Clear/SetEffects moved on to something else
+            if (m_effects === img) { m_bEffectsLoaded = true; RENDER.CheckPreview(); }
+        };
+        img.src = strURL;
     };
 
     // --------------------------------
@@ -194,13 +210,14 @@ var RENDER = (function () {
     // DrawEffects
     //     Draws the effects layer if it is loaded
     // --------------------------------
-    r.DrawEffects = function()
+    r.DrawEffects = function(fDeltaMs=1000/60)
     {
         let ctx = GetCanvas();
         if (ctx != null && m_bEffectsLoaded)
         {
-            if (m_fEffectsAlpha < m_fEffectsAlphaTarget) { m_fEffectsAlpha += FADE_DELTA; }
-            else if (m_fEffectsAlpha > m_fEffectsAlphaTarget) { m_fEffectsAlpha -= FADE_DELTA; }
+            if (InEditMode()) { m_fEffectsAlpha = m_fEffectsAlphaTarget = 1.0; }
+            else if (m_fEffectsAlpha < m_fEffectsAlphaTarget) { m_fEffectsAlpha = Math.min(m_fEffectsAlpha + FADE_RATE_PER_MS * fDeltaMs, m_fEffectsAlphaTarget); }
+            else if (m_fEffectsAlpha > m_fEffectsAlphaTarget) { m_fEffectsAlpha = Math.max(m_fEffectsAlpha - FADE_RATE_PER_MS * fDeltaMs, m_fEffectsAlphaTarget); }
             if (m_fEffectsAlpha <= 0.0 && m_effects != null)
             {
                 m_effects = null;
@@ -219,15 +236,15 @@ var RENDER = (function () {
     // DrawForeground
     //      Draws the foreground image if it is loaded
     // --------------------------------
-    r.DrawForeground = function()
+    r.DrawForeground = function(fDeltaMs=1000/60)
     {
         let ctx = GetCanvas();
         if (ctx != null && m_bForegroundLoaded)
         {
             let bInEditMode = InEditMode();
             if (bInEditMode == true) { m_fForegroundAlpha = m_fForegroundAlphaTarget = 1.0; }
-            else if (m_fForegroundAlpha < m_fForegroundAlphaTarget) { m_fForegroundAlpha += FADE_DELTA; }
-            else if (m_fForegroundAlpha > m_fForegroundAlphaTarget) { m_fForegroundAlpha -= FADE_DELTA; }
+            else if (m_fForegroundAlpha < m_fForegroundAlphaTarget) { m_fForegroundAlpha = Math.min(m_fForegroundAlpha + FADE_RATE_PER_MS * fDeltaMs, m_fForegroundAlphaTarget); }
+            else if (m_fForegroundAlpha > m_fForegroundAlphaTarget) { m_fForegroundAlpha = Math.max(m_fForegroundAlpha - FADE_RATE_PER_MS * fDeltaMs, m_fForegroundAlphaTarget); }
 
             if (m_fForegroundAlpha <= 0.0 && m_foreground != null)
             {
@@ -265,27 +282,27 @@ var RENDER = (function () {
     // DrawFade
     //     Draws the full-screen fade at the appropriate opacity
     // --------------------------------
-    r.DrawFade = function()
+    r.DrawFade = function(fDeltaMs=1000/60)
     {
         let ctx = GetCanvas();
         if (ctx == null) { return; }
 
         if (m_bIsFadingIn)
         {
-            if (m_fFadeAlpha >= m_fFadeTarget) { m_fFadeAlpha -= FADE_DELTA; }
-            else                               { m_bIsFadingIn = false;  }
+            m_fFadeAlpha = Math.max(m_fFadeAlpha - FADE_RATE_PER_MS * fDeltaMs, m_fFadeTarget);
+            if (m_fFadeAlpha <= m_fFadeTarget) { m_bIsFadingIn = false; }
         }
         else if (m_bIsFadingOut)
         {
-            if (m_fFadeAlpha <= m_fFadeTarget) { m_fFadeAlpha += FADE_DELTA; }
-            else                               { m_bIsFadingOut = false; }
+            m_fFadeAlpha = Math.min(m_fFadeAlpha + FADE_RATE_PER_MS * fDeltaMs, m_fFadeTarget);
+            if (m_fFadeAlpha >= m_fFadeTarget) { m_bIsFadingOut = false; }
         }
 
         if (m_bIsFadingIn || m_bIsFadingOut || m_bHoldFade)
         {
             ctx.fillStyle = "black";
             ctx.globalAlpha = m_fFadeAlpha;
-            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            ctx.fillRect(0, 0, GetCanvasWidth(), GetCanvasHeight());
             ctx.globalAlpha = 1.0;
         }
     };
@@ -336,17 +353,17 @@ var RENDER = (function () {
     // Render
     //     The main render loop
     // --------------------------------
-    r.Render = function()
+    r.Render = function(fDeltaMs=1000/60)
     {
         let ctx = GetCanvas();
         if (ctx == null) { return; }
 
         myGameArea.clear();
         if (m_bBackgroundLoaded) { ctx.drawImage(m_background, 0, 0, GetCanvasWidth(), GetCanvasHeight()); }
-        RENDER.DrawForeground();
-        RENDER.DrawEffects();
-        DIALOG.DrawDialog();
-        RENDER.DrawFade();
+        RENDER.DrawForeground(fDeltaMs);
+        RENDER.DrawEffects(fDeltaMs);
+        DIALOG.DrawDialog(fDeltaMs);
+        RENDER.DrawFade(fDeltaMs);
     };
 
     return r;
