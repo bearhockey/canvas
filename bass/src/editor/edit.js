@@ -31,10 +31,10 @@ var EDIT = (function () {
     var s_fade_in;
     var s_fade_out;
 
-    var s_choice_div_a;
-    var s_choice_div_b;
-    var s_choice_div_c;
-    var s_choice_div_d;
+    var s_choice_a;
+    var s_choice_b;
+    var s_choice_c;
+    var s_choice_d;
     var m_arrChoices;
     var s_save_event;
 
@@ -102,6 +102,12 @@ var EDIT = (function () {
     // --------------------------------
     edit.DeleteChapter = function()
     {
+        if (s_chapter_list != null && s_chapter_list.options.length <= 1)
+        {
+            window.alert("Cannot delete the only remaining chapter.");
+            return;
+        }
+
         let bConfirm = window.confirm("Are you sure you want to delete the chapter and all events within it?");
         if (bConfirm)
         {
@@ -389,7 +395,7 @@ var EDIT = (function () {
     edit.PreviewEffects = function()
     {
         if (s_effects_clear != null && s_effects_clear.checked)           { RENDER.ClearEffects(); }
-        else if (s_effects_scene != null && s_effects_scene.value != "")  { RENDER.SetEffects(s_foreground_scene.value); }
+        else if (s_effects_scene != null && s_effects_scene.value != "")  { RENDER.SetEffects(s_effects_scene.value); }
     }
 
     // --------------------------------

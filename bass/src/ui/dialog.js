@@ -28,21 +28,22 @@ var DIALOG = (function () {
     const BUTTON_HEIGHT = 64;
     const BUTTON_Y_WITH_DIALOG = 308;
     const BUTTON_Y_NO_DIALOG = 468;
+    const CHARS_PER_SECOND = 60; // reference: 1 char per ~60fps frame
     // private vars
     var m_strDialog = "";
     var m_strName = "";
     var m_bItalics = false;
     var m_bBold = false;
     var m_iTextIdx = 0;
+    var m_fCharAccumulator = 0;
     var m_bDialogShowing = false;
     var m_bDialogDone = false;
     var m_arrChoiceData = null;
     var m_cursor;
     var m_bCursorLoaded = false;
+    var m_objFontHeightCache = {};
 
     var m_arrChoices = [];
-    var m_choice_a;
-    var m_choice_b;
     // main
     var d = {};
 
@@ -85,6 +86,7 @@ var DIALOG = (function () {
         m_bBold = bUseBold;
         m_arrChoiceData = arrChoice;
         m_iTextIdx = 0;
+        m_fCharAccumulator = 0;
         m_bDialogShowing = true;
         m_bDialogDone = false;
 
@@ -124,15 +126,18 @@ var DIALOG = (function () {
         m_bBold = false;
         m_arrChoiceData = [];
         m_iTextIdx = 0;
+        m_fCharAccumulator = 0;
         m_bDialogShowing = false;
         m_bDialogDone = true;
+
+        for (const choice_button of m_arrChoices) { if (choice_button != null) { choice_button.visible = false; } }
     };
 
     // --------------------------------
     // DrawDialog
     //     Draws all of the dialog components to the screen
     // --------------------------------
-    d.DrawDialog = function()
+    d.DrawDialog = function(fDeltaMs=1000/60)
     {
         let ctx = GetCanvas();
         if (ctx != null && m_bDialogShowing)
@@ -143,7 +148,7 @@ var DIALOG = (function () {
 
             if (m_strDialog != "") { RENDER.DrawRoundedBox(DEFAULT_BOX, gradient); }
             if (m_strName != "")   { DIALOG.DrawName(); }
-            DIALOG.DrawText();
+            DIALOG.DrawText(fDeltaMs);
 
             for (const choice_button of m_arrChoices)
             {
@@ -176,7 +181,7 @@ var DIALOG = (function () {
     // DrawText
     //     Draws the text in the text box using an animation function to simulate a typewriter effect
     // --------------------------------
-    d.DrawText = function()
+    d.DrawText = function(fDeltaMs=1000/60)
     {
         let ctx = GetCanvas();
         if (ctx == null) { return; }
@@ -209,20 +214,40 @@ var DIALOG = (function () {
         else
         {
             strText = m_strDialog.substring(0, m_iTextIdx);
-            m_iTextIdx += 1;
+            m_fCharAccumulator += (CHARS_PER_SECOND * fDeltaMs) / 1000;
+            while (m_fCharAccumulator >= 1 && m_iTextIdx < m_strDialog.length)
+            {
+                m_iTextIdx += 1;
+                m_fCharAccumulator -= 1;
+            }
         }
 
         let arrLines = STRINGUTILS.GetLines(strText, DEFAULT_BOX[2]-32);
-        let iTextHeight;
+        let iTextHeight = DIALOG.GetFontHeight(ctx);
         let iLines = arrLines.length;
-        let textMetrics = ctx.measureText(strText);
-        iTextHeight = textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent;
         for (idx = 0; idx < iLines; ++idx)
         {
             ctx.fillText(arrLines[idx], DEFAULT_BOX[0]+BOX_X_PADDING, DEFAULT_BOX[1]+BOX_Y_PADDING + (iTextHeight * idx));
         }
 
         RENDER.DisableShadow();
+    };
+
+    // --------------------------------
+    // GetFontHeight
+    //     Returns the line height for the current ctx.font, cached per font string
+    //     since font metrics don't depend on the text content being measured
+    // --------------------------------
+    d.GetFontHeight = function(ctx)
+    {
+        let strFont = ctx.font;
+        if (m_objFontHeightCache[strFont] == null)
+        {
+            let textMetrics = ctx.measureText("Mgjy"); // sample text with ascenders/descenders to measure line height
+            m_objFontHeightCache[strFont] = textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent;
+        }
+
+        return m_objFontHeightCache[strFont];
     };
 
     // --------------------------------

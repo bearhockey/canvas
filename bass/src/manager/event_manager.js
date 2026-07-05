@@ -16,6 +16,7 @@ var EVENTS = (function () {
     var m_current_chapter = "0";
     var m_event_list = {};
     var m_event_idx = 0;
+    var m_iCheckpoint = -1;
 
     // --------------------------------
     // FetchEventsFile
@@ -167,9 +168,9 @@ var EVENTS = (function () {
             RENDER.SetFade(0.0);
             if (title_data.title_screen != null) { RENDER.SetBackground(title_data.title_screen); }
             m_event_list["-1"] = { "fadeout":true, "next":0 };
-            // if we have save data use that to populate iCheckpoint
-            iCheckpoint = -1;
-            let arrTitleData = [ {"text":"New Game", "target":-1}, {"text":"Load Game", "target":iCheckpoint } ];
+            // if we have save data use that to populate m_iCheckpoint
+            m_iCheckpoint = -1;
+            let arrTitleData = [ {"text":"New Game", "target":-1}, {"text":"Load Game", "target":m_iCheckpoint } ];
             DIALOG.SetText("", "", false, false, arrTitleData);
         }
         else
@@ -259,8 +260,8 @@ var EVENTS = (function () {
                     m_event_list[(idx + 1).toString()] = item;
                 }
             } // end for loop
-            // now insert one at the index
-            m_event_list[iNewIdx.toString()] = {};
+            // now insert one at the index, defaulting its "next" to whatever now follows it
+            m_event_list[iNewIdx.toString()] = { "next": (iNewIdx + 1) };
             return true;
         }
 
@@ -344,7 +345,7 @@ var EVENTS = (function () {
             {
                 if (item != null && item.next != null && item.next > iRemoveIdx)
                 {
-                    item.next = item.next -= 1;
+                    item.next -= 1;
                 }
 
                 idx = parseInt(key, 10);
