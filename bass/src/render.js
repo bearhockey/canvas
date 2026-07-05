@@ -101,9 +101,14 @@ var RENDER = (function () {
     r.SetBackground = function(strURL)
     {
         RENDER.ClearBackground();
-        m_background = new Image();
-        m_background.onload = function () { m_bBackgroundLoaded = true; RENDER.CheckPreview(); };
-        m_background.src = strURL;
+        let img = new Image();
+        m_background = img;
+        img.onload = function ()
+        {
+            // guard against a stale load finishing after Clear/SetBackground moved on to something else
+            if (m_background === img) { m_bBackgroundLoaded = true; RENDER.CheckPreview(); }
+        };
+        img.src = strURL;
     };
 
     // --------------------------------
@@ -117,16 +122,21 @@ var RENDER = (function () {
         m_foreground = null;
         m_fForegroundAlpha = 0.0;
         m_fForegroundAlphaTarget = 1.0;
-        m_foreground = new Image();
-        m_foreground.onload = function ()
+        let img = new Image();
+        m_foreground = img;
+        img.onload = function ()
         {
-            m_fForegroundWidth = this.naturalWidth;
-            m_fForegroundHeight = this.naturalHeight;
-            m_bForegroundLoaded = true;
-            RENDER.CheckPreview();
+            // guard against a stale load finishing after Clear/SetForeground moved on to something else
+            if (m_foreground === img)
+            {
+                m_fForegroundWidth = img.naturalWidth;
+                m_fForegroundHeight = img.naturalHeight;
+                m_bForegroundLoaded = true;
+                RENDER.CheckPreview();
+            }
         };
 
-        m_foreground.src = strURL;
+        img.src = strURL;
     };
 
     // --------------------------------
@@ -140,9 +150,14 @@ var RENDER = (function () {
         m_effects = null;
         m_fEffectsAlpha = 0.0;
         m_fEffectsAlphaTarget = 1.0;
-        m_effects = new Image();
-        m_effects.onload = function () { m_bEffectsLoaded = true; RENDER.CheckPreview(); };
-        m_effects.src = strURL;
+        let img = new Image();
+        m_effects = img;
+        img.onload = function ()
+        {
+            // guard against a stale load finishing after Clear/SetEffects moved on to something else
+            if (m_effects === img) { m_bEffectsLoaded = true; RENDER.CheckPreview(); }
+        };
+        img.src = strURL;
     };
 
     // --------------------------------
